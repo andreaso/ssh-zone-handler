@@ -1,0 +1,14 @@
+{
+  "sudoers": {
+    "rndc": "named",
+    "logs": "odin"
+  },
+  "users": {
+    "bob": {
+      "zones": [
+        "example.org"
+      ]
+    }
+  },
+  "zone_paths": "/var/cache/bind/db.{zone_name}"
+}

@@ -1,0 +1,14 @@
+; -*- mode: dns -*-
+
+$TTL    3600
+@            IN      SOA     primary hostmaster.example.net. (
+                             26281038    ; Serial
+                             14400       ; Refresh
+                             3600        ; Retry
+                             1209600     ; Expire
+                             1800 )      ; Negative Cache TTL
+
+@            IN      NS      primary
+@            IN      NS      secondary
+primary      IN      A       192.168.63.10
+secondary    IN      A       192.168.63.11

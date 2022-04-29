@@ -1,0 +1,18 @@
+{
+  "sudoers": {
+    "logs": "log-viewer"
+  },
+  "users": {
+    "alice": {
+      "zones": [
+        "example.com",
+        "example.net"
+      ]
+    },
+    "bob": {
+      "zones": [
+        "example.org"
+      ]
+    }
+  }
+}

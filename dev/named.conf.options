@@ -1,0 +1,13 @@
+options {
+    directory "/var/cache/bind";
+
+    allow-query { any; };
+    allow-query-cache { none; };
+    allow-transfer { none; };
+
+    recursion no;
+    dnssec-validation no;
+    notify explicit;
+
+    listen-on { any; };
+};

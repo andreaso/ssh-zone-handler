@@ -68,8 +68,8 @@ def _usage() -> None:
 
 def _dump(zone: str, zone_paths: str) -> None:
     zone_file: str = zone_paths.format(zone_name=zone)
-    failure: str = f'Failed to dump content of zone "{zone}"'
-    command: Sequence[str] = (
+    failure = f'Failed to dump content of zone "{zone}"'
+    command = (
         "/usr/bin/named-compilezone",
         "-f",
         "raw",
@@ -86,8 +86,8 @@ def _dump(zone: str, zone_paths: str) -> None:
 
 
 def _logs(zone: str, log_user: str) -> None:
-    failure: str = f'Failed to output log lines for zone "{zone}"'
-    command: Sequence[str] = ("/usr/bin/sudo", f"--user={log_user}") + JOURNALCTL
+    failure = f'Failed to output log lines for zone "{zone}"'
+    command = ("/usr/bin/sudo", f"--user={log_user}") + JOURNALCTL
 
     result: CompletedProcess[str] = _runner(command, failure)
 
@@ -98,8 +98,8 @@ def _logs(zone: str, log_user: str) -> None:
 
 
 def _retransfer(zone: str, rndc_user: str) -> None:
-    failure: str = f'Failed to trigger retransfer of zone "{zone}"'
-    command: Sequence[str] = (
+    failure = f'Failed to trigger retransfer of zone "{zone}"'
+    command = (
         "/usr/bin/sudo",
         f"--user={rndc_user}",
         "/usr/sbin/rndc",
@@ -112,8 +112,8 @@ def _retransfer(zone: str, rndc_user: str) -> None:
 
 
 def _status(zone: str, rndc_user: str) -> None:
-    failure: str = f'Failed to display status for zone "{zone}"'
-    command: Sequence[str] = (
+    failure = f'Failed to display status for zone "{zone}"'
+    command = (
         "/usr/bin/sudo",
         f"--user={rndc_user}",
         "/usr/sbin/rndc",

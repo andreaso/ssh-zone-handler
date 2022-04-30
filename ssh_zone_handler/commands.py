@@ -1,5 +1,6 @@
 """Command functionality"""
 
+import re
 import sys
 from collections.abc import Sequence
 from subprocess import CalledProcessError, CompletedProcess, run
@@ -55,6 +56,32 @@ def _runner(command: Sequence[str], failure: str) -> CompletedProcess[str]:
     return result
 
 
+def _lookup(zone: str, rndc_user: str, failure: str) -> Optional[str]:
+    zone_file: Optional[str] = None
+
+    command: Sequence[str] = (
+        "/usr/bin/sudo",
+        f"--user={rndc_user}",
+        "/usr/sbin/rndc",
+        "zonestatus",
+        zone,
+    )
+
+    result: CompletedProcess[str] = _runner(command, failure)
+
+    line: str
+    matched: Optional[re.Match[str]]
+    pattern = re.compile(r"^([^:]+): (.+)$")
+    for line in result.stdout.split("\n"):
+        matched = pattern.match(line)
+        if matched:
+            if matched.group(1) == "files":
+                zone_file = matched.group(2)
+                break
+
+    return zone_file
+
+
 def _usage() -> None:
     print("usage: command [ZONE]")
     print()
@@ -66,9 +93,13 @@ def _usage() -> None:
     print("status ZONE\t\tShow ZONE status")
 
 
-def _dump(zone: str, zone_paths: str) -> None:
-    zone_file: str = zone_paths.format(zone_name=zone)
-    failure = f'Failed to dump content of zone "{zone}"'
+def _dump(zone: str, rndc_user: str) -> None:
+    lookup_failure = f'Failed to lookup zone file for zone "{zone}"'
+    zone_file: Optional[str] = _lookup(zone, rndc_user, lookup_failure)
+    if not zone_file:
+        raise InvokeError(lookup_failure)
+
+    run_failure = f'Failed to dump content of zone "{zone}"'
     command = (
         "/usr/bin/named-compilezone",
         "-f",
@@ -79,7 +110,7 @@ def _dump(zone: str, zone_paths: str) -> None:
         zone_file,
     )
 
-    result: CompletedProcess[str] = _runner(command, failure)
+    result: CompletedProcess[str] = _runner(command, run_failure)
 
     zone_content: str = result.stdout.rstrip()
     print(zone_content)
@@ -147,7 +178,6 @@ def invoke(ssh_command: str, username: str, config: ZoneManagerConf) -> None:
 
     log_user: str = config.sudoers.logs
     rndc_user: str = config.sudoers.rndc
-    zone_paths: str = config.zone_paths
 
     if not command:
         raise InvokeError('Invalid command, try "help"')
@@ -161,7 +191,7 @@ def invoke(ssh_command: str, username: str, config: ZoneManagerConf) -> None:
     elif not zone:
         raise InvokeError("No valid zone provided")
     elif command == "dump":
-        _dump(zone, zone_paths)
+        _dump(zone, rndc_user)
     elif command == "logs":
         _logs(zone, log_user)
     elif command == "retransfer":

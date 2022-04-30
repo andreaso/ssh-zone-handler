@@ -9,6 +9,5 @@
         "example.org"
       ]
     }
-  },
-  "zone_paths": "/var/cache/bind/db.{zone_name}"
+  }
 }

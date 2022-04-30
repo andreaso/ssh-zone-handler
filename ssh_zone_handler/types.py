@@ -27,4 +27,3 @@ class ZoneManagerConf(BaseModel):
 
     sudoers: SudoUsers
     users: dict[str, UserConf]
-    zone_paths = "/var/cache/bind/{zone_name}.zone"

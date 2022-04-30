@@ -26,7 +26,6 @@ def test_cli_read_config():
             "alice": {"zones": ["example.com", "example.net"]},
             "bob": {"zones": ["example.org"]},
         },
-        "zone_paths": "/var/cache/bind/{zone_name}.zone",
     }
 
     alternative_config = _read_config("./tests/data/alternative-config.json")
@@ -38,7 +37,6 @@ def test_cli_read_config():
         "users": {
             "bob": {"zones": ["example.org"]},
         },
-        "zone_paths": "/var/cache/bind/db.{zone_name}",
     }
 
     with pytest.raises(ValidationError):

@@ -4,13 +4,14 @@ import json
 import os
 import pwd
 import sys
+from typing import Final
 
 from pydantic import ValidationError
 
-from ssh_zone_handler.commands import InvokeError, invoke
-from ssh_zone_handler.constants import CONFIG_FILE
-from ssh_zone_handler.sudoers import generate
+from ssh_zone_handler.commands import InvokeError, SshZoneHandler
 from ssh_zone_handler.types import ZoneHandlerConf
+
+CONFIG_FILE: Final[str] = "/etc/zone-handler.json"
 
 
 def _error_out(message: str) -> None:
@@ -43,7 +44,8 @@ def sudoers(config_file: str = CONFIG_FILE) -> None:
     except ValidationError:
         _error_out("Invalid server side config file")
 
-    generate(config)
+    szh = SshZoneHandler(config)
+    szh.generate()
 
 
 def wrapper(config_file: str = CONFIG_FILE) -> None:
@@ -76,7 +78,8 @@ def wrapper(config_file: str = CONFIG_FILE) -> None:
     except KeyError:
         pass
 
+    szh = SshZoneHandler(config)
     try:
-        invoke(ssh_command, username, config)
+        szh.invoke(ssh_command, username)
     except InvokeError as error:
         _error_out(str(error))

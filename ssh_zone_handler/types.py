@@ -25,5 +25,6 @@ class ZoneHandlerConf(BaseModel):
     zone-handler.json structure
     """
 
+    debug = False
     sudoers: SudoUsers
     users: dict[str, UserConf]

@@ -18,6 +18,7 @@ def mock_pwd_name(name):
 def test_cli_read_config():
     example_config = _read_config("./tests/data/example-config.json")
     assert example_config == {
+        "debug": False,
         "sudoers": {
             "logs": "log-viewer",
             "rndc": "bind",
@@ -30,6 +31,7 @@ def test_cli_read_config():
 
     alternative_config = _read_config("./tests/data/alternative-config.json")
     assert alternative_config == {
+        "debug": True,
         "sudoers": {
             "logs": "odin",
             "rndc": "named",

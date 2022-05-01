@@ -8,7 +8,6 @@ from typing import Final, Optional
 
 from ssh_zone_handler.types import UserConf, ZoneHandlerConf
 
-DEBUG: Final[bool] = False
 JOURNALCTL: Final[tuple[str, str, str, str]] = (
     "/usr/bin/journalctl",
     "--unit=named",
@@ -26,6 +25,7 @@ class SshZoneHandler:
 
     def __init__(self, config: ZoneHandlerConf):
         self.config: ZoneHandlerConf = config
+        self.debug: Final[bool] = config.debug
         self.log_user: Final[str] = config.sudoers.logs
         self.rndc_user: Final[str] = config.sudoers.rndc
 
@@ -89,12 +89,11 @@ class SshZoneHandler:
 
         return command, zone
 
-    @staticmethod
-    def __runner(command: Sequence[str], failure: str) -> CompletedProcess[str]:
+    def __runner(self, command: Sequence[str], failure: str) -> CompletedProcess[str]:
         try:
             result = run(command, capture_output=True, check=True, text=True)
         except (FileNotFoundError, CalledProcessError) as err:
-            if DEBUG:
+            if self.debug:
                 print(f"{type(err).__name__}: {str(err)}", file=sys.stderr)
             raise InvokeError(failure) from err
 

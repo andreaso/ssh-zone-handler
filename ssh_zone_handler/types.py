@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 class SudoUsers(BaseModel):
     """
-    Subset of ZoneManagerConf
+    Subset of ZoneHandlerConf
     """
 
     logs: str
@@ -14,13 +14,13 @@ class SudoUsers(BaseModel):
 
 class UserConf(BaseModel):
     """
-    Subset of ZoneManagerConf
+    Subset of ZoneHandlerConf
     """
 
     zones: list[str]
 
 
-class ZoneManagerConf(BaseModel):
+class ZoneHandlerConf(BaseModel):
     """
     zone-handler.json structure
     """

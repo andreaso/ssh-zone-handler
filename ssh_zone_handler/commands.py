@@ -7,14 +7,14 @@ from subprocess import CalledProcessError, CompletedProcess, run
 from typing import Optional
 
 from ssh_zone_handler.constants import DEBUG, JOURNALCTL
-from ssh_zone_handler.types import ZoneManagerConf
+from ssh_zone_handler.types import ZoneHandlerConf
 
 
 class InvokeError(Exception):
     """Used to propagate an error to the top level wrapper method"""
 
 
-def _zone_list(username: str, config: ZoneManagerConf) -> Sequence[str]:
+def _zone_list(username: str, config: ZoneHandlerConf) -> Sequence[str]:
     user_zones: Sequence[str] = ()
 
     try:
@@ -158,7 +158,7 @@ def _status(zone: str, rndc_user: str) -> None:
     print(zone_status)
 
 
-def invoke(ssh_command: str, username: str, config: ZoneManagerConf) -> None:
+def invoke(ssh_command: str, username: str, config: ZoneHandlerConf) -> None:
     """
     Pick what, if any, command to invoke.
 

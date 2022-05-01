@@ -3,10 +3,10 @@
 from collections.abc import KeysView
 
 from ssh_zone_handler.constants import JOURNALCTL
-from ssh_zone_handler.types import UserConf, ZoneManagerConf
+from ssh_zone_handler.types import UserConf, ZoneHandlerConf
 
 
-def _log_rules(config: ZoneManagerConf) -> list[str]:
+def _log_rules(config: ZoneHandlerConf) -> list[str]:
     users: KeysView[str] = config.users.keys()
     log_user: str = config.sudoers.logs
     command: str = " ".join(JOURNALCTL)
@@ -21,7 +21,7 @@ def _log_rules(config: ZoneManagerConf) -> list[str]:
     return rules
 
 
-def _rndc_rules(config: ZoneManagerConf) -> list[str]:
+def _rndc_rules(config: ZoneHandlerConf) -> list[str]:
     rndc_user: str = config.sudoers.rndc
 
     rules: list[str] = []
@@ -41,7 +41,7 @@ def _rndc_rules(config: ZoneManagerConf) -> list[str]:
     return rules
 
 
-def generate(config: ZoneManagerConf) -> None:
+def generate(config: ZoneHandlerConf) -> None:
     """
     Outputs all the needed sudoers rules.
 

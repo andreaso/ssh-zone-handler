@@ -10,7 +10,7 @@ from pydantic import ValidationError
 from ssh_zone_handler.commands import InvokeError, invoke
 from ssh_zone_handler.constants import CONFIG_FILE
 from ssh_zone_handler.sudoers import generate
-from ssh_zone_handler.types import ZoneManagerConf
+from ssh_zone_handler.types import ZoneHandlerConf
 
 
 def _error_out(message: str) -> None:
@@ -18,9 +18,9 @@ def _error_out(message: str) -> None:
     sys.exit(1)
 
 
-def _read_config(config_file: str) -> ZoneManagerConf:
+def _read_config(config_file: str) -> ZoneHandlerConf:
     with open(config_file, encoding="utf-8") as fin:
-        config = ZoneManagerConf(**json.load(fin))
+        config = ZoneHandlerConf(**json.load(fin))
 
     return config
 
@@ -35,7 +35,7 @@ def sudoers(config_file: str = CONFIG_FILE) -> None:
     """
 
     try:
-        config: ZoneManagerConf = _read_config(config_file)
+        config: ZoneHandlerConf = _read_config(config_file)
     except (FileNotFoundError, PermissionError):
         _error_out("Unable to access server side config file")
     except json.decoder.JSONDecodeError:
@@ -62,7 +62,7 @@ def wrapper(config_file: str = CONFIG_FILE) -> None:
 
     username: str = pwd.getpwuid(os.getuid()).pw_name
     try:
-        config: ZoneManagerConf = _read_config(config_file)
+        config: ZoneHandlerConf = _read_config(config_file)
     except (FileNotFoundError, PermissionError):
         _error_out("Unable to access server side config file")
     except json.decoder.JSONDecodeError:

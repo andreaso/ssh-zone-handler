@@ -9,6 +9,7 @@ import pytest
 from pydantic import ValidationError
 
 from ssh_zone_handler.cli import _read_config, sudoers, wrapper
+from ssh_zone_handler.commands import SshZoneHandler
 
 
 def mock_pwd_name(name):
@@ -106,3 +107,23 @@ def test_cli_zone_wrapper(capsys, mocker):
         wrapper("./tests/data/example-config.json")
     captured_unconf_user = capsys.readouterr()
     assert captured_unconf_user.err == 'No zones configured for user "mallory"\n'
+
+
+def test_log_filtering():
+    pre_filtered_file = "./tests/data/filtered-named-example-net.txt"
+    with open(pre_filtered_file, encoding="utf-8") as fin:
+        pre_filtered_data = fin.read().rstrip()
+
+    log_file = "./tests/data/journald-named-example-net.txt"
+    with open(log_file, encoding="utf-8") as fin:
+        log_data = fin.read()
+
+    log_lines = log_data.split("\n")
+    zone = "example.net"
+
+    filtered = []
+    # pylint: disable=protected-access
+    for line in SshZoneHandler._SshZoneHandler__filter_logs(log_lines, zone):
+        filtered.append(line)
+
+    assert filtered == pre_filtered_data.split("\n")

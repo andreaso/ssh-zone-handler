@@ -4,7 +4,7 @@ import re
 import sys
 from collections.abc import KeysView, Sequence
 from subprocess import CalledProcessError, CompletedProcess, run
-from typing import Final, Optional
+from typing import Final, Iterator, Optional
 
 from ssh_zone_handler.types import UserConf, ZoneHandlerConf
 
@@ -158,21 +158,28 @@ class SshZoneHandler:
         zone_content: str = result.stdout.rstrip()
         print(zone_content)
 
-    def __logs(self, zone: str) -> None:
-        failure = f'Failed to output log lines for zone "{zone}"'
-        command = ("/usr/bin/sudo", f"--user={self.log_user}") + JOURNALCTL
-
-        result: CompletedProcess[str] = self.__runner(command, failure)
-
+    @staticmethod
+    def __filter_logs(log_lines: list[str], zone: str) -> Iterator[str]:
         line: str
-        for line in result.stdout.split("\n"):
+        for line in log_lines:
             if (
                 f"zone {zone}/IN" in line
                 or f"'retransfer {zone}'" in line
                 or f"'{zone}/IN'" in line
                 or f"'{zone}'" in line
             ):
-                print(line)
+                yield line
+
+    def __logs(self, zone: str) -> None:
+        failure = f'Failed to output log lines for zone "{zone}"'
+        command = ("/usr/bin/sudo", f"--user={self.log_user}") + JOURNALCTL
+
+        result: CompletedProcess[str] = self.__runner(command, failure)
+        log_lines: list[str] = result.stdout.split("\n")
+
+        line: str
+        for line in self.__filter_logs(log_lines, zone):
+            print(line)
 
     def __retransfer(self, zone: str) -> None:
         failure = f'Failed to trigger retransfer of zone "{zone}"'

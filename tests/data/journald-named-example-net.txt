@@ -1,0 +1,352 @@
+May 05 18:44:24 szh-secondary systemd[1]: Starting BIND Domain Name Server...
+May 05 18:44:24 szh-secondary named[2568]: starting BIND 9.18.1-1ubuntu1-Ubuntu (Stable Release) <id:>
+May 05 18:44:24 szh-secondary named[2568]: running on Linux x86_64 5.15.0-25-generic #25-Ubuntu SMP Wed Mar 30 15:54:22 UTC 2022
+May 05 18:44:24 szh-secondary named[2568]: built with  '--build=x86_64-linux-gnu' '--prefix=/usr' '--includedir=${prefix}/include' '--mandir=${prefix}/share/man' '--infodir=${prefix}/share/info' '--sysconfdir=/etc' '--localstatedir=/var' '--disable-option-checking' '--disable-silent-rules' '--libdir=${prefix}/lib/x86_64-linux-gnu' '--runstatedir=/run' '--disable-maintainer-mode' '--disable-dependency-tracking' '--libdir=/usr/lib/x86_64-linux-gnu' '--sysconfdir=/etc/bind' '--with-python=python3' '--localstatedir=/' '--enable-threads' '--enable-largefile' '--with-libtool' '--enable-shared' '--disable-static' '--with-gost=no' '--with-openssl=/usr' '--with-gssapi=yes' '--with-libidn2' '--with-json-c' '--with-lmdb=/usr' '--with-gnu-ld' '--with-maxminddb' '--with-atf=no' '--enable-ipv6' '--enable-rrl' '--enable-filter-aaaa' '--disable-native-pkcs11' 'build_alias=x86_64-linux-gnu' 'CFLAGS=-g -O2 -ffile-prefix-map=/build/bind9-2SW0bQ/bind9-9.18.1=. -flto=auto -ffat-lto-objects -flto=auto -ffat-lto-objects -fstack-protector-strong -Wformat -Werror=format-security -fno-strict-aliasing -fno-delete-null-pointer-checks -DNO_VERSION_DATE -DDIG_SIGCHASE' 'LDFLAGS=-Wl,-Bsymbolic-functions -flto=auto -ffat-lto-objects -flto=auto -Wl,-z,relro -Wl,-z,now' 'CPPFLAGS=-Wdate-time -D_FORTIFY_SOURCE=2'
+May 05 18:44:24 szh-secondary named[2568]: running as: named -u bind
+May 05 18:44:24 szh-secondary named[2568]: compiled by GCC 11.2.0
+May 05 18:44:24 szh-secondary named[2568]: compiled with OpenSSL version: OpenSSL 3.0.2 15 Mar 2022
+May 05 18:44:24 szh-secondary named[2568]: linked to OpenSSL version: OpenSSL 3.0.2 15 Mar 2022
+May 05 18:44:24 szh-secondary named[2568]: compiled with libxml2 version: 2.9.13
+May 05 18:44:24 szh-secondary named[2568]: linked to libxml2 version: 20913
+May 05 18:44:24 szh-secondary named[2568]: compiled with json-c version: 0.15
+May 05 18:44:24 szh-secondary named[2568]: linked to json-c version: 0.15
+May 05 18:44:24 szh-secondary named[2568]: compiled with zlib version: 1.2.11
+May 05 18:44:24 szh-secondary named[2568]: linked to zlib version: 1.2.11
+May 05 18:44:24 szh-secondary named[2568]: ----------------------------------------------------
+May 05 18:44:24 szh-secondary named[2568]: BIND 9 is maintained by Internet Systems Consortium,
+May 05 18:44:24 szh-secondary named[2568]: Inc. (ISC), a non-profit 501(c)(3) public-benefit
+May 05 18:44:24 szh-secondary named[2568]: corporation.  Support and training for BIND 9 are
+May 05 18:44:24 szh-secondary named[2568]: available at https://www.isc.org/support
+May 05 18:44:24 szh-secondary named[2568]: ----------------------------------------------------
+May 05 18:44:24 szh-secondary named[2568]: adjusted limit on open files from 524288 to 1048576
+May 05 18:44:24 szh-secondary named[2568]: found 2 CPUs, using 2 worker threads
+May 05 18:44:24 szh-secondary named[2568]: using 2 UDP listeners per interface
+May 05 18:44:24 szh-secondary named[2568]: config.c: option 'trust-anchor-telemetry' is experimental and subject to change in the future
+May 05 18:44:24 szh-secondary named[2568]: loading configuration from '/etc/bind/named.conf'
+May 05 18:44:24 szh-secondary named[2568]: reading built-in trust anchors from file '/etc/bind/bind.keys'
+May 05 18:44:24 szh-secondary named[2568]: looking for GeoIP2 databases in '/usr/share/GeoIP'
+May 05 18:44:24 szh-secondary named[2568]: using default UDP/IPv4 port range: [32768, 60999]
+May 05 18:44:24 szh-secondary named[2568]: using default UDP/IPv6 port range: [32768, 60999]
+May 05 18:44:24 szh-secondary named[2568]: listening on IPv4 interface lo, 127.0.0.1#53
+May 05 18:44:24 szh-secondary named[2568]: listening on IPv4 interface enp0s3, 10.0.2.15#53
+May 05 18:44:24 szh-secondary named[2568]: listening on IPv4 interface enp0s8, 192.168.63.11#53
+May 05 18:44:24 szh-secondary named[2568]: IPv6 socket API is incomplete; explicitly binding to each IPv6 address separately
+May 05 18:44:24 szh-secondary named[2568]: listening on IPv6 interface lo, ::1#53
+May 05 18:44:24 szh-secondary named[2568]: listening on IPv6 interface enp0s3, fe80::15:54ff:fe75:57bf%2#53
+May 05 18:44:24 szh-secondary named[2568]: listening on IPv6 interface enp0s8, fe80::a00:27ff:fe68:110%3#53
+May 05 18:44:24 szh-secondary named[2568]: generating session key for dynamic DNS
+May 05 18:44:24 szh-secondary named[2568]: sizing zone task pool based on 5 zones
+May 05 18:44:24 szh-secondary named[2568]: none:97: 'max-cache-size 90%' - setting to 873MB (out of 971MB)
+May 05 18:44:24 szh-secondary named[2568]: obtaining root key for view _default from '/etc/bind/bind.keys'
+May 05 18:44:24 szh-secondary named[2568]: set up managed keys zone for view _default, file 'managed-keys.bind'
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 10.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 16.172.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 17.172.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 18.172.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 19.172.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 20.172.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 21.172.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 22.172.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 23.172.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 24.172.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 25.172.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 26.172.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 27.172.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 28.172.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 29.172.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 30.172.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 31.172.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 168.192.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 64.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 65.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 66.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 67.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 68.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 69.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 70.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 71.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 72.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 73.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 74.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 75.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 76.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 77.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 78.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 79.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 80.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 81.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 82.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 83.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 84.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 85.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 86.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 87.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 88.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 89.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 90.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 91.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 92.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 93.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 94.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 95.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 96.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 97.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 98.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 99.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 100.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 101.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 102.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 103.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 104.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 105.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 106.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 107.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 108.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 109.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 110.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 111.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 112.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 113.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 114.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 115.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 116.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 117.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 118.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 119.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 120.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 121.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 122.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 123.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 124.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 125.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 126.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 127.100.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 254.169.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 2.0.192.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 100.51.198.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 113.0.203.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 255.255.255.255.IN-ADDR.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.IP6.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.IP6.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: D.F.IP6.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 8.E.F.IP6.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 9.E.F.IP6.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: A.E.F.IP6.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: B.E.F.IP6.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: 8.B.D.0.1.0.0.2.IP6.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: EMPTY.AS112.ARPA
+May 05 18:44:24 szh-secondary named[2568]: automatic empty zone: HOME.ARPA
+May 05 18:44:24 szh-secondary named[2568]: configuring command channel from '/etc/bind/rndc.key'
+May 05 18:44:24 szh-secondary named[2568]: command channel listening on 127.0.0.1#953
+May 05 18:44:24 szh-secondary named[2568]: configuring command channel from '/etc/bind/rndc.key'
+May 05 18:44:24 szh-secondary named[2568]: command channel listening on ::1#953
+May 05 18:44:24 szh-secondary named[2568]: managed-keys-zone: loaded serial 0
+May 05 18:44:24 szh-secondary named[2568]: zone 0.in-addr.arpa/IN: loaded serial 1
+May 05 18:44:24 szh-secondary named[2568]: zone 127.in-addr.arpa/IN: loaded serial 1
+May 05 18:44:24 szh-secondary named[2568]: zone 255.in-addr.arpa/IN: loaded serial 1
+May 05 18:44:24 szh-secondary named[2568]: network unreachable resolving './DNSKEY/IN': 2001:7fe::53#53
+May 05 18:44:24 szh-secondary named[2568]: network unreachable resolving './NS/IN': 2001:7fe::53#53
+May 05 18:44:24 szh-secondary named[2568]: network unreachable resolving './DNSKEY/IN': 2001:7fd::1#53
+May 05 18:44:24 szh-secondary named[2568]: network unreachable resolving './NS/IN': 2001:7fd::1#53
+May 05 18:44:24 szh-secondary named[2568]: network unreachable resolving './DNSKEY/IN': 2001:dc3::35#53
+May 05 18:44:24 szh-secondary named[2568]: network unreachable resolving './NS/IN': 2001:dc3::35#53
+May 05 18:44:24 szh-secondary named[2568]: network unreachable resolving './DNSKEY/IN': 2001:503:ba3e::2:30#53
+May 05 18:44:24 szh-secondary named[2568]: network unreachable resolving './NS/IN': 2001:503:ba3e::2:30#53
+May 05 18:44:24 szh-secondary named[2568]: network unreachable resolving './DNSKEY/IN': 2001:500:a8::e#53
+May 05 18:44:24 szh-secondary named[2568]: network unreachable resolving './NS/IN': 2001:500:a8::e#53
+May 05 18:44:24 szh-secondary named[2568]: network unreachable resolving './DNSKEY/IN': 2001:500:1::53#53
+May 05 18:44:24 szh-secondary named[2568]: zone localhost/IN: loaded serial 2
+May 05 18:44:24 szh-secondary named[2568]: all zones loaded
+May 05 18:44:24 szh-secondary named[2568]: running
+May 05 18:44:24 szh-secondary named[2568]: network unreachable resolving './NS/IN': 2001:500:1::53#53
+May 05 18:44:24 szh-secondary named[2568]: network unreachable resolving './DNSKEY/IN': 2001:500:2d::d#53
+May 05 18:44:24 szh-secondary systemd[1]: Started BIND Domain Name Server.
+May 05 18:44:24 szh-secondary named[2568]: network unreachable resolving './NS/IN': 2001:500:2d::d#53
+May 05 18:44:24 szh-secondary named[2568]: network unreachable resolving './DNSKEY/IN': 2001:500:9f::42#53
+May 05 18:44:24 szh-secondary named[2568]: network unreachable resolving './NS/IN': 2001:500:9f::42#53
+May 05 18:44:24 szh-secondary named[2568]: network unreachable resolving './DNSKEY/IN': 2001:500:12::d0d#53
+May 05 18:44:24 szh-secondary named[2568]: network unreachable resolving './NS/IN': 2001:500:12::d0d#53
+May 05 18:44:24 szh-secondary named[2568]: network unreachable resolving './DNSKEY/IN': 2001:503:c27::2:30#53
+May 05 18:44:24 szh-secondary named[2568]: network unreachable resolving './NS/IN': 2001:503:c27::2:30#53
+May 05 18:44:24 szh-secondary named[2568]: network unreachable resolving './DNSKEY/IN': 2001:500:200::b#53
+May 05 18:44:24 szh-secondary named[2568]: network unreachable resolving './NS/IN': 2001:500:200::b#53
+May 05 18:44:24 szh-secondary named[2568]: network unreachable resolving './DNSKEY/IN': 2001:500:2::c#53
+May 05 18:44:24 szh-secondary named[2568]: network unreachable resolving './NS/IN': 2001:500:2::c#53
+May 05 18:44:24 szh-secondary named[2568]: network unreachable resolving './DNSKEY/IN': 2001:500:2f::f#53
+May 05 18:44:24 szh-secondary named[2568]: network unreachable resolving './NS/IN': 2001:500:2f::f#53
+May 05 18:44:24 szh-secondary named[2568]: managed-keys-zone: Initializing automatic trust anchor management for zone '.'; DNSKEY ID 20326 is now trusted, waiving the normal 30-day waiting period.
+May 05 18:44:24 szh-secondary named[2568]: resolver priming query complete: success
+May 05 18:44:37 szh-secondary systemd[1]: Stopping BIND Domain Name Server...
+May 05 18:44:37 szh-secondary named[2568]: received control channel command 'stop'
+May 05 18:44:37 szh-secondary named[2568]: no longer listening on 127.0.0.1#53
+May 05 18:44:37 szh-secondary named[2568]: no longer listening on 10.0.2.15#53
+May 05 18:44:37 szh-secondary named[2568]: no longer listening on 192.168.63.11#53
+May 05 18:44:37 szh-secondary named[2568]: no longer listening on ::1#53
+May 05 18:44:37 szh-secondary named[2568]: no longer listening on fe80::15:54ff:fe75:57bf%2#53
+May 05 18:44:37 szh-secondary named[2568]: no longer listening on fe80::a00:27ff:fe68:110%3#53
+May 05 18:44:37 szh-secondary named[2568]: shutting down: flushing changes
+May 05 18:44:37 szh-secondary named[2568]: stopping command channel on 127.0.0.1#953
+May 05 18:44:37 szh-secondary named[2568]: stopping command channel on ::1#953
+May 05 18:44:37 szh-secondary named[2568]: exiting
+May 05 18:44:37 szh-secondary systemd[1]: named.service: Deactivated successfully.
+May 05 18:44:37 szh-secondary systemd[1]: Stopped BIND Domain Name Server.
+May 05 18:44:37 szh-secondary systemd[1]: Starting BIND Domain Name Server...
+May 05 18:44:37 szh-secondary named[2771]: starting BIND 9.18.1-1ubuntu1-Ubuntu (Stable Release) <id:>
+May 05 18:44:37 szh-secondary named[2771]: running on Linux x86_64 5.15.0-25-generic #25-Ubuntu SMP Wed Mar 30 15:54:22 UTC 2022
+May 05 18:44:37 szh-secondary named[2771]: built with  '--build=x86_64-linux-gnu' '--prefix=/usr' '--includedir=${prefix}/include' '--mandir=${prefix}/share/man' '--infodir=${prefix}/share/info' '--sysconfdir=/etc' '--localstatedir=/var' '--disable-option-checking' '--disable-silent-rules' '--libdir=${prefix}/lib/x86_64-linux-gnu' '--runstatedir=/run' '--disable-maintainer-mode' '--disable-dependency-tracking' '--libdir=/usr/lib/x86_64-linux-gnu' '--sysconfdir=/etc/bind' '--with-python=python3' '--localstatedir=/' '--enable-threads' '--enable-largefile' '--with-libtool' '--enable-shared' '--disable-static' '--with-gost=no' '--with-openssl=/usr' '--with-gssapi=yes' '--with-libidn2' '--with-json-c' '--with-lmdb=/usr' '--with-gnu-ld' '--with-maxminddb' '--with-atf=no' '--enable-ipv6' '--enable-rrl' '--enable-filter-aaaa' '--disable-native-pkcs11' 'build_alias=x86_64-linux-gnu' 'CFLAGS=-g -O2 -ffile-prefix-map=/build/bind9-2SW0bQ/bind9-9.18.1=. -flto=auto -ffat-lto-objects -flto=auto -ffat-lto-objects -fstack-protector-strong -Wformat -Werror=format-security -fno-strict-aliasing -fno-delete-null-pointer-checks -DNO_VERSION_DATE -DDIG_SIGCHASE' 'LDFLAGS=-Wl,-Bsymbolic-functions -flto=auto -ffat-lto-objects -flto=auto -Wl,-z,relro -Wl,-z,now' 'CPPFLAGS=-Wdate-time -D_FORTIFY_SOURCE=2'
+May 05 18:44:37 szh-secondary named[2771]: running as: named -u bind
+May 05 18:44:37 szh-secondary named[2771]: compiled by GCC 11.2.0
+May 05 18:44:37 szh-secondary named[2771]: compiled with OpenSSL version: OpenSSL 3.0.2 15 Mar 2022
+May 05 18:44:37 szh-secondary named[2771]: linked to OpenSSL version: OpenSSL 3.0.2 15 Mar 2022
+May 05 18:44:37 szh-secondary named[2771]: compiled with libxml2 version: 2.9.13
+May 05 18:44:37 szh-secondary named[2771]: linked to libxml2 version: 20913
+May 05 18:44:37 szh-secondary named[2771]: compiled with json-c version: 0.15
+May 05 18:44:37 szh-secondary named[2771]: linked to json-c version: 0.15
+May 05 18:44:37 szh-secondary named[2771]: compiled with zlib version: 1.2.11
+May 05 18:44:37 szh-secondary named[2771]: linked to zlib version: 1.2.11
+May 05 18:44:37 szh-secondary named[2771]: ----------------------------------------------------
+May 05 18:44:37 szh-secondary named[2771]: BIND 9 is maintained by Internet Systems Consortium,
+May 05 18:44:37 szh-secondary named[2771]: Inc. (ISC), a non-profit 501(c)(3) public-benefit
+May 05 18:44:37 szh-secondary named[2771]: corporation.  Support and training for BIND 9 are
+May 05 18:44:37 szh-secondary named[2771]: available at https://www.isc.org/support
+May 05 18:44:37 szh-secondary named[2771]: ----------------------------------------------------
+May 05 18:44:37 szh-secondary named[2771]: adjusted limit on open files from 524288 to 1048576
+May 05 18:44:37 szh-secondary named[2771]: found 2 CPUs, using 2 worker threads
+May 05 18:44:37 szh-secondary named[2771]: using 2 UDP listeners per interface
+May 05 18:44:37 szh-secondary named[2771]: config.c: option 'trust-anchor-telemetry' is experimental and subject to change in the future
+May 05 18:44:37 szh-secondary named[2771]: loading configuration from '/etc/bind/named.conf'
+May 05 18:44:37 szh-secondary named[2771]: reading built-in trust anchors from file '/etc/bind/bind.keys'
+May 05 18:44:37 szh-secondary named[2771]: looking for GeoIP2 databases in '/usr/share/GeoIP'
+May 05 18:44:37 szh-secondary named[2771]: using default UDP/IPv4 port range: [32768, 60999]
+May 05 18:44:37 szh-secondary named[2771]: using default UDP/IPv6 port range: [32768, 60999]
+May 05 18:44:37 szh-secondary named[2771]: listening on IPv4 interface lo, 127.0.0.1#53
+May 05 18:44:37 szh-secondary named[2771]: listening on IPv4 interface enp0s3, 10.0.2.15#53
+May 05 18:44:37 szh-secondary named[2771]: listening on IPv4 interface enp0s8, 192.168.63.11#53
+May 05 18:44:37 szh-secondary named[2771]: IPv6 socket API is incomplete; explicitly binding to each IPv6 address separately
+May 05 18:44:37 szh-secondary named[2771]: listening on IPv6 interface lo, ::1#53
+May 05 18:44:37 szh-secondary named[2771]: listening on IPv6 interface enp0s3, fe80::15:54ff:fe75:57bf%2#53
+May 05 18:44:37 szh-secondary named[2771]: listening on IPv6 interface enp0s8, fe80::a00:27ff:fe68:110%3#53
+May 05 18:44:37 szh-secondary named[2771]: generating session key for dynamic DNS
+May 05 18:44:37 szh-secondary named[2771]: sizing zone task pool based on 8 zones
+May 05 18:44:37 szh-secondary named[2771]: set up managed keys zone for view _default, file 'managed-keys.bind'
+May 05 18:44:37 szh-secondary named[2771]: configuring command channel from '/etc/bind/rndc.key'
+May 05 18:44:37 szh-secondary named[2771]: command channel listening on 127.0.0.1#953
+May 05 18:44:37 szh-secondary named[2771]: configuring command channel from '/etc/bind/rndc.key'
+May 05 18:44:37 szh-secondary named[2771]: command channel listening on ::1#953
+May 05 18:44:37 szh-secondary named[2771]: managed-keys-zone: loaded serial 2
+May 05 18:44:37 szh-secondary named[2771]: zone 0.in-addr.arpa/IN: loaded serial 1
+May 05 18:44:37 szh-secondary named[2771]: zone 127.in-addr.arpa/IN: loaded serial 1
+May 05 18:44:37 szh-secondary named[2771]: zone 255.in-addr.arpa/IN: loaded serial 1
+May 05 18:44:37 szh-secondary named[2771]: zone localhost/IN: loaded serial 2
+May 05 18:44:37 szh-secondary named[2771]: all zones loaded
+May 05 18:44:37 szh-secondary named[2771]: running
+May 05 18:44:37 szh-secondary named[2771]: zone example.org/IN: Transfer started.
+May 05 18:44:37 szh-secondary named[2771]: transfer of 'example.org/IN' from 192.168.63.10#53: connected using 192.168.63.10#53
+May 05 18:44:37 szh-secondary named[2771]: zone example.org/IN: transferred serial 26281038
+May 05 18:44:37 szh-secondary named[2771]: transfer of 'example.org/IN' from 192.168.63.10#53: Transfer status: success
+May 05 18:44:37 szh-secondary named[2771]: transfer of 'example.org/IN' from 192.168.63.10#53: Transfer completed: 1 messages, 6 records, 201 bytes, 0.001 secs (201000 bytes/sec) (serial 26281038)
+May 05 18:44:37 szh-secondary systemd[1]: Started BIND Domain Name Server.
+May 05 18:44:38 szh-secondary named[2771]: zone example.com/IN: Transfer started.
+May 05 18:44:38 szh-secondary named[2771]: zone example.net/IN: Transfer started.
+May 05 18:44:38 szh-secondary named[2771]: transfer of 'example.net/IN' from 192.168.63.10#53: connected using 192.168.63.10#53
+May 05 18:44:38 szh-secondary named[2771]: transfer of 'example.com/IN' from 192.168.63.10#53: connected using 192.168.63.10#53
+May 05 18:44:38 szh-secondary named[2771]: zone example.net/IN: transferred serial 26281039
+May 05 18:44:38 szh-secondary named[2771]: transfer of 'example.net/IN' from 192.168.63.10#53: Transfer status: success
+May 05 18:44:38 szh-secondary named[2771]: transfer of 'example.net/IN' from 192.168.63.10#53: Transfer completed: 1 messages, 7 records, 212 bytes, 0.001 secs (212000 bytes/sec) (serial 26281039)
+May 05 18:44:38 szh-secondary named[2771]: zone example.com/IN: transferred serial 26281038
+May 05 18:44:38 szh-secondary named[2771]: transfer of 'example.com/IN' from 192.168.63.10#53: Transfer status: success
+May 05 18:44:38 szh-secondary named[2771]: transfer of 'example.com/IN' from 192.168.63.10#53: Transfer completed: 1 messages, 6 records, 201 bytes, 0.001 secs (201000 bytes/sec) (serial 26281038)
+May 05 18:46:06 szh-secondary named[2771]: client @0x7fce300482c8 192.168.63.10#33832: received notify for zone 'example.net'
+May 05 18:46:06 szh-secondary named[2771]: zone example.net/IN: notify from 192.168.63.10#33832: serial 26281040
+May 05 18:46:06 szh-secondary named[2771]: zone example.net/IN: Transfer started.
+May 05 18:46:06 szh-secondary named[2771]: transfer of 'example.net/IN' from 192.168.63.10#53: connected using 192.168.63.10#53
+May 05 18:46:06 szh-secondary named[2771]: zone example.net/IN: transferred serial 26281040
+May 05 18:46:06 szh-secondary named[2771]: transfer of 'example.net/IN' from 192.168.63.10#53: Transfer status: success
+May 05 18:46:06 szh-secondary named[2771]: transfer of 'example.net/IN' from 192.168.63.10#53: Transfer completed: 1 messages, 6 records, 190 bytes, 0.001 secs (190000 bytes/sec) (serial 26281040)
+May 05 18:46:53 szh-secondary systemd[1]: Stopping BIND Domain Name Server...
+May 05 18:46:53 szh-secondary named[2771]: received control channel command 'stop'
+May 05 18:46:53 szh-secondary named[2771]: no longer listening on 127.0.0.1#53
+May 05 18:46:53 szh-secondary named[2771]: no longer listening on 10.0.2.15#53
+May 05 18:46:53 szh-secondary named[2771]: no longer listening on 192.168.63.11#53
+May 05 18:46:53 szh-secondary named[2771]: no longer listening on ::1#53
+May 05 18:46:53 szh-secondary named[2771]: no longer listening on fe80::15:54ff:fe75:57bf%2#53
+May 05 18:46:53 szh-secondary named[2771]: no longer listening on fe80::a00:27ff:fe68:110%3#53
+May 05 18:46:53 szh-secondary named[2771]: shutting down: flushing changes
+May 05 18:46:53 szh-secondary named[2771]: stopping command channel on 127.0.0.1#953
+May 05 18:46:53 szh-secondary named[2771]: stopping command channel on ::1#953
+May 05 18:46:53 szh-secondary named[2771]: exiting
+May 05 18:46:53 szh-secondary systemd[1]: named.service: Deactivated successfully.
+May 05 18:46:53 szh-secondary systemd[1]: Stopped BIND Domain Name Server.
+-- Boot 119cdf426ff8486a9abec13e70fbfc9b --
+May 05 18:47:23 szh-secondary systemd[1]: Starting BIND Domain Name Server...
+May 05 18:47:23 szh-secondary named[706]: starting BIND 9.18.1-1ubuntu1-Ubuntu (Stable Release) <id:>
+May 05 18:47:23 szh-secondary named[706]: running on Linux x86_64 5.15.0-27-generic #28-Ubuntu SMP Thu Apr 14 04:55:28 UTC 2022
+May 05 18:47:23 szh-secondary named[706]: built with  '--build=x86_64-linux-gnu' '--prefix=/usr' '--includedir=${prefix}/include' '--mandir=${prefix}/share/man' '--infodir=${prefix}/share/info' '--sysconfdir=/etc' '--localstatedir=/var' '--disable-option-checking' '--disable-silent-rules' '--libdir=${prefix}/lib/x86_64-linux-gnu' '--runstatedir=/run' '--disable-maintainer-mode' '--disable-dependency-tracking' '--libdir=/usr/lib/x86_64-linux-gnu' '--sysconfdir=/etc/bind' '--with-python=python3' '--localstatedir=/' '--enable-threads' '--enable-largefile' '--with-libtool' '--enable-shared' '--disable-static' '--with-gost=no' '--with-openssl=/usr' '--with-gssapi=yes' '--with-libidn2' '--with-json-c' '--with-lmdb=/usr' '--with-gnu-ld' '--with-maxminddb' '--with-atf=no' '--enable-ipv6' '--enable-rrl' '--enable-filter-aaaa' '--disable-native-pkcs11' 'build_alias=x86_64-linux-gnu' 'CFLAGS=-g -O2 -ffile-prefix-map=/build/bind9-2SW0bQ/bind9-9.18.1=. -flto=auto -ffat-lto-objects -flto=auto -ffat-lto-objects -fstack-protector-strong -Wformat -Werror=format-security -fno-strict-aliasing -fno-delete-null-pointer-checks -DNO_VERSION_DATE -DDIG_SIGCHASE' 'LDFLAGS=-Wl,-Bsymbolic-functions -flto=auto -ffat-lto-objects -flto=auto -Wl,-z,relro -Wl,-z,now' 'CPPFLAGS=-Wdate-time -D_FORTIFY_SOURCE=2'
+May 05 18:47:23 szh-secondary named[706]: running as: named -u bind
+May 05 18:47:23 szh-secondary named[706]: compiled by GCC 11.2.0
+May 05 18:47:23 szh-secondary named[706]: compiled with OpenSSL version: OpenSSL 3.0.2 15 Mar 2022
+May 05 18:47:23 szh-secondary named[706]: linked to OpenSSL version: OpenSSL 3.0.2 15 Mar 2022
+May 05 18:47:23 szh-secondary named[706]: compiled with libxml2 version: 2.9.13
+May 05 18:47:23 szh-secondary named[706]: linked to libxml2 version: 20913
+May 05 18:47:23 szh-secondary named[706]: compiled with json-c version: 0.15
+May 05 18:47:23 szh-secondary named[706]: linked to json-c version: 0.15
+May 05 18:47:23 szh-secondary named[706]: compiled with zlib version: 1.2.11
+May 05 18:47:23 szh-secondary named[706]: linked to zlib version: 1.2.11
+May 05 18:47:23 szh-secondary named[706]: ----------------------------------------------------
+May 05 18:47:23 szh-secondary named[706]: BIND 9 is maintained by Internet Systems Consortium,
+May 05 18:47:23 szh-secondary named[706]: Inc. (ISC), a non-profit 501(c)(3) public-benefit
+May 05 18:47:23 szh-secondary named[706]: corporation.  Support and training for BIND 9 are
+May 05 18:47:23 szh-secondary named[706]: available at https://www.isc.org/support
+May 05 18:47:23 szh-secondary named[706]: ----------------------------------------------------
+May 05 18:47:23 szh-secondary named[706]: adjusted limit on open files from 524288 to 1048576
+May 05 18:47:23 szh-secondary named[706]: found 2 CPUs, using 2 worker threads
+May 05 18:47:23 szh-secondary named[706]: using 2 UDP listeners per interface
+May 05 18:47:23 szh-secondary named[706]: config.c: option 'trust-anchor-telemetry' is experimental and subject to change in the future
+May 05 18:47:23 szh-secondary named[706]: loading configuration from '/etc/bind/named.conf'
+May 05 18:47:23 szh-secondary named[706]: reading built-in trust anchors from file '/etc/bind/bind.keys'
+May 05 18:47:23 szh-secondary named[706]: looking for GeoIP2 databases in '/usr/share/GeoIP'
+May 05 18:47:23 szh-secondary named[706]: using default UDP/IPv4 port range: [32768, 60999]
+May 05 18:47:23 szh-secondary named[706]: using default UDP/IPv6 port range: [32768, 60999]
+May 05 18:47:23 szh-secondary named[706]: listening on IPv4 interface lo, 127.0.0.1#53
+May 05 18:47:23 szh-secondary named[706]: listening on IPv4 interface enp0s3, 10.0.2.15#53
+May 05 18:47:23 szh-secondary named[706]: listening on IPv4 interface enp0s8, 192.168.63.11#53
+May 05 18:47:23 szh-secondary named[706]: IPv6 socket API is incomplete; explicitly binding to each IPv6 address separately
+May 05 18:47:23 szh-secondary named[706]: listening on IPv6 interface lo, ::1#53
+May 05 18:47:23 szh-secondary named[706]: listening on IPv6 interface enp0s3, fe80::15:54ff:fe75:57bf%2#53
+May 05 18:47:23 szh-secondary named[706]: listening on IPv6 interface enp0s8, fe80::a00:27ff:fe68:110%3#53
+May 05 18:47:23 szh-secondary named[706]: generating session key for dynamic DNS
+May 05 18:47:23 szh-secondary named[706]: sizing zone task pool based on 8 zones
+May 05 18:47:23 szh-secondary named[706]: set up managed keys zone for view _default, file 'managed-keys.bind'
+May 05 18:47:23 szh-secondary named[706]: configuring command channel from '/etc/bind/rndc.key'
+May 05 18:47:23 szh-secondary named[706]: command channel listening on 127.0.0.1#953
+May 05 18:47:23 szh-secondary named[706]: configuring command channel from '/etc/bind/rndc.key'
+May 05 18:47:23 szh-secondary named[706]: command channel listening on ::1#953
+May 05 18:47:23 szh-secondary named[706]: managed-keys-zone: loaded serial 3
+May 05 18:47:23 szh-secondary named[706]: zone 0.in-addr.arpa/IN: loaded serial 1
+May 05 18:47:23 szh-secondary named[706]: zone example.com/IN: loaded serial 26281038
+May 05 18:47:23 szh-secondary named[706]: zone 127.in-addr.arpa/IN: loaded serial 1
+May 05 18:47:23 szh-secondary named[706]: zone example.org/IN: loaded serial 26281038
+May 05 18:47:23 szh-secondary named[706]: zone 255.in-addr.arpa/IN: loaded serial 1
+May 05 18:47:23 szh-secondary named[706]: zone example.net/IN: loaded serial 26281040
+May 05 18:47:23 szh-secondary named[706]: zone localhost/IN: loaded serial 2
+May 05 18:47:23 szh-secondary named[706]: all zones loaded
+May 05 18:47:23 szh-secondary named[706]: running
+May 05 18:47:23 szh-secondary systemd[1]: Started BIND Domain Name Server.
+May 05 18:47:25 szh-secondary named[706]: no longer listening on 10.0.2.15#53
+May 05 18:47:26 szh-secondary named[706]: no longer listening on 192.168.63.11#53
+May 05 18:47:26 szh-secondary named[706]: listening on IPv4 interface enp0s3, 10.0.2.15#53
+May 05 18:47:26 szh-secondary named[706]: listening on IPv4 interface enp0s8, 192.168.63.11#53
+May 05 18:48:48 szh-secondary named[706]: received control channel command 'retransfer example.net'
+May 05 18:48:48 szh-secondary named[706]: zone example.net/IN: refresh: failure trying primary 192.168.63.10#53 (source 0.0.0.0#0): connection refused
+May 05 18:53:04 szh-secondary named[706]: client @0x7fe630005588 192.168.63.10#38468: received notify for zone 'example.net'
+May 05 18:53:04 szh-secondary named[706]: zone example.net/IN: notify from 192.168.63.10#38468: zone is up to date
+May 05 18:53:04 szh-secondary named[706]: client @0x7fe630005588 192.168.63.10#45882: received notify for zone 'example.org'
+May 05 18:53:04 szh-secondary named[706]: zone example.org/IN: notify from 192.168.63.10#45882: zone is up to date
+May 05 18:53:04 szh-secondary named[706]: client @0x7fe630006b38 192.168.63.10#34750: received notify for zone 'example.com'
+May 05 18:53:04 szh-secondary named[706]: zone example.com/IN: notify from 192.168.63.10#34750: zone is up to date
+May 05 18:53:35 szh-secondary named[706]: received control channel command 'retransfer example.net'
+May 05 18:53:35 szh-secondary named[706]: zone example.net/IN: Transfer started.
+May 05 18:53:35 szh-secondary named[706]: transfer of 'example.net/IN' from 192.168.63.10#53: connected using 192.168.63.10#53
+May 05 18:53:35 szh-secondary named[706]: zone example.net/IN: transferred serial 26281040
+May 05 18:53:35 szh-secondary named[706]: transfer of 'example.net/IN' from 192.168.63.10#53: Transfer status: success
+May 05 18:53:35 szh-secondary named[706]: transfer of 'example.net/IN' from 192.168.63.10#53: Transfer completed: 1 messages, 6 records, 190 bytes, 0.001 secs (190000 bytes/sec) (serial 26281040)

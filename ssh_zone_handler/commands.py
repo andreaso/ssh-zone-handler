@@ -168,6 +168,7 @@ class SshZoneHandler:
         for line in result.stdout.split("\n"):
             if (
                 f"zone {zone}/IN" in line
+                or f"'retransfer {zone}'" in line
                 or f"'{zone}/IN'" in line
                 or f"'{zone}'" in line
             ):

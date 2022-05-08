@@ -1,0 +1,31 @@
+May 05 18:44:38 szh-secondary named[2771]: zone example.com/IN: Transfer started.
+May 05 18:44:38 szh-secondary named[2771]: zone example.net/IN: Transfer started.
+May 05 18:44:38 szh-secondary named[2771]: transfer of 'example.net/IN' from 192.168.63.10#53: connected using 192.168.63.10#53
+May 05 18:44:38 szh-secondary named[2771]: transfer of 'example.com/IN' from 192.168.63.10#53: connected using 192.168.63.10#53
+May 05 18:44:38 szh-secondary named[2771]: zone example.net/IN: transferred serial 26281039
+May 05 18:44:38 szh-secondary named[2771]: transfer of 'example.net/IN' from 192.168.63.10#53: Transfer status: success
+May 05 18:44:38 szh-secondary named[2771]: transfer of 'example.net/IN' from 192.168.63.10#53: Transfer completed: 1 messages, 7 records, 212 bytes, 0.001 secs (212000 bytes/sec) (serial 26281039)
+May 05 18:44:38 szh-secondary named[2771]: zone example.com/IN: transferred serial 26281038
+May 05 18:44:38 szh-secondary named[2771]: transfer of 'example.com/IN' from 192.168.63.10#53: Transfer status: success
+May 05 18:44:38 szh-secondary named[2771]: transfer of 'example.com/IN' from 192.168.63.10#53: Transfer completed: 1 messages, 6 records, 201 bytes, 0.001 secs (201000 bytes/sec) (serial 26281038)
+May 05 18:46:06 szh-secondary named[2771]: client @0x7fce300482c8 192.168.63.10#33832: received notify for zone 'example.net'
+May 05 18:46:06 szh-secondary named[2771]: zone example.net/IN: notify from 192.168.63.10#33832: serial 26281040
+May 05 18:46:06 szh-secondary named[2771]: zone example.net/IN: Transfer started.
+May 05 18:46:06 szh-secondary named[2771]: transfer of 'example.net/IN' from 192.168.63.10#53: connected using 192.168.63.10#53
+May 05 18:46:06 szh-secondary named[2771]: zone example.net/IN: transferred serial 26281040
+May 05 18:46:06 szh-secondary named[2771]: transfer of 'example.net/IN' from 192.168.63.10#53: Transfer status: success
+May 05 18:46:06 szh-secondary named[2771]: transfer of 'example.net/IN' from 192.168.63.10#53: Transfer completed: 1 messages, 6 records, 190 bytes, 0.001 secs (190000 bytes/sec) (serial 26281040)
+May 05 18:47:23 szh-secondary named[706]: zone example.com/IN: loaded serial 26281038
+May 05 18:47:23 szh-secondary named[706]: zone example.net/IN: loaded serial 26281040
+May 05 18:48:48 szh-secondary named[706]: received control channel command 'retransfer example.net'
+May 05 18:48:48 szh-secondary named[706]: zone example.net/IN: refresh: failure trying primary 192.168.63.10#53 (source 0.0.0.0#0): connection refused
+May 05 18:53:04 szh-secondary named[706]: client @0x7fe630005588 192.168.63.10#38468: received notify for zone 'example.net'
+May 05 18:53:04 szh-secondary named[706]: zone example.net/IN: notify from 192.168.63.10#38468: zone is up to date
+May 05 18:53:04 szh-secondary named[706]: client @0x7fe630006b38 192.168.63.10#34750: received notify for zone 'example.com'
+May 05 18:53:04 szh-secondary named[706]: zone example.com/IN: notify from 192.168.63.10#34750: zone is up to date
+May 05 18:53:35 szh-secondary named[706]: received control channel command 'retransfer example.net'
+May 05 18:53:35 szh-secondary named[706]: zone example.net/IN: Transfer started.
+May 05 18:53:35 szh-secondary named[706]: transfer of 'example.net/IN' from 192.168.63.10#53: connected using 192.168.63.10#53
+May 05 18:53:35 szh-secondary named[706]: zone example.net/IN: transferred serial 26281040
+May 05 18:53:35 szh-secondary named[706]: transfer of 'example.net/IN' from 192.168.63.10#53: Transfer status: success
+May 05 18:53:35 szh-secondary named[706]: transfer of 'example.net/IN' from 192.168.63.10#53: Transfer completed: 1 messages, 6 records, 190 bytes, 0.001 secs (190000 bytes/sec) (serial 26281040)

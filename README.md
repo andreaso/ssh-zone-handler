@@ -26,7 +26,7 @@ usage: command [ZONE]
 help                 Display this help message
 list                 List available zones
 dump ZONE            Output full content of ZONE
-logs ZONE            Output the last five days' log entries for ZONE
+logs [ZONE1 ZONE2]   Output the last five days' log entries for ZONE(s)
 retransfer ZONE      Trigger a full (AXFR) retransfer of ZONE
 status ZONE          Show ZONE status
 $
@@ -68,7 +68,7 @@ Create `/etc/zone-handler.json` based on [zone-handler.json.example](zone-handle
 
 ```
 python3 -m venv /opt/ssh-zone-handler
-/opt/ssh-zone-handler/bin/pip3 install git+https://github.com/andreaso/ssh-zone-handler.git@v0.1.2
+/opt/ssh-zone-handler/bin/pip3 install git+https://github.com/andreaso/ssh-zone-handler.git@v0.1.3
 ```
 
 

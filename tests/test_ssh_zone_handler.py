@@ -83,7 +83,7 @@ def test_cli_zone_wrapper(capsys, mocker):
     captured_invalid = capsys.readouterr()
     assert captured_invalid.err == 'Invalid command, try "help"\n'
 
-    os.environ["SSH_ORIGINAL_COMMAND"] = "logs"
+    os.environ["SSH_ORIGINAL_COMMAND"] = "logs example.org"
     with pytest.raises(SystemExit):
         wrapper("./tests/data/example-config.json")
     captured_no_zone = capsys.readouterr()
@@ -110,20 +110,30 @@ def test_cli_zone_wrapper(capsys, mocker):
 
 
 def test_log_filtering():
-    pre_filtered_file = "./tests/data/filtered-named-example-net.txt"
-    with open(pre_filtered_file, encoding="utf-8") as fin:
-        pre_filtered_data = fin.read().rstrip()
+    pre_filtered_file_net = "./tests/data/filtered-named-example-net.txt"
+    with open(pre_filtered_file_net, encoding="utf-8") as fin:
+        pre_filtered_data_net = fin.read().rstrip()
 
-    log_file = "./tests/data/journald-named-example-net.txt"
+    pre_filtered_file_com_net = "./tests/data/filtered-named-example-com-net.txt"
+    with open(pre_filtered_file_com_net, encoding="utf-8") as fin:
+        pre_filtered_data_com_net = fin.read().rstrip()
+
+    log_file = "./tests/data/journald-named.txt"
     with open(log_file, encoding="utf-8") as fin:
         log_data = fin.read()
 
     log_lines = log_data.split("\n")
-    zone = "example.net"
 
+    zones = ["example.net"]
     filtered = []
     # pylint: disable=protected-access
-    for line in SshZoneHandler._SshZoneHandler__filter_logs(log_lines, zone):
+    for line in SshZoneHandler._SshZoneHandler__filter_logs(log_lines, zones):
         filtered.append(line)
+    assert filtered == pre_filtered_data_net.split("\n")
 
-    assert filtered == pre_filtered_data.split("\n")
+    zones = ["example.com", "example.net"]
+    filtered = []
+    # pylint: disable=protected-access
+    for line in SshZoneHandler._SshZoneHandler__filter_logs(log_lines, zones):
+        filtered.append(line)
+    assert filtered == pre_filtered_data_com_net.split("\n")

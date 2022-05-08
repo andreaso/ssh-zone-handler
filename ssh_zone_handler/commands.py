@@ -80,12 +80,16 @@ class SshZoneHandler:
 
         if args[0] in ["help", "list", "dump", "logs", "retransfer", "status"]:
             command = args[0]
-
         args.pop(0)
 
+        zero_cmdline_zones = True
         for arg in args:
+            zero_cmdline_zones = False
             if arg in user_zones:
                 zones.append(arg)
+
+        if command == "logs" and zero_cmdline_zones:
+            zones = list(user_zones)
 
         return command, zones
 
@@ -131,7 +135,7 @@ class SshZoneHandler:
         print("help\t\t\tDisplay this help message")
         print("list\t\t\tList available zones")
         print("dump ZONE\t\tOutput full content of ZONE")
-        print("logs ZONE\t\tOutput the last five days' log entries for ZONE")
+        print("logs [ZONE1 ZONE2]\tOutput the last five days' log entries for ZONE(s)")
         print("retransfer ZONE\t\tTrigger a full (AXFR) retransfer of ZONE")
         print("status ZONE\t\tShow ZONE status")
 
@@ -159,26 +163,29 @@ class SshZoneHandler:
         print(zone_content)
 
     @staticmethod
-    def __filter_logs(log_lines: list[str], zone: str) -> Iterator[str]:
+    def __filter_logs(log_lines: list[str], zones: list[str]) -> Iterator[str]:
         line: str
         for line in log_lines:
-            if (
-                f"zone {zone}/IN" in line
-                or f"'retransfer {zone}'" in line
-                or f"'{zone}/IN'" in line
-                or f"'{zone}'" in line
-            ):
-                yield line
+            zone: str
+            for zone in zones:
+                if (
+                    f"zone {zone}/IN" in line
+                    or f"'retransfer {zone}'" in line
+                    or f"'{zone}/IN'" in line
+                    or f"'{zone}'" in line
+                ):
+                    yield line
 
-    def __logs(self, zone: str) -> None:
-        failure = f'Failed to output log lines for zone "{zone}"'
+    def __logs(self, zones: list[str]) -> None:
+        zones_str = ", ".join(zones)
+        failure = f"Failed to output log lines for the following zone(s): {zones_str}"
         command = ("/usr/bin/sudo", f"--user={self.log_user}") + JOURNALCTL
 
         result: CompletedProcess[str] = self.__runner(command, failure)
         log_lines: list[str] = result.stdout.split("\n")
 
         line: str
-        for line in self.__filter_logs(log_lines, zone):
+        for line in self.__filter_logs(log_lines, zones):
             print(line)
 
     def __retransfer(self, zone: str) -> None:
@@ -250,7 +257,7 @@ class SshZoneHandler:
         elif command == "dump":
             self.__dump(zones[0])
         elif command == "logs":
-            self.__logs(zones[0])
+            self.__logs(zones)
         elif command == "retransfer":
             self.__retransfer(zones[0])
         elif command == "status":

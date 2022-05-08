@@ -72,22 +72,22 @@ class SshZoneHandler:
     @staticmethod
     def __parse(
         ssh_command: str, user_zones: Sequence[str]
-    ) -> tuple[Optional[str], Optional[str]]:
+    ) -> tuple[Optional[str], list[str]]:
 
         args: list[str] = ssh_command.split()
         command: Optional[str] = None
-        zone: Optional[str] = None
+        zones: list[str] = []
 
         if args[0] in ["help", "list", "dump", "logs", "retransfer", "status"]:
             command = args[0]
 
-        try:
-            if args[1] in user_zones:
-                zone = args[1]
-        except IndexError:
-            pass
+        args.pop(0)
 
-        return command, zone
+        for arg in args:
+            if arg in user_zones:
+                zones.append(arg)
+
+        return command, zones
 
     def __runner(self, command: Sequence[str], failure: str) -> CompletedProcess[str]:
         try:
@@ -233,8 +233,8 @@ class SshZoneHandler:
             raise InvokeError(f'No zones configured for user "{username}"')
 
         command: Optional[str]
-        zone: Optional[str]
-        command, zone = self.__parse(ssh_command, user_zones)
+        zones: list[str]
+        command, zones = self.__parse(ssh_command, user_zones)
 
         if not command:
             raise InvokeError('Invalid command, try "help"')
@@ -245,13 +245,13 @@ class SshZoneHandler:
             uzn: str
             for uzn in user_zones:
                 print(uzn)
-        elif not zone:
+        elif not zones:
             raise InvokeError("No valid zone provided")
         elif command == "dump":
-            self.__dump(zone)
+            self.__dump(zones[0])
         elif command == "logs":
-            self.__logs(zone)
+            self.__logs(zones[0])
         elif command == "retransfer":
-            self.__retransfer(zone)
+            self.__retransfer(zones[0])
         elif command == "status":
-            self.__status(zone)
+            self.__status(zones[0])

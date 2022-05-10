@@ -17,7 +17,7 @@ permissions:
 jobs:
   poetry:
     name: Poetry
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout
@@ -25,14 +25,6 @@ jobs:
 
       - name: Install Poetry
         run: pipx install poetry
-
-      - name: Make Python 3.10 available
-        uses: actions/setup-python@v3
-        with:
-          python-version: "3.10"
-
-      - name: Use Python 3.10 with Poetry
-        run: poetry env use python3.10
 
       - name: Install dependencies
         run: poetry install
@@ -66,5 +58,6 @@ jobs:
         uses: github/super-linter/slim@v4
         env:
           VALIDATE_ALL_CODEBASE: true
+          VALIDATE_GITHUB_ACTIONS: false
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,5 +1,4 @@
 {
-  "debug": true,
   "sudoers": {
     "rndc": "named",
     "logs": "odin"

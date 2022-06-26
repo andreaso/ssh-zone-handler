@@ -1,7 +1,7 @@
 """Command functionality"""
 
+import logging
 import re
-import sys
 from collections.abc import KeysView, Sequence
 from subprocess import CalledProcessError, CompletedProcess, run
 from typing import Final, Iterator, Optional
@@ -25,7 +25,6 @@ class SshZoneHandler:
 
     def __init__(self, config: ZoneHandlerConf):
         self.config: ZoneHandlerConf = config
-        self.debug: Final[bool] = config.debug
         self.log_user: Final[str] = config.sudoers.logs
         self.rndc_user: Final[str] = config.sudoers.rndc
 
@@ -93,12 +92,14 @@ class SshZoneHandler:
 
         return command, zones
 
-    def __runner(self, command: Sequence[str], failure: str) -> CompletedProcess[str]:
+    @staticmethod
+    def __runner(command: Sequence[str], failure: str) -> CompletedProcess[str]:
         try:
             result = run(command, capture_output=True, check=True, text=True)
         except (FileNotFoundError, CalledProcessError) as err:
-            if self.debug:
-                print(f"{type(err).__name__}: {str(err)}", file=sys.stderr)
+            logging.debug("%s: %s", type(err).__name__, str(err))
+            if isinstance(err, CalledProcessError):
+                logging.debug(err.stderr)
             raise InvokeError(failure) from err
 
         return result
@@ -140,6 +141,8 @@ class SshZoneHandler:
         print("status ZONE\t\tShow ZONE status")
 
     def __dump(self, zone: str) -> None:
+        logging.info('Outputting "%s" zone content', zone)
+
         lookup_failure = f'Failed to lookup zone file for zone "{zone}"'
         zone_file: Optional[str] = self.__lookup(zone, lookup_failure)
 
@@ -181,6 +184,8 @@ class SshZoneHandler:
         failure = f"Failed to output log lines for the following zone(s): {zones_str}"
         command = ("/usr/bin/sudo", f"--user={self.log_user}") + JOURNALCTL
 
+        logging.info("Outputting logs for the following zone(s): %s", zones_str)
+
         result: CompletedProcess[str] = self.__runner(command, failure)
         log_lines: list[str] = result.stdout.split("\n")
 
@@ -189,6 +194,8 @@ class SshZoneHandler:
             print(line)
 
     def __retransfer(self, zone: str) -> None:
+        logging.info('Triggering "%s" AXFR zone retransfer', zone)
+
         failure = f'Failed to trigger retransfer of zone "{zone}"'
         command = (
             "/usr/bin/sudo",
@@ -201,6 +208,8 @@ class SshZoneHandler:
         print(f'Triggering retransfer of zone "{zone}"')
 
     def __status(self, zone: str) -> None:
+        logging.info('Showing "%s" zone status', zone)
+
         failure = f'Failed to display status for zone "{zone}"'
         command = (
             "/usr/bin/sudo",

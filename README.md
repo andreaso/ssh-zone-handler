@@ -68,7 +68,7 @@ Create `/etc/zone-handler.json` based on [zone-handler.json.example](zone-handle
 
 ```
 python3 -m venv /opt/ssh-zone-handler
-/opt/ssh-zone-handler/bin/pip3 install git+https://github.com/andreaso/ssh-zone-handler.git@v0.1.3
+/opt/ssh-zone-handler/bin/pip3 install git+https://github.com/andreaso/ssh-zone-handler.git@v0.1.4
 ```
 
 

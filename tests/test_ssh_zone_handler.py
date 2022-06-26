@@ -19,7 +19,6 @@ def mock_pwd_name(name):
 def test_cli_read_config():
     example_config = _read_config("./tests/data/example-config.json")
     assert example_config == {
-        "debug": False,
         "sudoers": {
             "logs": "log-viewer",
             "rndc": "bind",
@@ -32,7 +31,6 @@ def test_cli_read_config():
 
     alternative_config = _read_config("./tests/data/alternative-config.json")
     assert alternative_config == {
-        "debug": True,
         "sudoers": {
             "logs": "odin",
             "rndc": "named",
@@ -46,7 +44,7 @@ def test_cli_read_config():
         _read_config("./tests/data/outdated-config.json")
 
 
-def test_cli_zone_sudoers(capsys):
+def test_cli_zone_sudoers(caplog, capsys):
     sudoers("./tests/data/example-config.json")
     captured_expected = capsys.readouterr()
 
@@ -63,13 +61,14 @@ def test_cli_zone_sudoers(capsys):
         ]
     )
 
+    caplog.clear()
     with pytest.raises(SystemExit):
         sudoers("./tests/data/outdated-config.json")
-    captured_outdated = capsys.readouterr()
-    assert captured_outdated.err == "Invalid server side config file\n"
+    captured_outdated = caplog.text
+    assert captured_outdated == "Invalid server side config file\n"
 
 
-def test_cli_zone_wrapper(capsys, mocker):
+def test_cli_zone_wrapper(caplog, capsys, mocker):
     mocker.patch("pwd.getpwuid", return_value=mock_pwd_name("alice"))
 
     os.environ["SSH_ORIGINAL_COMMAND"] = "list"
@@ -77,36 +76,41 @@ def test_cli_zone_wrapper(capsys, mocker):
     captured_passing = capsys.readouterr()
     assert captured_passing.out == "example.com\nexample.net\n"
 
+    caplog.clear()
     os.environ["SSH_ORIGINAL_COMMAND"] = "sing"
     with pytest.raises(SystemExit):
         wrapper("./tests/data/example-config.json")
-    captured_invalid = capsys.readouterr()
-    assert captured_invalid.err == 'Invalid command, try "help"\n'
+    captured_invalid = caplog.text
+    assert captured_invalid == 'Invalid command, try "help"\n'
 
+    caplog.clear()
+    os.environ["SSH_ORIGINAL_COMMAND"] = "status"
+    with pytest.raises(SystemExit):
+        wrapper("./tests/data/example-config.json")
+    captured_no_zone = caplog.text
+    assert captured_no_zone == "No valid zone provided\n"
+
+    caplog.clear()
     os.environ["SSH_ORIGINAL_COMMAND"] = "logs example.org"
     with pytest.raises(SystemExit):
         wrapper("./tests/data/example-config.json")
-    captured_no_zone = capsys.readouterr()
-    assert captured_no_zone.err == "No valid zone provided\n"
+    captured_wrong_zone = caplog.text
+    assert captured_wrong_zone == "No valid zone provided\n"
 
-    os.environ["SSH_ORIGINAL_COMMAND"] = "logs example.org"
-    with pytest.raises(SystemExit):
-        wrapper("./tests/data/example-config.json")
-    captured_wrong_zone = capsys.readouterr()
-    assert captured_wrong_zone.err == "No valid zone provided\n"
-
+    caplog.clear()
     os.environ["SSH_ORIGINAL_COMMAND"] = "list"
     with pytest.raises(SystemExit):
         wrapper("./tests/data/outdated-config.json")
-    captured_outdated = capsys.readouterr()
-    assert captured_outdated.err == "Invalid server side config file\n"
+    captured_outdated = caplog.text
+    assert captured_outdated == "Invalid server side config file\n"
 
+    caplog.clear()
     mocker.patch("pwd.getpwuid", return_value=mock_pwd_name("mallory"))
     os.environ["SSH_ORIGINAL_COMMAND"] = "help"
     with pytest.raises(SystemExit):
         wrapper("./tests/data/example-config.json")
-    captured_unconf_user = capsys.readouterr()
-    assert captured_unconf_user.err == 'No zones configured for user "mallory"\n'
+    captured_unconf_user = caplog.text
+    assert captured_unconf_user == 'No zones configured for user "mallory"\n'
 
 
 def test_log_filtering():

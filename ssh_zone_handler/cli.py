@@ -1,6 +1,8 @@
 """CLI scripts entry points"""
 
 import json
+import logging
+import logging.config
 import os
 import pwd
 import sys
@@ -9,13 +11,16 @@ from typing import Final
 from pydantic import ValidationError
 
 from ssh_zone_handler.commands import InvokeError, SshZoneHandler
+from ssh_zone_handler.static import LOGCONF
 from ssh_zone_handler.types import ZoneHandlerConf
 
 CONFIG_FILE: Final[str] = "/etc/zone-handler.json"
 
+logging.config.dictConfig(LOGCONF)
+
 
 def _error_out(message: str) -> None:
-    print(message, file=sys.stderr)
+    logging.critical(message)
     sys.exit(1)
 
 

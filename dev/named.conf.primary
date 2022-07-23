@@ -2,20 +2,20 @@
 zone "example.com" {
     type primary;
     file "/etc/bind/zones/example.com.zone";
-    allow-transfer { 192.168.63.11; };
-    also-notify { 192.168.63.11; };
+    allow-transfer { 192.168.63.11; 192.168.63.12; };
+    also-notify { 192.168.63.11; 192.168.63.12; };
 };
 
 zone "example.net" {
     type primary;
     file "/etc/bind/zones/example.net.zone";
-    allow-transfer { 192.168.63.11; };
-    also-notify { 192.168.63.11; };
+    allow-transfer { 192.168.63.11; 192.168.63.12; };
+    also-notify { 192.168.63.11; 192.168.63.12; };
 };
 
 zone "example.org" {
     type primary;
     file "/etc/bind/zones/example.org.zone";
-    allow-transfer { 192.168.63.11; };
-    also-notify { 192.168.63.11; };
+    allow-transfer { 192.168.63.11; 192.168.63.12; };
+    also-notify { 192.168.63.11; 192.168.63.12; };
 };

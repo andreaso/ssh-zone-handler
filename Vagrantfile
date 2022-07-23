@@ -49,4 +49,18 @@ Vagrant.configure("2") do |config|
       systemctl restart named ssh
     SHELL
   end
+
+  config.vm.define "tertiary" do |tertiary|
+    tertiary.vm.network "private_network", ip: "192.168.63.12"
+    tertiary.vm.hostname = "szh-tertiary"
+
+    tertiary.vm.provision "shell", inline: <<-SHELL
+      apt-get update --quiet --quiet
+      DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --yes knot python3-venv
+
+      install --owner=root --group=root --mode=0644 /vagrant/dev/knot.conf /etc/knot/knot.conf
+
+      systemctl restart knot
+    SHELL
+  end
 end

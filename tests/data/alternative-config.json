@@ -1,10 +1,10 @@
 {
   "sudoers": {
-    "rndc": "named",
     "logs": "odin"
   },
   "service": {
-    "daemon": "bind"
+    "daemon": "bind",
+    "user": "named"
   },
   "users": {
     "bob": {

@@ -7,9 +7,11 @@ from pydantic import BaseModel, validator
 SERVICE_DEFAULTS = {
     "bind": {
         "unit": "named.service",
+        "user": "bind",
     },
     "knot": {
         "unit": "knot.service",
+        "user": "knot",
     },
 }
 
@@ -20,7 +22,6 @@ class SudoUsers(BaseModel):
     """
 
     logs: str
-    rndc = "bind"
 
 
 class UserConf(BaseModel):
@@ -37,7 +38,8 @@ class ServiceConf(BaseModel):
     """
 
     daemon: Literal["bind", "knot"]
-    systemd_unit: str = ""
+    systemd_unit = ""
+    user = ""
 
     @validator("systemd_unit", always=True)
     # pylint: disable=no-self-argument
@@ -45,6 +47,13 @@ class ServiceConf(BaseModel):
         if not systemd_unit:
             systemd_unit = SERVICE_DEFAULTS[values["daemon"]]["unit"]
         return systemd_unit
+
+    @validator("user", always=True)
+    # pylint: disable=no-self-argument
+    def _default_user(cls, user: str, values: dict[str, str]) -> str:
+        if not user:
+            user = SERVICE_DEFAULTS[values["daemon"]]["user"]
+        return user
 
 
 class ZoneHandlerConf(BaseModel):

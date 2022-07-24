@@ -21,11 +21,11 @@ def test_cli_read_config():
     assert example_config == {
         "sudoers": {
             "logs": "log-viewer",
-            "rndc": "bind",
         },
         "service": {
             "daemon": "bind",
             "systemd_unit": "named.service",
+            "user": "bind",
         },
         "users": {
             "alice": {"zones": ["example.com", "example.net"]},
@@ -37,11 +37,11 @@ def test_cli_read_config():
     assert alternative_config == {
         "sudoers": {
             "logs": "odin",
-            "rndc": "named",
         },
         "service": {
             "daemon": "bind",
             "systemd_unit": "named.service",
+            "user": "named",
         },
         "users": {
             "bob": {"zones": ["example.org"]},

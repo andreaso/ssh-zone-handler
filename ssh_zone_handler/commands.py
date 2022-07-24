@@ -16,16 +16,28 @@ class InvokeError(Exception):
 class SshZoneHandler:
     """This is where all the magic happens"""
 
+    # pylint: disable=too-many-instance-attributes
     def __init__(self, config: ZoneHandlerConf):
         self.config: ZoneHandlerConf = config
         self.daemon: Final[str] = config.service.daemon
         self.log_user: Final[str] = config.sudoers.logs
-        self.log_service: Final[str] = config.service.systemd_unit
-        self.rndc_user: Final[str] = config.sudoers.rndc
+        self.service_unit: Final[str] = config.service.systemd_unit
+        self.service_user: Final[str] = config.service.user
+
+        sudo_prefix: Final[tuple[str, str]] = (
+            "/usr/bin/sudo",
+            f"--user={self.service_user}",
+        )
+        self.knotc_prefix: Final[tuple[str, str, str]] = sudo_prefix + (
+            "/usr/sbin/knotc",
+        )
+        self.rndc_prefix: Final[tuple[str, str, str]] = sudo_prefix + (
+            "/usr/sbin/rndc",
+        )
 
         self.journal_cmd: Final[tuple[str, str, str, str]] = (
             "/usr/bin/journalctl",
-            f"--unit={self.log_service}",
+            f"--unit={self.service_unit}",
             "--since=-5days",
             "--utc",
         )
@@ -42,6 +54,24 @@ class SshZoneHandler:
 
         return rules
 
+    def __knotc_rules(self) -> list[str]:
+        rules: list[str] = []
+
+        user: str
+        user_conf: UserConf
+        for user, user_conf in self.config.users.items():
+            cmd: str
+            for cmd in ["zone-read", "zone-status", "zone-retransfer"]:
+                zone: str
+                for zone in user_conf.zones:
+                    rule: str = (
+                        f"{user}\tALL=({self.service_user}) NOPASSWD: "
+                        + f"/usr/sbin/knotc {cmd} {zone}"
+                    )
+                    rules.append(rule)
+
+        return rules
+
     def __rndc_rules(self) -> list[str]:
         rules: list[str] = []
 
@@ -53,7 +83,7 @@ class SshZoneHandler:
                 zone: str
                 for zone in user_conf.zones:
                     rule: str = (
-                        f"{user}\tALL=({self.rndc_user}) NOPASSWD: "
+                        f"{user}\tALL=({self.service_user}) NOPASSWD: "
                         + f"/usr/sbin/rndc {cmd} {zone}"
                     )
                     rules.append(rule)
@@ -111,7 +141,7 @@ class SshZoneHandler:
 
         command: Sequence[str] = (
             "/usr/bin/sudo",
-            f"--user={self.rndc_user}",
+            f"--user={self.service_user}",
             "/usr/sbin/rndc",
             "zonestatus",
             zone,
@@ -214,13 +244,11 @@ class SshZoneHandler:
         logging.info('Triggering "%s" AXFR zone retransfer', zone)
 
         failure = f'Failed to trigger retransfer of zone "{zone}"'
-        command = (
-            "/usr/bin/sudo",
-            f"--user={self.rndc_user}",
-            "/usr/sbin/rndc",
-            "retransfer",
-            zone,
-        )
+        bind_command = self.rndc_prefix + ("retransfer", zone)
+        knot_command = self.knotc_prefix + ("zone-retransfer", zone)
+
+        command = knot_command if self.daemon == "knot" else bind_command
+
         self.__runner(command, failure)
         print(f'Triggering retransfer of zone "{zone}"')
 
@@ -228,14 +256,10 @@ class SshZoneHandler:
         logging.info('Showing "%s" zone status', zone)
 
         failure = f'Failed to display status for zone "{zone}"'
-        command = (
-            "/usr/bin/sudo",
-            f"--user={self.rndc_user}",
-            "/usr/sbin/rndc",
-            "zonestatus",
-            zone,
-        )
+        bind_command = self.rndc_prefix + ("zonestatus", zone)
+        knot_command = self.knotc_prefix + ("zone-status", zone)
 
+        command = knot_command if self.daemon == "knot" else bind_command
         result: CompletedProcess[str] = self.__runner(command, failure)
 
         zone_status: str = result.stdout.rstrip()
@@ -246,7 +270,12 @@ class SshZoneHandler:
 
         all_rules: list[str] = []
         all_rules += self.__log_rules()
-        all_rules += self.__rndc_rules()
+
+        if self.daemon == "bind":
+            all_rules += self.__rndc_rules()
+
+        if self.daemon == "knot":
+            all_rules += self.__knotc_rules()
 
         rule: str
         for rule in all_rules:

@@ -8,13 +8,6 @@ from typing import Final, Iterator, Optional
 
 from ssh_zone_handler.types import UserConf, ZoneHandlerConf
 
-JOURNALCTL: Final[tuple[str, str, str, str]] = (
-    "/usr/bin/journalctl",
-    "--unit=named",
-    "--since=-5days",
-    "--utc",
-)
-
 
 class InvokeError(Exception):
     """Used to propagate an error to the top level wrapper method"""
@@ -25,12 +18,21 @@ class SshZoneHandler:
 
     def __init__(self, config: ZoneHandlerConf):
         self.config: ZoneHandlerConf = config
+        self.daemon: Final[str] = config.service.daemon
         self.log_user: Final[str] = config.sudoers.logs
+        self.log_service: Final[str] = config.service.systemd_unit
         self.rndc_user: Final[str] = config.sudoers.rndc
+
+        self.journal_cmd: Final[tuple[str, str, str, str]] = (
+            "/usr/bin/journalctl",
+            f"--unit={self.log_service}",
+            "--since=-5days",
+            "--utc",
+        )
 
     def __log_rules(self) -> list[str]:
         users: KeysView[str] = self.config.users.keys()
-        command: str = " ".join(JOURNALCTL)
+        command: str = " ".join(self.journal_cmd)
         rules: list[str] = []
 
         user: str
@@ -166,7 +168,7 @@ class SshZoneHandler:
         print(zone_content)
 
     @staticmethod
-    def __filter_logs(log_lines: list[str], zones: list[str]) -> Iterator[str]:
+    def __filter_bind_logs(log_lines: list[str], zones: list[str]) -> Iterator[str]:
         line: str
         for line in log_lines:
             zone: str
@@ -179,18 +181,33 @@ class SshZoneHandler:
                 ):
                     yield line
 
+    @staticmethod
+    def __filter_knot_logs(log_lines: list[str], zones: list[str]) -> Iterator[str]:
+        line: str
+        for line in log_lines:
+            zone: str
+            for zone in zones:
+                if f"[{zone}.]" in line:
+                    yield line
+
     def __logs(self, zones: list[str]) -> None:
         zones_str = ", ".join(zones)
         failure = f"Failed to output log lines for the following zone(s): {zones_str}"
-        command = ("/usr/bin/sudo", f"--user={self.log_user}") + JOURNALCTL
+        command = ("/usr/bin/sudo", f"--user={self.log_user}") + self.journal_cmd
 
         logging.info("Outputting logs for the following zone(s): %s", zones_str)
 
         result: CompletedProcess[str] = self.__runner(command, failure)
         log_lines: list[str] = result.stdout.split("\n")
 
+        filter_logs = (
+            self.__filter_knot_logs
+            if self.daemon == "knot"
+            else self.__filter_bind_logs
+        )
+
         line: str
-        for line in self.__filter_logs(log_lines, zones):
+        for line in filter_logs(log_lines, zones):
             print(line)
 
     def __retransfer(self, zone: str) -> None:

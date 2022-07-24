@@ -3,6 +3,9 @@
     "rndc": "named",
     "logs": "odin"
   },
+  "service": {
+    "daemon": "bind"
+  },
   "users": {
     "bob": {
       "zones": [

@@ -2,6 +2,9 @@
   "sudoers": {
     "logs": "log-viewer"
   },
+  "service": {
+    "daemon": "bind"
+  },
   "users": {
     "alice": {
       "zones": [

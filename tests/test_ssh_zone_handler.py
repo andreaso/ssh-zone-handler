@@ -23,6 +23,10 @@ def test_cli_read_config():
             "logs": "log-viewer",
             "rndc": "bind",
         },
+        "service": {
+            "daemon": "bind",
+            "systemd_unit": "named.service",
+        },
         "users": {
             "alice": {"zones": ["example.com", "example.net"]},
             "bob": {"zones": ["example.org"]},
@@ -34,6 +38,10 @@ def test_cli_read_config():
         "sudoers": {
             "logs": "odin",
             "rndc": "named",
+        },
+        "service": {
+            "daemon": "bind",
+            "systemd_unit": "named.service",
         },
         "users": {
             "bob": {"zones": ["example.org"]},
@@ -50,8 +58,8 @@ def test_cli_zone_sudoers(caplog, capsys):
 
     assert captured_expected.out == "\n".join(
         [
-            "alice\tALL=(log-viewer) NOPASSWD: /usr/bin/journalctl --unit=named --since=-5days --utc",  # noqa: E501
-            "bob\tALL=(log-viewer) NOPASSWD: /usr/bin/journalctl --unit=named --since=-5days --utc",  # noqa: E501
+            "alice\tALL=(log-viewer) NOPASSWD: /usr/bin/journalctl --unit=named.service --since=-5days --utc",  # noqa: E501
+            "bob\tALL=(log-viewer) NOPASSWD: /usr/bin/journalctl --unit=named.service --since=-5days --utc",  # noqa: E501
             "alice\tALL=(bind) NOPASSWD: /usr/sbin/rndc retransfer example.com",
             "alice\tALL=(bind) NOPASSWD: /usr/sbin/rndc retransfer example.net",
             "alice\tALL=(bind) NOPASSWD: /usr/sbin/rndc zonestatus example.com",
@@ -131,13 +139,13 @@ def test_log_filtering():
     zones = ["example.net"]
     filtered = []
     # pylint: disable=protected-access
-    for line in SshZoneHandler._SshZoneHandler__filter_logs(log_lines, zones):
+    for line in SshZoneHandler._SshZoneHandler__filter_bind_logs(log_lines, zones):
         filtered.append(line)
     assert filtered == pre_filtered_data_net.split("\n")
 
     zones = ["example.com", "example.net"]
     filtered = []
     # pylint: disable=protected-access
-    for line in SshZoneHandler._SshZoneHandler__filter_logs(log_lines, zones):
+    for line in SshZoneHandler._SshZoneHandler__filter_bind_logs(log_lines, zones):
         filtered.append(line)
     assert filtered == pre_filtered_data_com_net.split("\n")

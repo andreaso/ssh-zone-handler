@@ -10,7 +10,7 @@ Vagrant.configure("2") do |config|
 
     primary.vm.provision "shell", inline: <<-SHELL
       apt-get update --quiet --quiet
-      DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --yes bind9
+      DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --yes bind9 emacs-nox
 
       install --owner=root --group=root --mode=0755 --directory /etc/bind/zones
       install --owner=root --group=root --mode=0644 /vagrant/dev/example-zone /etc/bind/zones/example.com.zone
@@ -28,7 +28,7 @@ Vagrant.configure("2") do |config|
 
     secondary.vm.provision "shell", inline: <<-SHELL
       apt-get update --quiet --quiet
-      DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --yes bind9 python3-venv
+      DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --yes bind9 emacs-nox python3-venv
 
       install --owner=root --group=root --mode=0644 /vagrant/dev/named.conf.secondary /etc/bind/named.conf.local
       install --owner=root --group=root --mode=0644 /vagrant/dev/named.conf.options /etc/bind/

@@ -21,7 +21,11 @@ def test_cli_read_config():
     assert example_config == {
         "sudoers": {
             "logs": "log-viewer",
-            "rndc": "bind",
+        },
+        "service": {
+            "server": "bind",
+            "systemd_unit": "named.service",
+            "user": "bind",
         },
         "users": {
             "alice": {"zones": ["example.com", "example.net"]},
@@ -33,7 +37,11 @@ def test_cli_read_config():
     assert alternative_config == {
         "sudoers": {
             "logs": "odin",
-            "rndc": "named",
+        },
+        "service": {
+            "server": "bind",
+            "systemd_unit": "bind9.service",
+            "user": "named",
         },
         "users": {
             "bob": {"zones": ["example.org"]},
@@ -50,8 +58,8 @@ def test_cli_zone_sudoers(caplog, capsys):
 
     assert captured_expected.out == "\n".join(
         [
-            "alice\tALL=(log-viewer) NOPASSWD: /usr/bin/journalctl --unit=named --since=-5days --utc",  # noqa: E501
-            "bob\tALL=(log-viewer) NOPASSWD: /usr/bin/journalctl --unit=named --since=-5days --utc",  # noqa: E501
+            "alice\tALL=(log-viewer) NOPASSWD: /usr/bin/journalctl --unit=named.service --since=-5days --utc",  # noqa: E501
+            "bob\tALL=(log-viewer) NOPASSWD: /usr/bin/journalctl --unit=named.service --since=-5days --utc",  # noqa: E501
             "alice\tALL=(bind) NOPASSWD: /usr/sbin/rndc retransfer example.com",
             "alice\tALL=(bind) NOPASSWD: /usr/sbin/rndc retransfer example.net",
             "alice\tALL=(bind) NOPASSWD: /usr/sbin/rndc zonestatus example.com",

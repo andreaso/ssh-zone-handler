@@ -8,13 +8,6 @@ from typing import Final, Iterator, Optional
 
 from ssh_zone_handler.types import UserConf, ZoneHandlerConf
 
-JOURNALCTL: Final[tuple[str, str, str, str]] = (
-    "/usr/bin/journalctl",
-    "--unit=named",
-    "--since=-5days",
-    "--utc",
-)
-
 
 class InvokeError(Exception):
     """Used to propagate an error to the top level wrapper method"""
@@ -26,11 +19,19 @@ class SshZoneHandler:
     def __init__(self, config: ZoneHandlerConf):
         self.config: ZoneHandlerConf = config
         self.log_user: Final[str] = config.sudoers.logs
-        self.rndc_user: Final[str] = config.sudoers.rndc
+        self.service_user: Final[str] = config.service.user
+        service_unit: Final[str] = config.service.systemd_unit
+
+        self.journal_cmd: Final[tuple[str, str, str, str]] = (
+            "/usr/bin/journalctl",
+            f"--unit={service_unit}",
+            "--since=-5days",
+            "--utc",
+        )
 
     def __log_rules(self) -> list[str]:
         users: KeysView[str] = self.config.users.keys()
-        command: str = " ".join(JOURNALCTL)
+        command: str = " ".join(self.journal_cmd)
         rules: list[str] = []
 
         user: str
@@ -51,7 +52,7 @@ class SshZoneHandler:
                 zone: str
                 for zone in user_conf.zones:
                     rule: str = (
-                        f"{user}\tALL=({self.rndc_user}) NOPASSWD: "
+                        f"{user}\tALL=({self.service_user}) NOPASSWD: "
                         + f"/usr/sbin/rndc {cmd} {zone}"
                     )
                     rules.append(rule)
@@ -109,7 +110,7 @@ class SshZoneHandler:
 
         command: Sequence[str] = (
             "/usr/bin/sudo",
-            f"--user={self.rndc_user}",
+            f"--user={self.service_user}",
             "/usr/sbin/rndc",
             "zonestatus",
             zone,
@@ -182,7 +183,7 @@ class SshZoneHandler:
     def __logs(self, zones: list[str]) -> None:
         zones_str = ", ".join(zones)
         failure = f"Failed to output log lines for the following zone(s): {zones_str}"
-        command = ("/usr/bin/sudo", f"--user={self.log_user}") + JOURNALCTL
+        command = ("/usr/bin/sudo", f"--user={self.log_user}") + self.journal_cmd
 
         logging.info("Outputting logs for the following zone(s): %s", zones_str)
 
@@ -199,7 +200,7 @@ class SshZoneHandler:
         failure = f'Failed to trigger retransfer of zone "{zone}"'
         command = (
             "/usr/bin/sudo",
-            f"--user={self.rndc_user}",
+            f"--user={self.service_user}",
             "/usr/sbin/rndc",
             "retransfer",
             zone,
@@ -213,7 +214,7 @@ class SshZoneHandler:
         failure = f'Failed to display status for zone "{zone}"'
         command = (
             "/usr/bin/sudo",
-            f"--user={self.rndc_user}",
+            f"--user={self.service_user}",
             "/usr/sbin/rndc",
             "zonestatus",
             zone,

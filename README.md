@@ -63,6 +63,10 @@ adduser --system --no-create-home --home /nonexistent --shell /usr/sbin/nologin 
 
 Create `/etc/zone-handler.json` based on [zone-handler.json.example](zone-handler.json.example).
 
+Pending proper documentation, see
+[ssh_zone_handler/types.py](ssh_zone_handler/types.py) for a
+description of the config format.
+
 
 ### Install application
 

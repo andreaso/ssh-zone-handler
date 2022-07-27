@@ -1,5 +1,7 @@
 """Custom types"""
 
+from typing import Literal
+
 from pydantic import BaseModel
 
 
@@ -9,7 +11,6 @@ class SudoUsers(BaseModel):
     """
 
     logs: str
-    rndc = "bind"
 
 
 class UserConf(BaseModel):
@@ -20,6 +21,16 @@ class UserConf(BaseModel):
     zones: list[str]
 
 
+class ServiceConf(BaseModel):
+    """
+    Subset of ZoneHandlerConf
+    """
+
+    server: Literal["bind"]
+    systemd_unit = "named.service"
+    user = "bind"
+
+
 class ZoneHandlerConf(BaseModel):
     """
     zone-handler.json structure
@@ -27,3 +38,4 @@ class ZoneHandlerConf(BaseModel):
 
     sudoers: SudoUsers
     users: dict[str, UserConf]
+    service: ServiceConf

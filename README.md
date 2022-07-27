@@ -72,7 +72,7 @@ description of the config format.
 
 ```
 python3 -m venv /opt/ssh-zone-handler
-/opt/ssh-zone-handler/bin/pip3 install git+https://github.com/andreaso/ssh-zone-handler.git@v0.1.4
+/opt/ssh-zone-handler/bin/pip3 install git+https://github.com/andreaso/ssh-zone-handler.git@v0.2.0
 ```
 
 

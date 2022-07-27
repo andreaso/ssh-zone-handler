@@ -48,6 +48,22 @@ def test_cli_read_config():
         },
     }
 
+    knot_config = _read_config("./tests/data/knot-config.json")
+    assert knot_config == {
+        "sudoers": {
+            "logs": "log-viewer",
+        },
+        "service": {
+            "server": "knot",
+            "systemd_unit": "knot.service",
+            "user": "knot",
+        },
+        "users": {
+            "alice": {"zones": ["example.com", "example.net"]},
+            "bob": {"zones": ["example.org"]},
+        },
+    }
+
     with pytest.raises(ValidationError):
         _read_config("./tests/data/outdated-config.json")
 
@@ -66,6 +82,26 @@ def test_cli_zone_sudoers(caplog, capsys):
             "alice\tALL=(bind) NOPASSWD: /usr/sbin/rndc zonestatus example.net",
             "bob\tALL=(bind) NOPASSWD: /usr/sbin/rndc retransfer example.org",
             "bob\tALL=(bind) NOPASSWD: /usr/sbin/rndc zonestatus example.org\n",
+        ]
+    )
+
+    caplog.clear()
+    sudoers("./tests/data/knot-config.json")
+    captured_knot_expected = capsys.readouterr()
+
+    assert captured_knot_expected.out == "\n".join(
+        [
+            "alice\tALL=(log-viewer) NOPASSWD: /usr/bin/journalctl --unit=knot.service --since=-5days --utc",  # noqa: E501
+            "bob\tALL=(log-viewer) NOPASSWD: /usr/bin/journalctl --unit=knot.service --since=-5days --utc",  # noqa: E501
+            "alice\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-read example.com",
+            "alice\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-read example.net",
+            "alice\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-retransfer example.com",
+            "alice\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-retransfer example.net",
+            "alice\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-status example.com",
+            "alice\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-status example.net",
+            "bob\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-read example.org",
+            "bob\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-retransfer example.org",
+            "bob\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-status example.org\n",
         ]
     )
 
@@ -139,13 +175,13 @@ def test_log_filtering():
     zones = ["example.net"]
     filtered = []
     # pylint: disable=protected-access
-    for line in SshZoneHandler._SshZoneHandler__filter_logs(log_lines, zones):
+    for line in SshZoneHandler._SshZoneHandler__filter_bind_logs(log_lines, zones):
         filtered.append(line)
     assert filtered == pre_filtered_data_net.split("\n")
 
     zones = ["example.com", "example.net"]
     filtered = []
     # pylint: disable=protected-access
-    for line in SshZoneHandler._SshZoneHandler__filter_logs(log_lines, zones):
+    for line in SshZoneHandler._SshZoneHandler__filter_bind_logs(log_lines, zones):
         filtered.append(line)
     assert filtered == pre_filtered_data_com_net.split("\n")

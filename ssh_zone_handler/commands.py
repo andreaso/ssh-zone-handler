@@ -16,11 +16,24 @@ class InvokeError(Exception):
 class SshZoneHandler:
     """This is where all the magic happens"""
 
+    # pylint: disable=too-many-instance-attributes
     def __init__(self, config: ZoneHandlerConf):
         self.config: ZoneHandlerConf = config
         self.log_user: Final[str] = config.sudoers.logs
+        self.server: Final[str] = config.service.server
         self.service_user: Final[str] = config.service.user
         service_unit: Final[str] = config.service.systemd_unit
+
+        sudo_prefix: Final[tuple[str, str]] = (
+            "/usr/bin/sudo",
+            f"--user={self.service_user}",
+        )
+        self.knotc_prefix: Final[tuple[str, str, str]] = sudo_prefix + (
+            "/usr/sbin/knotc",
+        )
+        self.rndc_prefix: Final[tuple[str, str, str]] = sudo_prefix + (
+            "/usr/sbin/rndc",
+        )
 
         self.journal_cmd: Final[tuple[str, str, str, str]] = (
             "/usr/bin/journalctl",
@@ -38,6 +51,24 @@ class SshZoneHandler:
         for user in users:
             rule = f"{user}\tALL=({self.log_user}) NOPASSWD: {command}"
             rules.append(rule)
+
+        return rules
+
+    def __knotc_rules(self) -> list[str]:
+        rules: list[str] = []
+
+        user: str
+        user_conf: UserConf
+        for user, user_conf in self.config.users.items():
+            cmd: str
+            for cmd in ["zone-read", "zone-retransfer", "zone-status"]:
+                zone: str
+                for zone in user_conf.zones:
+                    rule: str = (
+                        f"{user}\tALL=({self.service_user}) NOPASSWD: "
+                        + f"/usr/sbin/knotc {cmd} {zone}"
+                    )
+                    rules.append(rule)
 
         return rules
 
@@ -108,13 +139,7 @@ class SshZoneHandler:
     def __lookup(self, zone: str, failure: str) -> Optional[str]:
         zone_file: Optional[str] = None
 
-        command: Sequence[str] = (
-            "/usr/bin/sudo",
-            f"--user={self.service_user}",
-            "/usr/sbin/rndc",
-            "zonestatus",
-            zone,
-        )
+        command = self.rndc_prefix + ("zonestatus", zone)
 
         result: CompletedProcess[str] = self.__runner(command, failure)
 
@@ -141,33 +166,54 @@ class SshZoneHandler:
         print("retransfer ZONE\t\tTrigger a full (AXFR) retransfer of ZONE")
         print("status ZONE\t\tShow ZONE status")
 
+    @staticmethod
+    def __filter_knot_dump(content: str, zone: str) -> str:
+        prefix = f"[{zone}.] "
+        offset = len(prefix)
+        lines = content.split("\n")
+        filtered: list[str] = []
+
+        for line in lines:
+            if line.startswith(prefix):
+                line = line[offset:]
+            filtered.append(line)
+
+        return "\n".join(filtered)
+
     def __dump(self, zone: str) -> None:
         logging.info('Outputting "%s" zone content', zone)
 
-        lookup_failure = f'Failed to lookup zone file for zone "{zone}"'
-        zone_file: Optional[str] = self.__lookup(zone, lookup_failure)
+        command: Sequence[str]
+        if self.server == "knot":
+            command = self.knotc_prefix + ("zone-read", zone)
+        else:
+            lookup_failure = f'Failed to lookup zone file for zone "{zone}"'
+            zone_file: Optional[str] = self.__lookup(zone, lookup_failure)
 
-        if not zone_file:
-            raise InvokeError(lookup_failure)
+            if not zone_file:
+                raise InvokeError(lookup_failure)
+
+            command = (
+                "/usr/bin/named-compilezone",
+                "-f",
+                "raw",
+                "-o",
+                "-",
+                zone,
+                zone_file,
+            )
 
         run_failure = f'Failed to dump content of zone "{zone}"'
-        command = (
-            "/usr/bin/named-compilezone",
-            "-f",
-            "raw",
-            "-o",
-            "-",
-            zone,
-            zone_file,
-        )
-
         result: CompletedProcess[str] = self.__runner(command, run_failure)
-
         zone_content: str = result.stdout.rstrip()
+
+        if self.server == "knot":
+            zone_content = self.__filter_knot_dump(zone_content, zone)
+
         print(zone_content)
 
     @staticmethod
-    def __filter_logs(log_lines: list[str], zones: list[str]) -> Iterator[str]:
+    def __filter_bind_logs(log_lines: list[str], zones: list[str]) -> Iterator[str]:
         line: str
         for line in log_lines:
             zone: str
@@ -180,6 +226,15 @@ class SshZoneHandler:
                 ):
                     yield line
 
+    @staticmethod
+    def __filter_knot_logs(log_lines: list[str], zones: list[str]) -> Iterator[str]:
+        line: str
+        for line in log_lines:
+            zone: str
+            for zone in zones:
+                if f"[{zone}.]" in line:
+                    yield line
+
     def __logs(self, zones: list[str]) -> None:
         zones_str = ", ".join(zones)
         failure = f"Failed to output log lines for the following zone(s): {zones_str}"
@@ -190,21 +245,25 @@ class SshZoneHandler:
         result: CompletedProcess[str] = self.__runner(command, failure)
         log_lines: list[str] = result.stdout.split("\n")
 
+        filter_logs = (
+            self.__filter_knot_logs
+            if self.server == "knot"
+            else self.__filter_bind_logs
+        )
+
         line: str
-        for line in self.__filter_logs(log_lines, zones):
+        for line in filter_logs(log_lines, zones):
             print(line)
 
     def __retransfer(self, zone: str) -> None:
         logging.info('Triggering "%s" AXFR zone retransfer', zone)
 
         failure = f'Failed to trigger retransfer of zone "{zone}"'
-        command = (
-            "/usr/bin/sudo",
-            f"--user={self.service_user}",
-            "/usr/sbin/rndc",
-            "retransfer",
-            zone,
-        )
+        bind_command = self.rndc_prefix + ("retransfer", zone)
+        knot_command = self.knotc_prefix + ("zone-retransfer", zone)
+
+        command = knot_command if self.server == "knot" else bind_command
+
         self.__runner(command, failure)
         print(f'Triggering retransfer of zone "{zone}"')
 
@@ -212,14 +271,10 @@ class SshZoneHandler:
         logging.info('Showing "%s" zone status', zone)
 
         failure = f'Failed to display status for zone "{zone}"'
-        command = (
-            "/usr/bin/sudo",
-            f"--user={self.service_user}",
-            "/usr/sbin/rndc",
-            "zonestatus",
-            zone,
-        )
+        bind_command = self.rndc_prefix + ("zonestatus", zone)
+        knot_command = self.knotc_prefix + ("zone-status", zone)
 
+        command = knot_command if self.server == "knot" else bind_command
         result: CompletedProcess[str] = self.__runner(command, failure)
 
         zone_status: str = result.stdout.rstrip()
@@ -230,7 +285,12 @@ class SshZoneHandler:
 
         all_rules: list[str] = []
         all_rules += self.__log_rules()
-        all_rules += self.__rndc_rules()
+
+        if self.server == "bind":
+            all_rules += self.__rndc_rules()
+
+        if self.server == "knot":
+            all_rules += self.__knotc_rules()
 
         rule: str
         for rule in all_rules:

@@ -96,6 +96,5 @@ Match User alice,bob
 
 ## Known limitations
 
-* Currently only supports BIND
 * Might be Ubuntu distro specific
 * Less-than-ideal config format

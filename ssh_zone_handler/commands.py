@@ -13,10 +13,10 @@ class InvokeError(Exception):
     """Used to propagate an error to the top level wrapper method"""
 
 
+# pylint: disable=too-few-public-methods
 class SshZoneHandler:
-    """This is where all the magic happens"""
+    """Parse shared config, define constants, etc"""
 
-    # pylint: disable=too-many-instance-attributes
     def __init__(self, config: ZoneHandlerConf):
         self.config: ZoneHandlerConf = config
         self.log_user: Final[str] = config.sudoers.logs
@@ -24,23 +24,16 @@ class SshZoneHandler:
         self.service_user: Final[str] = config.service.user
         service_unit: Final[str] = config.service.systemd_unit
 
-        sudo_prefix: Final[tuple[str, str]] = (
-            "/usr/bin/sudo",
-            f"--user={self.service_user}",
-        )
-        self.knotc_prefix: Final[tuple[str, str, str]] = sudo_prefix + (
-            "/usr/sbin/knotc",
-        )
-        self.rndc_prefix: Final[tuple[str, str, str]] = sudo_prefix + (
-            "/usr/sbin/rndc",
-        )
-
         self.journal_cmd: Final[tuple[str, str, str, str]] = (
             "/usr/bin/journalctl",
             f"--unit={service_unit}",
             "--since=-5days",
             "--utc",
         )
+
+
+class SshZoneSudoers(SshZoneHandler):
+    """Pre-generate needed sudoers rules"""
 
     def __log_rules(self) -> list[str]:
         users: KeysView[str] = self.config.users.keys()
@@ -89,6 +82,40 @@ class SshZoneHandler:
                     rules.append(rule)
 
         return rules
+
+    def generate(self) -> None:
+        """Outputs all the needed sudoers rules."""
+
+        all_rules: list[str] = []
+        all_rules += self.__log_rules()
+
+        if self.server == "bind":
+            all_rules += self.__rndc_rules()
+
+        if self.server == "knot":
+            all_rules += self.__knotc_rules()
+
+        rule: str
+        for rule in all_rules:
+            print(rule)
+
+
+class SshZoneCommand(SshZoneHandler):
+    """Runs the actual commands"""
+
+    def __init__(self, config: ZoneHandlerConf):
+        super().__init__(config)
+
+        sudo_prefix: Final[tuple[str, str]] = (
+            "/usr/bin/sudo",
+            f"--user={self.service_user}",
+        )
+        self.knotc_prefix: Final[tuple[str, str, str]] = sudo_prefix + (
+            "/usr/sbin/knotc",
+        )
+        self.rndc_prefix: Final[tuple[str, str, str]] = sudo_prefix + (
+            "/usr/sbin/rndc",
+        )
 
     def __zone_list(self, username: str) -> Sequence[str]:
         user_zones: Sequence[str] = ()
@@ -279,22 +306,6 @@ class SshZoneHandler:
 
         zone_status: str = result.stdout.rstrip()
         print(zone_status)
-
-    def generate(self) -> None:
-        """Outputs all the needed sudoers rules."""
-
-        all_rules: list[str] = []
-        all_rules += self.__log_rules()
-
-        if self.server == "bind":
-            all_rules += self.__rndc_rules()
-
-        if self.server == "knot":
-            all_rules += self.__knotc_rules()
-
-        rule: str
-        for rule in all_rules:
-            print(rule)
 
     def invoke(self, ssh_command: str, username: str) -> None:
         """

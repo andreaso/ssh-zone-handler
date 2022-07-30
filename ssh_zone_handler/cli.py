@@ -10,7 +10,7 @@ from typing import Final
 
 from pydantic import ValidationError
 
-from ssh_zone_handler.commands import InvokeError, SshZoneHandler
+from ssh_zone_handler.commands import InvokeError, SshZoneCommand, SshZoneSudoers
 from ssh_zone_handler.static import LOGCONF
 from ssh_zone_handler.types import ZoneHandlerConf
 
@@ -49,7 +49,7 @@ def sudoers(config_file: str = CONFIG_FILE) -> None:
     except ValidationError:
         _error_out("Invalid server side config file")
 
-    szh = SshZoneHandler(config)
+    szh = SshZoneSudoers(config)
     szh.generate()
 
 
@@ -83,7 +83,7 @@ def wrapper(config_file: str = CONFIG_FILE) -> None:
     except KeyError:
         pass
 
-    szh = SshZoneHandler(config)
+    szh = SshZoneCommand(config)
     try:
         szh.invoke(ssh_command, username)
     except InvokeError as error:

@@ -157,7 +157,7 @@ def test_cli_zone_wrapper(caplog, capsys, mocker):
     assert captured_unconf_user == 'No zones configured for user "mallory"\n'
 
 
-def test_log_filtering():
+def test_bind_log_filtering():
     pre_filtered_file_net = "./tests/data/filtered-named-example-net.txt"
     with open(pre_filtered_file_net, encoding="utf-8") as fin:
         pre_filtered_data_net = fin.read().rstrip()
@@ -183,5 +183,35 @@ def test_log_filtering():
     filtered = []
     # pylint: disable=protected-access
     for line in SshZoneCommand._SshZoneCommand__filter_bind_logs(log_lines, zones):
+        filtered.append(line)
+    assert filtered == pre_filtered_data_com_net.split("\n")
+
+
+def test_knot_log_filtering():
+    pre_filtered_file_net = "./tests/data/filtered-knot-example-net.txt"
+    with open(pre_filtered_file_net, encoding="utf-8") as fin:
+        pre_filtered_data_net = fin.read().rstrip()
+
+    pre_filtered_file_com_net = "./tests/data/filtered-knot-example-com-net.txt"
+    with open(pre_filtered_file_com_net, encoding="utf-8") as fin:
+        pre_filtered_data_com_net = fin.read().rstrip()
+
+    log_file = "./tests/data/journald-knot.txt"
+    with open(log_file, encoding="utf-8") as fin:
+        log_data = fin.read()
+
+    log_lines = log_data.split("\n")
+
+    zones = ["example.net"]
+    filtered = []
+    # pylint: disable=protected-access
+    for line in SshZoneCommand._SshZoneCommand__filter_knot_logs(log_lines, zones):
+        filtered.append(line)
+    assert filtered == pre_filtered_data_net.split("\n")
+
+    zones = ["example.com", "example.net"]
+    filtered = []
+    # pylint: disable=protected-access
+    for line in SshZoneCommand._SshZoneCommand__filter_knot_logs(log_lines, zones):
         filtered.append(line)
     assert filtered == pre_filtered_data_com_net.split("\n")

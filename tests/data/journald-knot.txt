@@ -1,0 +1,92 @@
+Aug 01 10:03:55 szh-tertiary systemd[1]: Starting Knot DNS server...
+Aug 01 10:03:55 szh-tertiary knotc[2760]: Configuration is valid
+Aug 01 10:03:55 szh-tertiary knotd[2761]: info: Knot DNS 3.1.6 starting
+Aug 01 10:03:55 szh-tertiary knotd[2761]: info: loaded configuration file '/etc/knot/knot.conf', mapsize 512 MiB
+Aug 01 10:03:55 szh-tertiary knotd[2761]: warning: no network interface configured
+Aug 01 10:03:55 szh-tertiary knotd[2761]: info: loading 0 zones
+Aug 01 10:03:55 szh-tertiary knotd[2761]: warning: no zones loaded
+Aug 01 10:03:55 szh-tertiary knotd[2761]: info: starting server
+Aug 01 10:03:55 szh-tertiary knotd[2761]: info: server started in the foreground, PID 2761
+Aug 01 10:03:55 szh-tertiary knotd[2761]: info: control, binding to '/run/knot/knot.sock'
+Aug 01 10:03:55 szh-tertiary systemd[1]: Started Knot DNS server.
+Aug 01 10:04:19 szh-tertiary systemd[1]: Stopping Knot DNS server...
+Aug 01 10:04:19 szh-tertiary knotd[2761]: info: stopping server
+Aug 01 10:04:19 szh-tertiary knotd[2761]: info: updating persistent timer DB
+Aug 01 10:04:19 szh-tertiary knotd[2761]: info: shutting down
+Aug 01 10:04:19 szh-tertiary systemd[1]: knot.service: Deactivated successfully.
+Aug 01 10:04:19 szh-tertiary systemd[1]: Stopped Knot DNS server.
+Aug 01 10:04:19 szh-tertiary systemd[1]: Starting Knot DNS server...
+Aug 01 10:04:19 szh-tertiary knotc[3045]: Configuration is valid
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: Knot DNS 3.1.6 starting
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: loaded configuration file '/etc/knot/knot.conf', mapsize 512 MiB
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: using UDP reuseport, incoming TCP Fast Open
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: binding to interface 127.0.0.1@53
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: binding to interface ::1@53
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: binding to interface 192.168.63.12@53
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: loading 3 zones
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: [example.com.] zone will be loaded
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: [example.net.] zone will be loaded
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: [example.org.] zone will be loaded
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: starting server
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: [example.com.] failed to parse zone file '/var/lib/knot/example.com.zone' (not exists)
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: [example.com.] zone will be bootstrapped
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: [example.org.] failed to parse zone file '/var/lib/knot/example.org.zone' (not exists)
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: [example.org.] zone will be bootstrapped
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: [example.net.] failed to parse zone file '/var/lib/knot/example.net.zone' (not exists)
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: [example.net.] zone will be bootstrapped
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: server started in the foreground, PID 3047
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: control, binding to '/run/knot/knot.sock'
+Aug 01 10:04:19 szh-tertiary systemd[1]: Started Knot DNS server.
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: [example.com.] AXFR, incoming, remote 192.168.63.10@53, started
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: [example.com.] AXFR, incoming, remote 192.168.63.10@53, finished, 0.00 seconds, 1 messages, 237 bytes
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: [example.com.] refresh, remote 192.168.63.10@53, zone updated, 0.00 seconds, serial none -> 26281038
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: [example.org.] AXFR, incoming, remote 192.168.63.10@53, started
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: [example.org.] AXFR, incoming, remote 192.168.63.10@53, finished, 0.00 seconds, 1 messages, 237 bytes
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: [example.org.] refresh, remote 192.168.63.10@53, zone updated, 0.00 seconds, serial none -> 26281038
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: [example.net.] AXFR, incoming, remote 192.168.63.10@53, started
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: [example.net.] AXFR, incoming, remote 192.168.63.10@53, finished, 0.00 seconds, 1 messages, 226 bytes
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: [example.net.] refresh, remote 192.168.63.10@53, zone updated, 0.00 seconds, serial none -> 26281038
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: [example.com.] zone file updated, serial 26281038
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: [example.net.] zone file updated, serial 26281038
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: [example.org.] zone file updated, serial 26281038
+Aug 01 10:10:29 szh-tertiary knotd[3047]: info: [example.com.] notify, incoming, remote 192.168.63.10@50980, serial 26281039
+Aug 01 10:10:29 szh-tertiary knotd[3047]: info: [example.com.] refresh, remote 192.168.63.10@53, remote serial 26281039, zone is outdated
+Aug 01 10:10:29 szh-tertiary knotd[3047]: info: [example.com.] IXFR, incoming, remote 192.168.63.10@53, receiving AXFR-style IXFR
+Aug 01 10:10:29 szh-tertiary knotd[3047]: info: [example.com.] AXFR, incoming, remote 192.168.63.10@53, started
+Aug 01 10:10:29 szh-tertiary knotd[3047]: info: [example.com.] AXFR, incoming, remote 192.168.63.10@53, finished, 0.00 seconds, 1 messages, 267 bytes
+Aug 01 10:10:29 szh-tertiary knotd[3047]: info: [example.com.] refresh, remote 192.168.63.10@53, zone updated, 0.01 seconds, serial 26281038 -> 26281039
+Aug 01 10:10:29 szh-tertiary knotd[3047]: info: [example.com.] zone file updated, serial 26281038 -> 26281039
+Aug 01 10:10:55 szh-tertiary systemd[1]: Stopping Knot DNS server...
+Aug 01 10:10:55 szh-tertiary knotd[3047]: info: stopping server
+Aug 01 10:10:55 szh-tertiary knotd[3047]: info: updating persistent timer DB
+Aug 01 10:10:55 szh-tertiary knotd[3047]: info: shutting down
+Aug 01 10:10:55 szh-tertiary systemd[1]: knot.service: Deactivated successfully.
+Aug 01 10:10:55 szh-tertiary systemd[1]: Stopped Knot DNS server.
+-- Boot 47329f9dfc6042029c0d48454a6df1cf --
+Aug 01 10:11:25 szh-tertiary systemd[1]: Starting Knot DNS server...
+Aug 01 10:11:25 szh-tertiary knotc[624]: Configuration is valid
+Aug 01 10:11:25 szh-tertiary knotd[643]: info: Knot DNS 3.1.6 starting
+Aug 01 10:11:25 szh-tertiary knotd[643]: info: loaded configuration file '/etc/knot/knot.conf', mapsize 512 MiB
+Aug 01 10:11:25 szh-tertiary knotd[643]: info: using UDP reuseport, incoming TCP Fast Open
+Aug 01 10:11:25 szh-tertiary knotd[643]: info: binding to interface 127.0.0.1@53
+Aug 01 10:11:25 szh-tertiary knotd[643]: info: binding to interface ::1@53
+Aug 01 10:11:25 szh-tertiary knotd[643]: info: binding to interface 192.168.63.12@53
+Aug 01 10:11:25 szh-tertiary knotd[643]: info: loading 3 zones
+Aug 01 10:11:25 szh-tertiary knotd[643]: info: [example.com.] zone will be loaded
+Aug 01 10:11:25 szh-tertiary knotd[643]: info: [example.net.] zone will be loaded
+Aug 01 10:11:25 szh-tertiary knotd[643]: info: [example.org.] zone will be loaded
+Aug 01 10:11:25 szh-tertiary knotd[643]: info: starting server
+Aug 01 10:11:25 szh-tertiary knotd[643]: info: [example.net.] zone file parsed, serial 26281038
+Aug 01 10:11:25 szh-tertiary knotd[643]: info: [example.net.] loaded, serial none -> 26281038, 286 bytes
+Aug 01 10:11:25 szh-tertiary knotd[643]: info: [example.com.] zone file parsed, serial 26281039
+Aug 01 10:11:25 szh-tertiary knotd[643]: info: [example.com.] loaded, serial none -> 26281039, 327 bytes
+Aug 01 10:11:25 szh-tertiary knotd[643]: info: [example.org.] zone file parsed, serial 26281038
+Aug 01 10:11:25 szh-tertiary knotd[643]: info: [example.org.] loaded, serial none -> 26281038, 286 bytes
+Aug 01 10:11:25 szh-tertiary knotd[643]: info: server started in the foreground, PID 643
+Aug 01 10:11:25 szh-tertiary knotd[643]: info: control, binding to '/run/knot/knot.sock'
+Aug 01 10:11:25 szh-tertiary systemd[1]: Started Knot DNS server.
+Aug 01 10:12:26 szh-tertiary knotd[643]: info: [example.net.] control, received command 'zone-retransfer'
+Aug 01 10:12:26 szh-tertiary knotd[643]: info: [example.net.] AXFR, incoming, remote 192.168.63.10@53, started
+Aug 01 10:12:26 szh-tertiary knotd[643]: info: [example.net.] AXFR, incoming, remote 192.168.63.10@53, finished, 0.00 seconds, 1 messages, 226 bytes
+Aug 01 10:12:26 szh-tertiary knotd[643]: info: [example.net.] refresh, remote 192.168.63.10@53, zone updated, 0.00 seconds, serial 26281038 -> 26281038
+Aug 01 10:12:26 szh-tertiary knotd[643]: info: [example.net.] zone file updated, serial 26281038 -> 26281038

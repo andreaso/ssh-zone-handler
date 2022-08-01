@@ -1,0 +1,15 @@
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: [example.net.] zone will be loaded
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: [example.net.] failed to parse zone file '/var/lib/knot/example.net.zone' (not exists)
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: [example.net.] zone will be bootstrapped
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: [example.net.] AXFR, incoming, remote 192.168.63.10@53, started
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: [example.net.] AXFR, incoming, remote 192.168.63.10@53, finished, 0.00 seconds, 1 messages, 226 bytes
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: [example.net.] refresh, remote 192.168.63.10@53, zone updated, 0.00 seconds, serial none -> 26281038
+Aug 01 10:04:19 szh-tertiary knotd[3047]: info: [example.net.] zone file updated, serial 26281038
+Aug 01 10:11:25 szh-tertiary knotd[643]: info: [example.net.] zone will be loaded
+Aug 01 10:11:25 szh-tertiary knotd[643]: info: [example.net.] zone file parsed, serial 26281038
+Aug 01 10:11:25 szh-tertiary knotd[643]: info: [example.net.] loaded, serial none -> 26281038, 286 bytes
+Aug 01 10:12:26 szh-tertiary knotd[643]: info: [example.net.] control, received command 'zone-retransfer'
+Aug 01 10:12:26 szh-tertiary knotd[643]: info: [example.net.] AXFR, incoming, remote 192.168.63.10@53, started
+Aug 01 10:12:26 szh-tertiary knotd[643]: info: [example.net.] AXFR, incoming, remote 192.168.63.10@53, finished, 0.00 seconds, 1 messages, 226 bytes
+Aug 01 10:12:26 szh-tertiary knotd[643]: info: [example.net.] refresh, remote 192.168.63.10@53, zone updated, 0.00 seconds, serial 26281038 -> 26281038
+Aug 01 10:12:26 szh-tertiary knotd[643]: info: [example.net.] zone file updated, serial 26281038 -> 26281038

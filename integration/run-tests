@@ -1,0 +1,25 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o noglob
+set -o pipefail
+
+basedir=$(cd "$(dirname -- "$0")"/.. && pwd)
+cd "$basedir"
+
+stashdir=$(mktemp --directory)
+trap 'rm -rf "$stashdir"' EXIT
+
+ssh_config="${stashdir}/ssh_conf"
+ssh_command="ssh -F ${ssh_config}"
+
+vagrant up
+
+vagrant ssh-config secondary > "$ssh_config"
+vagrant ssh-config tertiary >> "$ssh_config"
+
+$ssh_command alice@secondary "list"
+$ssh_command bob@secondary "list"
+
+$ssh_command alice@tertiary "list"
+$ssh_command bob@tertiary "list"

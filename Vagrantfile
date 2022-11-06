@@ -3,6 +3,7 @@
 
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/jammy64"
+  config.vm.box_check_update = false
 
   config.vm.define "primary" do |primary|
     primary.vm.network "private_network", ip: "192.168.63.10"
@@ -41,10 +42,14 @@ Vagrant.configure("2") do |config|
       install --owner=alice --group=alice --mode=0700 --directory /home/alice/.ssh
       install --owner=alice --group=alice --mode=0644 /home/vagrant/.ssh/authorized_keys /home/alice/.ssh/
 
+      adduser --quiet --disabled-password --gecos "Byggare Bob" bob
+      install --owner=bob --group=bob --mode=0700 --directory /home/bob/.ssh
+      install --owner=bob --group=bob --mode=0644 /home/vagrant/.ssh/authorized_keys /home/bob/.ssh/
+
       adduser --quiet --system --no-create-home --home /nonexistent --shell /usr/sbin/nologin --ingroup systemd-journal log-viewer
       /opt/ssh-zone-handler/bin/szh-sudoers | EDITOR="tee" visudo -f /etc/sudoers.d/zone-handler
 
-      echo -e "\nMatch User alice\n\tForceCommand /opt/ssh-zone-handler/bin/szh-wrapper\n\tPermitTTY no\n\tAllowTcpForwarding no\n\tX11Forwarding no" >> /etc/ssh/sshd_config
+      echo -e "\nMatch User alice,bob\n\tForceCommand /opt/ssh-zone-handler/bin/szh-wrapper\n\tPermitTTY no\n\tAllowTcpForwarding no\n\tX11Forwarding no" >> /etc/ssh/sshd_config
 
       systemctl restart named ssh
     SHELL
@@ -68,10 +73,14 @@ Vagrant.configure("2") do |config|
       install --owner=alice --group=alice --mode=0700 --directory /home/alice/.ssh
       install --owner=alice --group=alice --mode=0644 /home/vagrant/.ssh/authorized_keys /home/alice/.ssh/
 
+      adduser --quiet --disabled-password --gecos "Byggare Bob" bob
+      install --owner=bob --group=bob --mode=0700 --directory /home/bob/.ssh
+      install --owner=bob --group=bob --mode=0644 /home/vagrant/.ssh/authorized_keys /home/bob/.ssh/
+
       adduser --quiet --system --no-create-home --home /nonexistent --shell /usr/sbin/nologin --ingroup systemd-journal log-viewer
       /opt/ssh-zone-handler/bin/szh-sudoers | EDITOR="tee" visudo -f /etc/sudoers.d/zone-handler
 
-      echo -e "\nMatch User alice\n\tForceCommand /opt/ssh-zone-handler/bin/szh-wrapper\n\tPermitTTY no\n\tAllowTcpForwarding no\n\tX11Forwarding no" >> /etc/ssh/sshd_config
+      echo -e "\nMatch User alice,bob\n\tForceCommand /opt/ssh-zone-handler/bin/szh-wrapper\n\tPermitTTY no\n\tAllowTcpForwarding no\n\tX11Forwarding no" >> /etc/ssh/sshd_config
 
       systemctl restart knot ssh
     SHELL

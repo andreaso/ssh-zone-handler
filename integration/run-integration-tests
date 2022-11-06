@@ -1,0 +1,97 @@
+#!/usr/bin/env python3
+
+import os
+import subprocess
+import sys
+from tempfile import TemporaryDirectory
+from typing import Final
+
+from test_cases import TestCase, cases
+
+
+class RunTests:
+    def __init__(self) -> None:
+        self.stash_directory = TemporaryDirectory(prefix="szh-")
+        self.ssh_conf_path: Final[str] = self.__vagrant_ssh_conf()
+
+    def __vagrant_ssh_conf(self) -> str:
+        base_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
+        vagrant_directory = os.path.abspath(os.path.join(base_directory, ".."))
+
+        secondary_conf = subprocess.run(
+            ["vagrant", "ssh-config", "secondary"],
+            stdout=subprocess.PIPE,
+            cwd=vagrant_directory,
+            check=True,
+            text=True,
+        )
+        tertiary_conf = subprocess.run(
+            ["vagrant", "ssh-config", "tertiary"],
+            stdout=subprocess.PIPE,
+            cwd=vagrant_directory,
+            check=True,
+            text=True,
+        )
+
+        ssh_conf_path = os.path.join(self.stash_directory.name, "ssh_conf")
+        with open(ssh_conf_path, "w", encoding="utf-8") as cf:
+            cf.write(secondary_conf.stdout)
+            cf.write(tertiary_conf.stdout)
+
+        return ssh_conf_path
+
+    def test(self, host: str, daemon: str, case: TestCase) -> None:
+        full_command = [
+            "ssh",
+            "-F",
+            self.ssh_conf_path,
+            "-l",
+            "alice",
+            host,
+            case.command,
+        ]
+        full_command += case.zones
+
+        chosen_stdout: str = case.stdout.pick(daemon)
+        chosen_stderr: str = case.stderr.pick(daemon)
+
+        result = subprocess.run(full_command, capture_output=True, text=True)
+
+        try:
+            assert result.returncode == case.rc
+        except AssertionError as error:
+            print(f"Expected return code: {case.rc}")
+            print(f"Resulted return code: {result.returncode}")
+            raise error
+        try:
+            assert result.stderr == chosen_stderr
+        except AssertionError as error:
+            print(f"Expected standard error:  {repr(chosen_stderr)}")
+            print(f"Resulted standard error:  {repr(result.stderr)}")
+            raise error
+        try:
+            assert result.stdout == chosen_stdout
+        except AssertionError as error:
+            print(f"Expected standard output:  {repr(chosen_stdout)}")
+            print(f"Resulted standard output:  {repr(result.stdout)}")
+            raise error
+
+
+def main() -> None:
+    rt = RunTests()
+
+    for host, daemon in [("secondary", "BIND"), ("tertiary", "Knot")]:
+        print(f"* Testing {host} {daemon} host")
+        case: TestCase
+        for case in cases:
+            print(f"** Test {case.name}")
+            try:
+                rt.test(host, daemon, case)
+            except AssertionError:
+                print("\nTest failed. Aborting.")
+                sys.exit(1)
+        print()
+
+
+if __name__ == "__main__":
+    main()

@@ -1,25 +1,50 @@
-#!/bin/bash
-set -o errexit
-set -o nounset
-set -o noglob
-set -o pipefail
+#!/usr/bin/env python3
 
-basedir=$(cd "$(dirname -- "$0")"/.. && pwd)
-cd "$basedir"
+import os
+import subprocess
+import sys
+import tempfile
+from typing import Final
 
-stashdir=$(mktemp --directory)
-trap 'rm -rf "$stashdir"' EXIT
 
-ssh_config="${stashdir}/ssh_conf"
-ssh_command="ssh -F ${ssh_config}"
+class RunTests:
+    """Vagrant intergration test runner"""
 
-vagrant up
+    def __init__(self, stash_directory: str):
+        self.stash_directory: Final[str] = stash_directory
+        self.base_directory: Final[str] = os.path.dirname(os.path.abspath(sys.argv[0]))
+        self.ssh_conf_path: Final[str] = self.__vagrant_ssh_conf()
 
-vagrant ssh-config secondary > "$ssh_config"
-vagrant ssh-config tertiary >> "$ssh_config"
+    def __vagrant_ssh_conf(self) -> str:
+        vagrant_directory = os.path.abspath(os.path.join(self.base_directory, ".."))
 
-$ssh_command alice@secondary "list"
-$ssh_command bob@secondary "list"
+        secondary_conf = subprocess.run(
+            ["vagrant", "ssh-config", "secondary"],
+            stdout=subprocess.PIPE,
+            cwd=vagrant_directory,
+            check=True,
+            text=True,
+        )
+        tertiary_conf = subprocess.run(
+            ["vagrant", "ssh-config", "tertiary"],
+            stdout=subprocess.PIPE,
+            cwd=vagrant_directory,
+            check=True,
+            text=True,
+        )
 
-$ssh_command alice@tertiary "list"
-$ssh_command bob@tertiary "list"
+        ssh_conf_path = os.path.join(self.stash_directory, "ssh_conf")
+        with open(ssh_conf_path, "w", encoding="utf-8") as cf:
+            cf.write(secondary_conf.stdout)
+            cf.write(tertiary_conf.stdout)
+
+        return ssh_conf_path
+
+
+def main() -> None:
+    with tempfile.TemporaryDirectory(prefix="szh-") as stash_directory:
+        rt = RunTests(stash_directory)
+
+
+if __name__ == "__main__":
+    main()

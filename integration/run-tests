@@ -4,12 +4,10 @@ import os
 import subprocess
 import sys
 import tempfile
-from typing import Final
+from typing import Any, Final
 
 
 class RunTests:
-    """Vagrant intergration test runner"""
-
     def __init__(self, stash_directory: str):
         self.stash_directory: Final[str] = stash_directory
         self.base_directory: Final[str] = os.path.dirname(os.path.abspath(sys.argv[0]))
@@ -40,10 +38,45 @@ class RunTests:
 
         return ssh_conf_path
 
+    def test(self, host: str, command: str, expected: dict[str, Any]) -> None:
+        full_command = ["ssh", "-F", self.ssh_conf_path, "-l", "alice", host, command]
+        result = subprocess.run(full_command, capture_output=True, text=True)
+
+        try:
+            assert result.returncode == expected["returncode"]
+        except AssertionError as error:
+            print(f"Expected return code: {expected['returncode']}")
+            print(f"Resulted return code: {result.returncode}")
+            raise error
+        try:
+            assert result.stdout == expected["stdout"]
+        except AssertionError as error:
+            print(f"Expected standard output:\n\n{expected['stdout']}")
+            print(f"Resulted standard output:\n\n{result.stdout}")
+            raise error
+        try:
+            assert result.stderr == expected["stderr"]
+        except AssertionError as error:
+            print(f"Expected standard error: {expected['stderr']}")
+            print(f"Resulted standard error: {result.stderr}")
+            raise error
+
 
 def main() -> None:
     with tempfile.TemporaryDirectory(prefix="szh-") as stash_directory:
         rt = RunTests(stash_directory)
+
+        response_secondary_help = {
+            "returncode": 0,
+            "stdout": "usage: command [ZONE]\n\nhelp\t\t\tDisplay this help message\nlist\t\t\tList available zones\ndump ZONE\t\tOutput full content of ZONE\nlogs [ZONE1 ZONE2]\tOutput the last five days' log entries for ZONE(s)\nretransfer ZONE\t\tTrigger a full (AXFR) retransfer of ZONE\nstatus ZONE\t\tShow ZONE status\n",
+            "stderr": "",
+        }
+
+        try:
+            rt.test("secondary", "help", response_secondary_help)
+        except AssertionError:
+            print("\nTest failed. Aborting.")
+            sys.exit(1)
 
 
 if __name__ == "__main__":

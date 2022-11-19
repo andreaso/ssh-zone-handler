@@ -52,10 +52,8 @@ class RunTests:
         ]
         full_command += case.zones
 
-        try:
-            chosen_stdout = case.stdout.get(daemon.lower())
-        except AttributeError:
-            chosen_stdout = case.stdout
+        chosen_stdout: str = case.stdout.pick(daemon)
+        chosen_stderr: str = case.stderr.pick(daemon)
 
         result = subprocess.run(full_command, capture_output=True, text=True)
 
@@ -66,9 +64,9 @@ class RunTests:
             print(f"Resulted return code: {result.returncode}")
             raise error
         try:
-            assert result.stderr == case.stderr
+            assert result.stderr == chosen_stderr
         except AssertionError as error:
-            print(f"Expected standard error:  {repr(case.stderr)}")
+            print(f"Expected standard error:  {repr(chosen_stderr)}")
             print(f"Resulted standard error:  {repr(result.stderr)}")
             raise error
         try:

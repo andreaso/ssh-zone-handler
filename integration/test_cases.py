@@ -1,5 +1,20 @@
 from dataclasses import dataclass
-from typing import Union
+
+
+@dataclass
+class PerDaemon:
+    shared: str | None = None
+    bind: str | None = None
+    knot: str | None = None
+
+    def pick(self, daemon: str) -> str:
+        if self.shared is not None:
+            return self.shared
+        if self.bind is not None and daemon.lower() == "bind":
+            return self.bind
+        if self.knot is not None and daemon.lower() == "knot":
+            return self.knot
+        return ""
 
 
 @dataclass
@@ -7,8 +22,8 @@ class TestCase:
     name: str
     command: str
     zones: list[str]
-    stdout: Union[str, dict[str, str]]
-    stderr: Union[str, dict[str, str]] = ""
+    stdout: PerDaemon = PerDaemon()
+    stderr: PerDaemon = PerDaemon()
     rc: int = 0
 
 
@@ -17,43 +32,43 @@ cases: list[TestCase] = [
         name="help output",
         command="help",
         zones=[],
-        stdout="usage: command [ZONE]\n\nhelp\t\t\tDisplay this help message\nlist\t\t\tList available zones\ndump ZONE\t\tOutput full content of ZONE\nlogs [ZONE1 ZONE2]\tOutput the last five days' log entries for ZONE(s)\nretransfer ZONE\t\tTrigger a full (AXFR) retransfer of ZONE\nstatus ZONE\t\tShow ZONE status\n",
+        stdout=PerDaemon(
+            "usage: command [ZONE]\n\nhelp\t\t\tDisplay this help message\nlist\t\t\tList available zones\ndump ZONE\t\tOutput full content of ZONE\nlogs [ZONE1 ZONE2]\tOutput the last five days' log entries for ZONE(s)\nretransfer ZONE\t\tTrigger a full (AXFR) retransfer of ZONE\nstatus ZONE\t\tShow ZONE status\n"
+        ),
     ),
     TestCase(
         name="listing zones",
         command="list",
         zones=[],
-        stdout="example.com\nexample.net\n",
+        stdout=PerDaemon("example.com\nexample.net\n"),
     ),
     TestCase(
         name="dummy command",
         command="bazinga",
         zones=["example.com"],
-        stdout="",
-        stderr='Invalid command, try "help"\n',
+        stderr=PerDaemon('Invalid command, try "help"\n'),
         rc=1,
     ),
     TestCase(
         name="dumping zone",
         command="dump",
         zones=["example.com"],
-        stdout={
-            "bind": "example.com.\t\t\t\t      3600 IN SOA\tprimary.example.com. hostmaster.example.net. 26281038 14400 3600 1209600 1800\nexample.com.\t\t\t\t      3600 IN NS\tprimary.example.com.\nexample.com.\t\t\t\t      3600 IN NS\tsecondary.example.com.\nprimary.example.com.\t\t\t      3600 IN A\t\t192.168.63.10\nsecondary.example.com.\t\t\t      3600 IN A\t\t192.168.63.11\ntertiary.example.com.\t\t\t      3600 IN A\t\t192.168.63.12\n",
-            "knot": "example.com. 3600 NS primary.example.com.\nexample.com. 3600 NS secondary.example.com.\nexample.com. 3600 SOA primary.example.com. hostmaster.example.net. 26281038 14400 3600 1209600 1800\nprimary.example.com. 3600 A 192.168.63.10\nsecondary.example.com. 3600 A 192.168.63.11\ntertiary.example.com. 3600 A 192.168.63.12\n",
-        },
+        stdout=PerDaemon(
+            bind="example.com.\t\t\t\t      3600 IN SOA\tprimary.example.com. hostmaster.example.net. 26281038 14400 3600 1209600 1800\nexample.com.\t\t\t\t      3600 IN NS\tprimary.example.com.\nexample.com.\t\t\t\t      3600 IN NS\tsecondary.example.com.\nprimary.example.com.\t\t\t      3600 IN A\t\t192.168.63.10\nsecondary.example.com.\t\t\t      3600 IN A\t\t192.168.63.11\ntertiary.example.com.\t\t\t      3600 IN A\t\t192.168.63.12\n",
+            knot="example.com. 3600 NS primary.example.com.\nexample.com. 3600 NS secondary.example.com.\nexample.com. 3600 SOA primary.example.com. hostmaster.example.net. 26281038 14400 3600 1209600 1800\nprimary.example.com. 3600 A 192.168.63.10\nsecondary.example.com. 3600 A 192.168.63.11\ntertiary.example.com. 3600 A 192.168.63.12\n",
+        ),
     ),
     TestCase(
         name="triggering retransfer",
         command="retransfer",
         zones=["example.com"],
-        stdout='Triggering retransfer of zone "example.com"\n',
+        stdout=PerDaemon('Triggering retransfer of zone "example.com"\n'),
     ),
     TestCase(
         name="picking the wrong zone",
         command="retransfer",
         zones=["example.org"],
-        stdout="",
-        stderr="No valid zone provided\n",
+        stderr=PerDaemon("No valid zone provided\n"),
         rc=1,
     ),
 ]

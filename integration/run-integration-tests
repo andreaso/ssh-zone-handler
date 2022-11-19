@@ -3,20 +3,20 @@
 import os
 import subprocess
 import sys
-import tempfile
+from tempfile import TemporaryDirectory
 from typing import Final
 
 from test_cases import TestCase, cases
 
 
 class RunTests:
-    def __init__(self, stash_directory: str):
-        self.stash_directory: Final[str] = stash_directory
-        self.base_directory: Final[str] = os.path.dirname(os.path.abspath(sys.argv[0]))
+    def __init__(self) -> None:
+        self.stash_directory = TemporaryDirectory(prefix="szh-")
         self.ssh_conf_path: Final[str] = self.__vagrant_ssh_conf()
 
     def __vagrant_ssh_conf(self) -> str:
-        vagrant_directory = os.path.abspath(os.path.join(self.base_directory, ".."))
+        base_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
+        vagrant_directory = os.path.abspath(os.path.join(base_directory, ".."))
 
         secondary_conf = subprocess.run(
             ["vagrant", "ssh-config", "secondary"],
@@ -33,7 +33,7 @@ class RunTests:
             text=True,
         )
 
-        ssh_conf_path = os.path.join(self.stash_directory, "ssh_conf")
+        ssh_conf_path = os.path.join(self.stash_directory.name, "ssh_conf")
         with open(ssh_conf_path, "w", encoding="utf-8") as cf:
             cf.write(secondary_conf.stdout)
             cf.write(tertiary_conf.stdout)
@@ -78,20 +78,19 @@ class RunTests:
 
 
 def main() -> None:
-    with tempfile.TemporaryDirectory(prefix="szh-") as stash_directory:
-        rt = RunTests(stash_directory)
+    rt = RunTests()
 
-        for host, daemon in [("secondary", "BIND"), ("tertiary", "Knot")]:
-            print(f"* Testing {host} {daemon} host")
-            case: TestCase
-            for case in cases:
-                print(f"** Test {case.name}")
-                try:
-                    rt.test(host, daemon, case)
-                except AssertionError:
-                    print("\nTest failed. Aborting.")
-                    sys.exit(1)
-            print()
+    for host, daemon in [("secondary", "BIND"), ("tertiary", "Knot")]:
+        print(f"* Testing {host} {daemon} host")
+        case: TestCase
+        for case in cases:
+            print(f"** Test {case.name}")
+            try:
+                rt.test(host, daemon, case)
+            except AssertionError:
+                print("\nTest failed. Aborting.")
+                sys.exit(1)
+        print()
 
 
 if __name__ == "__main__":

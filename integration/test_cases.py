@@ -29,7 +29,7 @@ class TestCase:
 
 cases: list[TestCase] = [
     TestCase(
-        name="help output",
+        name="the help command",
         command="help",
         zones=[],
         stdout=PerDaemon(
@@ -37,20 +37,13 @@ cases: list[TestCase] = [
         ),
     ),
     TestCase(
-        name="listing zones",
+        name="the list command",
         command="list",
         zones=[],
         stdout=PerDaemon("example.com\nexample.net\n"),
     ),
     TestCase(
-        name="dummy command",
-        command="bazinga",
-        zones=["example.com"],
-        stderr=PerDaemon('Invalid command, try "help"\n'),
-        rc=1,
-    ),
-    TestCase(
-        name="dumping zone",
+        name="the dump command",
         command="dump",
         zones=["example.com"],
         stdout=PerDaemon(
@@ -59,7 +52,7 @@ cases: list[TestCase] = [
         ),
     ),
     TestCase(
-        name="triggering retransfer",
+        name="the retransfer command",
         command="retransfer",
         zones=["example.com"],
         stdout=PerDaemon('Triggering retransfer of zone "example.com"\n'),
@@ -69,6 +62,13 @@ cases: list[TestCase] = [
         command="retransfer",
         zones=["example.org"],
         stderr=PerDaemon("No valid zone provided\n"),
+        rc=1,
+    ),
+    TestCase(
+        name="picking a non-existent command",
+        command="bazinga",
+        zones=["example.com"],
+        stderr=PerDaemon('Invalid command, try "help"\n'),
         rc=1,
     ),
 ]

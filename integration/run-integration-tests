@@ -40,7 +40,7 @@ class RunTests:
 
         return ssh_conf_path
 
-    def test(self, host: str, case: TestCase) -> None:
+    def test(self, host: str, daemon: str, case: TestCase) -> None:
         full_command = [
             "ssh",
             "-F",
@@ -52,6 +52,11 @@ class RunTests:
         ]
         full_command += case.zones
 
+        try:
+            chosen_stdout = case.stdout.get(daemon.lower())
+        except AttributeError:
+            chosen_stdout = case.stdout
+
         result = subprocess.run(full_command, capture_output=True, text=True)
 
         try:
@@ -61,16 +66,16 @@ class RunTests:
             print(f"Resulted return code: {result.returncode}")
             raise error
         try:
-            assert result.stdout == case.stdout
-        except AssertionError as error:
-            print(f"Expected standard output:  {repr(case.stdout)}")
-            print(f"Resulted standard output:  {repr(result.stdout)}")
-            raise error
-        try:
             assert result.stderr == case.stderr
         except AssertionError as error:
             print(f"Expected standard error:  {repr(case.stderr)}")
             print(f"Resulted standard error:  {repr(result.stderr)}")
+            raise error
+        try:
+            assert result.stdout == chosen_stdout
+        except AssertionError as error:
+            print(f"Expected standard output:  {repr(chosen_stdout)}")
+            print(f"Resulted standard output:  {repr(result.stdout)}")
             raise error
 
 
@@ -84,7 +89,7 @@ def main() -> None:
             for case in cases:
                 print(f"** Test {case.name}")
                 try:
-                    rt.test(host, case)
+                    rt.test(host, daemon, case)
                 except AssertionError:
                     print("\nTest failed. Aborting.")
                     sys.exit(1)

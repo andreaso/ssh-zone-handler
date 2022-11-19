@@ -4,9 +4,9 @@ import os
 import subprocess
 import sys
 import tempfile
-from typing import Any, Final
+from typing import Final
 
-from test_cases import cases
+from test_cases import TestCase, cases
 
 
 class RunTests:
@@ -40,29 +40,37 @@ class RunTests:
 
         return ssh_conf_path
 
-    def test(self, host: str, case: dict[str, Any]) -> None:
-        full_command = ["ssh", "-F", self.ssh_conf_path, "-l", "alice", host, case["command"]]
-        full_command += case["zones"]
+    def test(self, host: str, case: TestCase) -> None:
+        full_command = [
+            "ssh",
+            "-F",
+            self.ssh_conf_path,
+            "-l",
+            "alice",
+            host,
+            case.command,
+        ]
+        full_command += case.zones
 
         result = subprocess.run(full_command, capture_output=True, text=True)
 
         try:
-            assert result.returncode == case["rc"]
+            assert result.returncode == case.rc
         except AssertionError as error:
-            print(f"Expected return code: {case['rc']}")
+            print(f"Expected return code: {case.rc}")
             print(f"Resulted return code: {result.returncode}")
             raise error
         try:
-            assert result.stdout == case["stdout"]
+            assert result.stdout == case.stdout
         except AssertionError as error:
-            print(f"Expected standard output:\n\n{case['stdout']}")
-            print(f"Resulted standard output:\n\n{result.stdout}")
+            print(f"Expected standard output:  {repr(case.stdout)}")
+            print(f"Resulted standard output:  {repr(result.stdout)}")
             raise error
         try:
-            assert result.stderr == case["stderr"]
+            assert result.stderr == case.stderr
         except AssertionError as error:
-            print(f"Expected standard error: {case['stderr']}")
-            print(f"Resulted standard error: {result.stderr}")
+            print(f"Expected standard error:  {repr(case.stderr)}")
+            print(f"Resulted standard error:  {repr(result.stderr)}")
             raise error
 
 
@@ -70,14 +78,17 @@ def main() -> None:
     with tempfile.TemporaryDirectory(prefix="szh-") as stash_directory:
         rt = RunTests(stash_directory)
 
-        print("* Testing secondary BIND host")
-        for case in cases:
-            print(f"** Test {case['name']}")
-            try:
-                rt.test("secondary", case)
-            except AssertionError:
-                print("\nTest failed. Aborting.")
-                sys.exit(1)
+        for host, daemon in [("secondary", "BIND"), ("tertiary", "Knot")]:
+            print(f"* Testing {host} {daemon} host")
+            case: TestCase
+            for case in cases:
+                print(f"** Test {case.name}")
+                try:
+                    rt.test(host, case)
+                except AssertionError:
+                    print("\nTest failed. Aborting.")
+                    sys.exit(1)
+            print()
 
 
 if __name__ == "__main__":

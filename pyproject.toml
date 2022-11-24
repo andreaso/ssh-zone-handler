@@ -26,7 +26,7 @@ szh-wrapper = "ssh_zone_handler.cli:wrapper"
 [tool.isort]
 profile = "black"
 
-[tool.pylint.'MASTER']
+[tool.pylint.'MAIN']
 extension-pkg-allow-list = "pydantic"
 
 [tool.pytest.ini_options]

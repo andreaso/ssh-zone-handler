@@ -94,14 +94,9 @@ class SshZoneCommand(SshZoneHandler):
             command = args[0]
         args.pop(0)
 
-        zero_cmdline_zones = True
         for arg in args:
-            zero_cmdline_zones = False
             if arg in user_zones:
                 zones.append(arg)
-
-        if command == "logs" and zero_cmdline_zones:
-            zones = list(user_zones)
 
         return command, zones
 
@@ -124,7 +119,7 @@ class SshZoneCommand(SshZoneHandler):
         print("help\t\t\tDisplay this help message")
         print("list\t\t\tList available zones")
         print("dump ZONE\t\tOutput full content of ZONE")
-        print("logs [ZONE1 ZONE2]\tOutput the last five days' log entries for ZONE(s)")
+        print("logs ZONE1 [ZONE2]\tOutput the last five days' log entries for ZONE(s)")
         print("retransfer ZONE\t\tTrigger a full (AXFR) retransfer of ZONE")
         print("status ZONE\t\tShow ZONE status")
 

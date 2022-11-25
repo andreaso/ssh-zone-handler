@@ -10,9 +10,11 @@ from typing import Final
 
 from pydantic import ValidationError
 
-from ssh_zone_handler.commands import InvokeError, SshZoneCommand, SshZoneSudoers
-from ssh_zone_handler.static import LOGCONF
-from ssh_zone_handler.types import ZoneHandlerConf
+from .base import InvokeError
+from .bind import BindCommand, BindSudoers
+from .knot import KnotCommand, KnotSudoers
+from .static import LOGCONF
+from .types import ZoneHandlerConf
 
 CONFIG_FILE: Final[str] = "/etc/zone-handler.json"
 
@@ -49,7 +51,13 @@ def sudoers(config_file: str = CONFIG_FILE) -> None:
     except ValidationError:
         _error_out("Invalid server side config file")
 
-    szh = SshZoneSudoers(config)
+    szh: BindSudoers | KnotSudoers
+    if config.service.server == "bind":
+        szh = BindSudoers(config)
+    elif config.service.server == "knot":
+        szh = KnotSudoers(config)
+    else:
+        _error_out("Unsupported server configured")
     szh.generate()
 
 
@@ -83,7 +91,14 @@ def wrapper(config_file: str = CONFIG_FILE) -> None:
     except KeyError:
         pass
 
-    szh = SshZoneCommand(config)
+    szh: BindCommand | KnotCommand
+    if config.service.server == "bind":
+        szh = BindCommand(config)
+    elif config.service.server == "knot":
+        szh = KnotCommand(config)
+    else:
+        _error_out("Unsupported server configured")
+
     try:
         szh.invoke(ssh_command, username)
     except InvokeError as error:

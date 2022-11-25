@@ -28,6 +28,7 @@ profile = "black"
 
 [tool.pylint.'MAIN']
 extension-pkg-allow-list = "pydantic"
+disable="too-few-public-methods"
 
 [tool.pytest.ini_options]
 log_format = "%(message)s"

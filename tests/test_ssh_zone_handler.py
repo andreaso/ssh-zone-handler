@@ -8,8 +8,9 @@ import pwd
 import pytest
 from pydantic import ValidationError
 
+from ssh_zone_handler.bind import BindCommand
 from ssh_zone_handler.cli import _read_config, sudoers, wrapper
-from ssh_zone_handler.commands import SshZoneCommand
+from ssh_zone_handler.knot import KnotCommand
 
 
 def mock_pwd_name(name):
@@ -175,14 +176,14 @@ def test_bind_log_filtering():
     zones = ["example.net"]
     filtered = []
     # pylint: disable=protected-access
-    for line in SshZoneCommand._SshZoneCommand__filter_bind_logs(log_lines, zones):
+    for line in BindCommand._filter_logs(log_lines, zones):
         filtered.append(line)
     assert filtered == pre_filtered_data_net.split("\n")
 
     zones = ["example.com", "example.net"]
     filtered = []
     # pylint: disable=protected-access
-    for line in SshZoneCommand._SshZoneCommand__filter_bind_logs(log_lines, zones):
+    for line in BindCommand._filter_logs(log_lines, zones):
         filtered.append(line)
     assert filtered == pre_filtered_data_com_net.split("\n")
 
@@ -205,13 +206,13 @@ def test_knot_log_filtering():
     zones = ["example.net"]
     filtered = []
     # pylint: disable=protected-access
-    for line in SshZoneCommand._SshZoneCommand__filter_knot_logs(log_lines, zones):
+    for line in KnotCommand._filter_logs(log_lines, zones):
         filtered.append(line)
     assert filtered == pre_filtered_data_net.split("\n")
 
     zones = ["example.com", "example.net"]
     filtered = []
     # pylint: disable=protected-access
-    for line in SshZoneCommand._SshZoneCommand__filter_knot_logs(log_lines, zones):
+    for line in KnotCommand._filter_logs(log_lines, zones):
         filtered.append(line)
     assert filtered == pre_filtered_data_com_net.split("\n")

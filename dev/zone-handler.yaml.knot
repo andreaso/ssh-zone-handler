@@ -3,8 +3,8 @@
 system:
   log_access_user: log-viewer
   server_type: knot
-  server_user: knot
-  systemd_unit: knot.service
+  # server_user: knot
+  # systemd_unit: knot.service
 zones:
   alice:
     - example.com

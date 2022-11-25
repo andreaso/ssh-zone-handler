@@ -17,10 +17,10 @@ class SshZoneHandler:
 
     def __init__(self, config: ZoneHandlerConf):
         self.config: ZoneHandlerConf = config
-        self.log_user: Final[str] = config.sudoers.logs
-        self.server: Final[str] = config.service.server
-        self.service_user: Final[str] = config.service.user
-        service_unit: Final[str] = config.service.systemd_unit
+        self.log_user: Final[str] = config.system.log_access_user
+        self.server: Final[str] = config.system.server_type
+        self.service_user: Final[str] = config.system.server_user
+        service_unit: Final[str] = config.system.systemd_unit
 
         self.journal_cmd: Final[tuple[str, str, str, str]] = (
             "/usr/bin/journalctl",
@@ -34,7 +34,7 @@ class SshZoneSudoers(SshZoneHandler):
     """Common class to pre-generate needed sudoers rules"""
 
     def __log_rules(self) -> list[str]:
-        users: KeysView[str] = self.config.users.keys()
+        users: KeysView[str] = self.config.zones.keys()
         command: str = " ".join(self.journal_cmd)
         rules: list[str] = []
 
@@ -75,7 +75,7 @@ class SshZoneCommand(SshZoneHandler):
         user_zones: Sequence[str] = ()
 
         try:
-            user_zones = tuple(self.config.users[username].zones)
+            user_zones = tuple(self.config.zones[username])
         except KeyError:
             pass
 

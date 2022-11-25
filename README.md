@@ -61,11 +61,7 @@ adduser --system --no-create-home --home /nonexistent --shell /usr/sbin/nologin 
 
 ### Create configuration
 
-Create `/etc/zone-handler.json` based on [zone-handler.json.example](zone-handler.json.example).
-
-Pending proper documentation, see
-[ssh_zone_handler/types.py](ssh_zone_handler/types.py) for a
-description of the config format.
+Create `/etc/zone-handler.yaml` based on [zone-handler.yaml.example](zone-handler.yaml.example).
 
 
 ### Install application
@@ -97,4 +93,3 @@ Match User alice,bob
 ## Known limitations
 
 * Might be Ubuntu distro specific
-* Less-than-ideal config format

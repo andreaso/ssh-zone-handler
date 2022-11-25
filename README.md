@@ -61,7 +61,9 @@ adduser --system --no-create-home --home /nonexistent --shell /usr/sbin/nologin 
 
 ### Create configuration
 
-Create `/etc/zone-handler.yaml` based on [zone-handler.yaml.example](zone-handler.yaml.example).
+Create `/etc/zone-handler.yaml` based on either
+[zone-handler.yaml.bind.example](zone-handler.yaml.bind.example) or
+[zone-handler.yaml.knot.example](zone-handler.yaml.knot.example).
 
 
 ### Install application

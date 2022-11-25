@@ -2,7 +2,7 @@
 
 * You run your own DNS server(s), providing Secondary DNS to others?
 * You want to provide your DNS tenants with a bit of self-service?
-* You like ssh, but you don't want to grant others full shell access?
+* You like SSH, but you don't want to grant others full shell access?
 
 If so, then this might just be the tool for you.
 
@@ -52,7 +52,7 @@ $
 
 ## Setup instructions
 
-### Add sudoers user with access to journald
+### Create log viewer user with journald access
 
 ```
 adduser --system --no-create-home --home /nonexistent --shell /usr/sbin/nologin --ingroup systemd-journal log-viewer

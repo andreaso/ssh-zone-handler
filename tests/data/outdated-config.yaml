@@ -1,0 +1,13 @@
+---
+
+system:
+  log_access_user: log-viewer
+  server_type: bind
+users:
+  alice:
+    zones:
+      - example.com
+      - example.net
+  bob:
+    zones:
+      - example.org

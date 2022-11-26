@@ -1,0 +1,10 @@
+---
+
+system:
+  log_access_user: odin
+  server_type: bind
+  server_user: named
+  systemd_unit: bind9.service
+zones:
+  bob:
+    - example.org

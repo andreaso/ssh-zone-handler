@@ -1,8 +1,8 @@
 # SSH Zone Handler
 
 * You run your own DNS server(s), providing Secondary DNS to others?
-* You want to provide your DNS tenants with a bit of self-service?
-* You like SSH, but you don't want to grant others full shell access?
+* You want to provide your DNS tenants with a bit of debugging self-service?
+* You like SSH, but you don't want to grant people not-you full shell access?
 
 If so, then this might just be the tool for you.
 

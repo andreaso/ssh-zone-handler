@@ -48,8 +48,8 @@ def sudoers(config_file: str = CONFIG_FILE) -> None:
         _error_out("Unable to access server side config file")
     except yaml.YAMLError:
         _error_out("Malformed YAML in server side config file")
-    except ValidationError:
-        _error_out("Invalid server side config file")
+    except ValidationError as vle:
+        _error_out(f"Invalid server side config file\n\n{str(vle)}")
 
     szh: BindSudoers | KnotSudoers
     if config.system.server_type == "bind":

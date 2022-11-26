@@ -104,7 +104,10 @@ def test_cli_zone_sudoers(caplog, capsys):
     with pytest.raises(SystemExit):
         sudoers("./tests/data/outdated-config.yaml")
     captured_outdated = caplog.text
-    assert captured_outdated == "Invalid server side config file\n"
+    assert (
+        "Invalid server side config file\n\n1 validation error for ZoneHandlerConf"
+        in captured_outdated
+    )
 
 
 def test_cli_zone_wrapper(caplog, capsys, mocker):

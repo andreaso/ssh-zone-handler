@@ -1,0 +1,13 @@
+---
+
+system:
+  log_access_user: log-viewer
+  server_type: bind
+  # server_user: bind
+  # systemd_unit: named.service
+zones:
+  alice:
+    - example.com
+    - example.net
+  bob:
+    - example.org

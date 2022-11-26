@@ -5,7 +5,7 @@ from subprocess import CompletedProcess
 from typing import Final, Iterator
 
 from .base import SshZoneCommand, SshZoneSudoers
-from .types import UserConf, ZoneHandlerConf
+from .types import ZoneHandlerConf
 
 
 class KnotSudoers(SshZoneSudoers):
@@ -16,12 +16,12 @@ class KnotSudoers(SshZoneSudoers):
         rules: list[str] = []
 
         user: str
-        user_conf: UserConf
-        for user, user_conf in self.config.users.items():
+        zones: list[str]
+        for user, zones in self.config.zones.items():
             cmd: str
             for cmd in ["zone-read", "zone-retransfer", "zone-status"]:
                 zone: str
-                for zone in user_conf.zones:
+                for zone in zones:
                     rule: str = (
                         f"{user}\tALL=({self.service_user}) NOPASSWD: "
                         + f"/usr/sbin/knotc {cmd} {zone}"

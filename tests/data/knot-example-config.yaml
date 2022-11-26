@@ -1,0 +1,11 @@
+---
+
+system:
+  log_access_user: log-viewer
+  server_type: knot
+zones:
+  alice:
+    - example.com
+    - example.net
+  bob:
+    - example.org

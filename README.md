@@ -61,18 +61,16 @@ adduser --system --no-create-home --home /nonexistent --shell /usr/sbin/nologin 
 
 ### Create configuration
 
-Create `/etc/zone-handler.json` based on [zone-handler.json.example](zone-handler.json.example).
-
-Pending proper documentation, see
-[ssh_zone_handler/types.py](ssh_zone_handler/types.py) for a
-description of the config format.
+Create `/etc/zone-handler.yaml` based on either
+[zone-handler.yaml.bind.example](zone-handler.yaml.bind.example) or
+[zone-handler.yaml.knot.example](zone-handler.yaml.knot.example).
 
 
 ### Install application
 
 ```
 python3 -m venv /opt/ssh-zone-handler
-/opt/ssh-zone-handler/bin/pip3 install git+https://github.com/andreaso/ssh-zone-handler.git@v0.2.1
+/opt/ssh-zone-handler/bin/pip3 install git+https://github.com/andreaso/ssh-zone-handler.git@v0.3.0
 ```
 
 
@@ -97,4 +95,3 @@ Match User alice,bob
 ## Known limitations
 
 * Might be Ubuntu distro specific
-* Less-than-ideal config format

@@ -18,59 +18,53 @@ def mock_pwd_name(name):
 
 
 def test_cli_read_config():
-    example_config = _read_config("./tests/data/example-config.json")
+    example_config = _read_config("./tests/data/bind-example-config.yaml")
     assert example_config == {
-        "sudoers": {
-            "logs": "log-viewer",
-        },
-        "service": {
-            "server": "bind",
+        "system": {
+            "log_access_user": "log-viewer",
+            "server_type": "bind",
+            "server_user": "bind",
             "systemd_unit": "named.service",
-            "user": "bind",
         },
-        "users": {
-            "alice": {"zones": ["example.com", "example.net"]},
-            "bob": {"zones": ["example.org"]},
+        "zones": {
+            "alice": ["example.com", "example.net"],
+            "bob": ["example.org"],
         },
     }
 
-    alternative_config = _read_config("./tests/data/alternative-config.json")
+    alternative_config = _read_config("./tests/data/bind-alternative-config.yaml")
     assert alternative_config == {
-        "sudoers": {
-            "logs": "odin",
-        },
-        "service": {
-            "server": "bind",
+        "system": {
+            "log_access_user": "odin",
+            "server_type": "bind",
+            "server_user": "named",
             "systemd_unit": "bind9.service",
-            "user": "named",
         },
-        "users": {
-            "bob": {"zones": ["example.org"]},
+        "zones": {
+            "bob": ["example.org"],
         },
     }
 
-    knot_config = _read_config("./tests/data/knot-config.json")
+    knot_config = _read_config("./tests/data/knot-example-config.yaml")
     assert knot_config == {
-        "sudoers": {
-            "logs": "log-viewer",
-        },
-        "service": {
-            "server": "knot",
+        "system": {
+            "log_access_user": "log-viewer",
+            "server_type": "knot",
+            "server_user": "knot",
             "systemd_unit": "knot.service",
-            "user": "knot",
         },
-        "users": {
-            "alice": {"zones": ["example.com", "example.net"]},
-            "bob": {"zones": ["example.org"]},
+        "zones": {
+            "alice": ["example.com", "example.net"],
+            "bob": ["example.org"],
         },
     }
 
     with pytest.raises(ValidationError):
-        _read_config("./tests/data/outdated-config.json")
+        _read_config("./tests/data/outdated-config.yaml")
 
 
 def test_cli_zone_sudoers(caplog, capsys):
-    sudoers("./tests/data/example-config.json")
+    sudoers("./tests/data/bind-example-config.yaml")
     captured_expected = capsys.readouterr()
 
     assert captured_expected.out == "\n".join(
@@ -87,7 +81,7 @@ def test_cli_zone_sudoers(caplog, capsys):
     )
 
     caplog.clear()
-    sudoers("./tests/data/knot-config.json")
+    sudoers("./tests/data/knot-example-config.yaml")
     captured_knot_expected = capsys.readouterr()
 
     assert captured_knot_expected.out == "\n".join(
@@ -108,44 +102,47 @@ def test_cli_zone_sudoers(caplog, capsys):
 
     caplog.clear()
     with pytest.raises(SystemExit):
-        sudoers("./tests/data/outdated-config.json")
+        sudoers("./tests/data/outdated-config.yaml")
     captured_outdated = caplog.text
-    assert captured_outdated == "Invalid server side config file\n"
+    assert (
+        "Invalid server side config file\n\n1 validation error for ZoneHandlerConf"
+        in captured_outdated
+    )
 
 
 def test_cli_zone_wrapper(caplog, capsys, mocker):
     mocker.patch("pwd.getpwuid", return_value=mock_pwd_name("alice"))
 
     os.environ["SSH_ORIGINAL_COMMAND"] = "list"
-    wrapper("./tests/data/example-config.json")
+    wrapper("./tests/data/bind-example-config.yaml")
     captured_passing = capsys.readouterr()
     assert captured_passing.out == "example.com\nexample.net\n"
 
     caplog.clear()
     os.environ["SSH_ORIGINAL_COMMAND"] = "sing"
     with pytest.raises(SystemExit):
-        wrapper("./tests/data/example-config.json")
+        wrapper("./tests/data/bind-example-config.yaml")
     captured_invalid = caplog.text
     assert captured_invalid == 'Invalid command, try "help"\n'
 
     caplog.clear()
     os.environ["SSH_ORIGINAL_COMMAND"] = "status"
     with pytest.raises(SystemExit):
-        wrapper("./tests/data/example-config.json")
+        wrapper("./tests/data/bind-example-config.yaml")
     captured_no_zone = caplog.text
     assert captured_no_zone == "No valid zone provided\n"
 
     caplog.clear()
     os.environ["SSH_ORIGINAL_COMMAND"] = "logs example.org"
     with pytest.raises(SystemExit):
-        wrapper("./tests/data/example-config.json")
+        wrapper("./tests/data/bind-example-config.yaml")
     captured_wrong_zone = caplog.text
     assert captured_wrong_zone == "No valid zone provided\n"
 
     caplog.clear()
     os.environ["SSH_ORIGINAL_COMMAND"] = "list"
     with pytest.raises(SystemExit):
-        wrapper("./tests/data/outdated-config.json")
+        wrapper("./tests/data/outdated-config.yaml")
     captured_outdated = caplog.text
     assert captured_outdated == "Invalid server side config file\n"
 
@@ -153,7 +150,7 @@ def test_cli_zone_wrapper(caplog, capsys, mocker):
     mocker.patch("pwd.getpwuid", return_value=mock_pwd_name("mallory"))
     os.environ["SSH_ORIGINAL_COMMAND"] = "help"
     with pytest.raises(SystemExit):
-        wrapper("./tests/data/example-config.json")
+        wrapper("./tests/data/bind-example-config.yaml")
     captured_unconf_user = caplog.text
     assert captured_unconf_user == 'No zones configured for user "mallory"\n'
 

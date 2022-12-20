@@ -40,3 +40,10 @@ repos:
         language: system
         types: [python]
         args: ["-rn", "-sn"]
+
+      - id: bandit
+        name: bandit
+        entry: poetry run bandit
+        language: system
+        types: [python]
+        args: ["-c", "pyproject.toml"]

@@ -23,14 +23,14 @@ class RunTests:
         vagrant_directory = os.path.abspath(os.path.join(base_directory, ".."))
 
         secondary_conf = subprocess.run(
-            ["vagrant", "ssh-config", "secondary"],
+            ["/usr/bin/vagrant", "ssh-config", "secondary"],
             stdout=subprocess.PIPE,
             cwd=vagrant_directory,
             check=True,
             text=True,
         )
         tertiary_conf = subprocess.run(
-            ["vagrant", "ssh-config", "tertiary"],
+            ["/usr/bin/vagrant", "ssh-config", "tertiary"],
             stdout=subprocess.PIPE,
             cwd=vagrant_directory,
             check=True,

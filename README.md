@@ -9,7 +9,7 @@ If so, then this might just be the tool for you.
 
 ## Usage
 
-Usage example, based on local [Vagrantfile](Vagrantfile) setup.
+Usage example, based on local [Vagrantfile][1] setup.
 
 ```
 $ vagrant up
@@ -62,8 +62,8 @@ adduser --system --no-create-home --home /nonexistent --shell /usr/sbin/nologin 
 ### Create configuration
 
 Create `/etc/zone-handler.yaml` based on either
-[zone-handler.yaml.bind.example](zone-handler.yaml.bind.example) or
-[zone-handler.yaml.knot.example](zone-handler.yaml.knot.example).
+[zone-handler.yaml.bind.example][2] or
+[zone-handler.yaml.knot.example][3].
 
 
 ### Install application
@@ -95,3 +95,8 @@ Match User alice,bob
 ## Known limitations
 
 * Might be Ubuntu distro specific
+
+
+[1]: https://github.com/andreaso/ssh-zone-handler/blob/main/Vagrantfile
+[2]: https://github.com/andreaso/ssh-zone-handler/blob/main/zone-handler.yaml.bind.example
+[3]: https://github.com/andreaso/ssh-zone-handler/blob/main/zone-handler.yaml.knot.example

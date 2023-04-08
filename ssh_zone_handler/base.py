@@ -85,7 +85,6 @@ class SshZoneCommand(SshZoneHandler):
     def __parse(
         ssh_command: str, user_zones: Sequence[str]
     ) -> tuple[Optional[str], list[str]]:
-
         args: list[str] = ssh_command.split()
         command: Optional[str] = None
         zones: list[str] = []

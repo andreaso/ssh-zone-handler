@@ -70,7 +70,7 @@ Create `/etc/zone-handler.yaml` based on either
 
 ```
 python3 -m venv /opt/ssh-zone-handler
-/opt/ssh-zone-handler/bin/pip3 install git+https://github.com/andreaso/ssh-zone-handler.git@v0.3.0
+/opt/ssh-zone-handler/bin/pip3 install ssh-zone-handler
 ```
 
 

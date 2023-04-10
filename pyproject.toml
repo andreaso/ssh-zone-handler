@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ssh-zone-handler"
-version = "0.3.1"
+version = "0.3.2"
 description = "SSH commands to provide Secondary DNS self-service."
 readme = "README.md"
 license = "MIT"

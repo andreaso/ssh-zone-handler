@@ -1,7 +1,10 @@
 
 zone "example.com" {
     type primary;
-    file "/etc/bind/zones/example.com.zone";
+    file "/var/lib/bind/example.com.zone";
+    key-directory "/etc/bind/keys/com";
+    auto-dnssec maintain;
+    inline-signing yes;
     allow-transfer { 192.168.63.11; 192.168.63.12; };
     also-notify { 192.168.63.11; 192.168.63.12; };
 };

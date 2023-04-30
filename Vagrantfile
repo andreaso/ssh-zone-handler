@@ -13,7 +13,11 @@ Vagrant.configure("2") do |config|
       DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --yes bind9 emacs-nox
 
       install --owner=root --group=root --mode=0755 --directory /etc/bind/zones
-      install --owner=root --group=root --mode=0644 /vagrant/dev/example-zone /etc/bind/zones/example.com.zone
+      install --owner=root --group=bind --mode=0750 --directory /etc/bind/keys
+      install --owner=root --group=bind --mode=0750 --directory /etc/bind/keys/com
+      install --owner=root --group=bind --mode=0640 /vagrant/dev/Kexample.com.*.private /etc/bind/keys/com/
+      install --owner=root --group=bind --mode=0644 /vagrant/dev/Kexample.com.*.key /etc/bind/keys/com/
+      install --owner=root --group=root --mode=0644 /vagrant/dev/example-zone /var/lib/bind/example.com.zone
       install --owner=root --group=root --mode=0644 /vagrant/dev/example-zone /etc/bind/zones/example.net.zone
       install --owner=root --group=root --mode=0644 /vagrant/dev/example-zone /etc/bind/zones/example.org.zone
       install --owner=root --group=root --mode=0644 /vagrant/dev/named.conf.primary /etc/bind/named.conf.local

@@ -50,8 +50,8 @@ cases: list[TestCase] = [
         command="dump",
         zones=["example.com"],
         stdout=PerDaemon(
-            bind="example.com.\t\t\t\t      3600 IN SOA\tprimary.example.com. hostmaster.example.net. 26281038 14400 3600 1209600 1800\nexample.com.\t\t\t\t      3600 IN NS\tprimary.example.com.\nexample.com.\t\t\t\t      3600 IN NS\tsecondary.example.com.\nprimary.example.com.\t\t\t      3600 IN A\t\t192.168.63.10\nsecondary.example.com.\t\t\t      3600 IN A\t\t192.168.63.11\ntertiary.example.com.\t\t\t      3600 IN A\t\t192.168.63.12\n",
-            knot="example.com. 3600 NS primary.example.com.\nexample.com. 3600 NS secondary.example.com.\nexample.com. 3600 SOA primary.example.com. hostmaster.example.net. 26281038 14400 3600 1209600 1800\nprimary.example.com. 3600 A 192.168.63.10\nsecondary.example.com. 3600 A 192.168.63.11\ntertiary.example.com. 3600 A 192.168.63.12\n",
+            bind="example.com.\t\t\t\t      3600 IN SOA\tprimary.example.com. hostmaster.example.net. 26281038 14400 3600 1209600 1800\nexample.com.\t\t\t\t      3600 IN NS\tprimary.example.com.\nexample.com.\t\t\t\t      3600 IN NS\tsecondary.example.com.\nprimary.example.com.\t\t\t      3600 IN A\t\t198.51.100.10\nsecondary.example.com.\t\t\t      3600 IN A\t\t198.51.100.11\ntertiary.example.com.\t\t\t      3600 IN A\t\t198.51.100.12\n",
+            knot="example.com. 3600 NS primary.example.com.\nexample.com. 3600 NS secondary.example.com.\nexample.com. 3600 SOA primary.example.com. hostmaster.example.net. 26281038 14400 3600 1209600 1800\nprimary.example.com. 3600 A 198.51.100.10\nsecondary.example.com. 3600 A 198.51.100.11\ntertiary.example.com. 3600 A 198.51.100.12\n",
         ),
     ),
     TestCase(

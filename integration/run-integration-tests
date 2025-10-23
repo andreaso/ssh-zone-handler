@@ -15,34 +15,8 @@ class RunTests:
     # pylint: disable=too-few-public-methods
     def __init__(self) -> None:
         # pylint: disable=consider-using-with
-        self.stash_directory = TemporaryDirectory(prefix="szh-")
-        self.ssh_conf_path: Final[str] = self.__vagrant_ssh_conf()
-
-    def __vagrant_ssh_conf(self) -> str:
-        base_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
-        vagrant_directory = os.path.abspath(os.path.join(base_directory, ".."))
-
-        secondary_conf = subprocess.run(
-            ["/usr/bin/vagrant", "ssh-config", "secondary"],
-            stdout=subprocess.PIPE,
-            cwd=vagrant_directory,
-            check=True,
-            text=True,
-        )
-        tertiary_conf = subprocess.run(
-            ["/usr/bin/vagrant", "ssh-config", "tertiary"],
-            stdout=subprocess.PIPE,
-            cwd=vagrant_directory,
-            check=True,
-            text=True,
-        )
-
-        ssh_conf_path = os.path.join(self.stash_directory.name, "ssh_conf")
-        with open(ssh_conf_path, "w", encoding="utf-8") as cf:
-            cf.write(secondary_conf.stdout)
-            cf.write(tertiary_conf.stdout)
-
-        return ssh_conf_path
+        basedir = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), ".."))
+        self.ssh_conf_path: Final[str] = os.path.join(basedir, "devel/.generated/ssh_conf")
 
     def test(self, host: str, daemon: str, case: TestCase) -> None:
         full_command = [
@@ -85,7 +59,7 @@ class RunTests:
 def main() -> None:
     rt = RunTests()
 
-    for host, daemon in [("secondary", "BIND"), ("tertiary", "Knot")]:
+    for host, daemon in [("szh-secondary", "BIND"), ("szh-tertiary", "Knot")]:
         print(f"* Testing {host} {daemon} host")
         case: TestCase
         for case in cases:

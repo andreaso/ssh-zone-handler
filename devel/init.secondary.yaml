@@ -1,0 +1,7 @@
+#cloud-config
+
+package_update: true
+packages:
+  - bind9
+  - python3-venv
+  - jq

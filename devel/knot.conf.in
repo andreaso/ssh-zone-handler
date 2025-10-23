@@ -2,7 +2,7 @@
 server:
     rundir: "/run/knot"
     user: knot:knot
-    listen: [127.0.0.1, ::1, 192.168.63.12]
+    listen: [127.0.0.1, ::1, __TERTIARY_IP__]
 
 log:
   - target: syslog
@@ -18,7 +18,7 @@ template:
 
 remote:
   - id: primary
-    address: 192.168.63.10
+    address: __PRIMARY_IP__
 
 acl:
  - id: notify

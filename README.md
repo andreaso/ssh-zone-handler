@@ -9,18 +9,18 @@ If so, then this might just be the tool for you.
 
 ## Usage
 
-Usage example, based on local [Vagrantfile][1] setup.
+Usage example, based on local [Multipass][1] setup.
 
 ```
-$ vagrant up
-```
-
-```
-$ alias ssh="ssh -i .vagrant/machines/secondary/virtualbox/private_key"
+$ make vm-create
 ```
 
 ```
-$ ssh alice@192.168.63.11 help
+$ alias ssh='ssh -F devel/.generated/ssh_conf'
+```
+
+```
+$ ssh alice@szh-secondary help
 usage: command [ZONE]
 
 help                 Display this help message
@@ -33,14 +33,14 @@ $
 ```
 
 ```
-$ ssh alice@192.168.63.11 list
+$ ssh alice@szh-secondary list
 example.com
 example.net
 $
 ```
 
 ```
-$ ssh alice@192.168.63.11 logs example.net
+$ ssh alice@szh-secondary logs example.net
 Apr 28 17:52:00 szh-secondary named[2821]: zone example.net/IN: Transfer started.
 Apr 28 17:52:00 szh-secondary named[2821]: transfer of 'example.net/IN' from 192.168.63.10#53: connected using 192.168.63.10#53
 Apr 28 17:52:00 szh-secondary named[2821]: zone example.net/IN: transferred serial 26281038
@@ -97,6 +97,6 @@ Match User alice,bob
 * Might be Ubuntu distro specific
 
 
-[1]: https://github.com/andreaso/ssh-zone-handler/blob/main/Vagrantfile
+[1]: https://documentation.ubuntu.com/multipass/
 [2]: https://github.com/andreaso/ssh-zone-handler/blob/main/zone-handler.yaml.bind.example
 [3]: https://github.com/andreaso/ssh-zone-handler/blob/main/zone-handler.yaml.knot.example

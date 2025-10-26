@@ -26,6 +26,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+        with:
+          persist-credentials: false
 
       - name: Install Poetry
         run: pipx install poetry
@@ -74,6 +76,11 @@ jobs:
 
       - name: Lint GitHub Actions workflows
         run: actionlint
+
+      - name: Analyze GitHub Actions
+        run: zizmor --format=github .
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Markdown lint README
         run: markdownlint --disable MD012 MD013 MD014 MD040 -- README.md

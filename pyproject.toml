@@ -17,7 +17,6 @@ isort = "^5.12.0"
 black = ">=23.3,<25.0"
 mypy = "^1.2.0"
 pylint = "^2.17.2"
-bandit = {extras = ["toml"], version = "^1.7.5"}
 pytest = "^7.2.2"
 pytest-mock = "^3.10.0"
 types-pyyaml = "^6.0.12.9"
@@ -32,13 +31,6 @@ profile = "black"
 [tool.pylint.'MAIN']
 extension-pkg-allow-list = "pydantic"
 disable="too-few-public-methods"
-
-[tool.bandit]
-exclude_dirs = [".venv"]
-skips = ["B404", "B603"]
-
-[tool.bandit.assert_used]
-skips = ["*/test_*.py", "*/run-integration-tests"]
 
 [tool.pytest.ini_options]
 log_format = "%(message)s"

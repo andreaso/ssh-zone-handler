@@ -1,6 +1,0 @@
-{
-  "threshold": 0,
-  "reporters": ["consoleFull"],
-  "ignore": ["/github/workspace/tests/data/*"],
-  "absolute": true
-}

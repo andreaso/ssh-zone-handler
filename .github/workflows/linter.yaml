@@ -12,7 +12,6 @@ on:
 
 permissions:
   contents: read
-  statuses: write
 
 jobs:
   poetry:
@@ -60,19 +59,21 @@ jobs:
       - name: Run Pytest
         run: poetry run pytest
 
-  lint:
-    name: Super-Linter
-    runs-on: ubuntu-latest
+  secondary:
+    name: Secondary linting
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
         with:
-          fetch-depth: 0
+          persist-credentials: false
 
-      - name: Lint
-        uses: github/super-linter/slim@v4
-        env:
-          VALIDATE_ALL_CODEBASE: true
-          DEFAULT_BRANCH: main
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Setup Secondary Linters
+        uses: andreaso/setup-secondary-linters@main
+
+      - name: Lint GitHub Actions workflows
+        run: actionlint
+
+      - name: Markdown lint README
+        run: markdownlint --disable MD012 MD013 MD014 MD040 -- README.md

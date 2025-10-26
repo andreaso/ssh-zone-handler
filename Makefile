@@ -11,9 +11,9 @@ devel/.generated/id_alice_ed25519: devel/.generated
 	ssh-keygen -q -t ed25519 -N '' -f "$@" -C alice
 
 vm-create: devel/.generated/id_alice_ed25519
-	multipass launch --name szh-primary --cloud-init ./devel/init.primary.yaml --mount $(shell pwd):/mp jammy
-	multipass launch --name szh-secondary --cloud-init ./devel/init.secondary.yaml --mount $(shell pwd):/mp jammy
-	multipass launch --name szh-tertiary --cloud-init ./devel/init.tertiary.yaml --mount $(shell pwd):/mp jammy
+	multipass launch --name szh-primary --cloud-init ./devel/init.primary.yaml --mount $(shell pwd):/mp noble
+	multipass launch --name szh-secondary --cloud-init ./devel/init.secondary.yaml --mount $(shell pwd):/mp noble
+	multipass launch --name szh-tertiary --cloud-init ./devel/init.tertiary.yaml --mount $(shell pwd):/mp noble
 	multipass info --format=json > ./devel/.generated/multipass_info.json
 	./devel/output-ssh-conf > ./devel/.generated/ssh_conf
 	multipass exec szh-primary -- sudo bash /mp/devel/setup.primary.sh

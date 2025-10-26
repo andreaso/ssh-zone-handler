@@ -1,7 +1,5 @@
 """Testing top level functionality"""
 
-# pylint: disable=missing-function-docstring,line-too-long
-
 import os
 import pwd
 
@@ -172,14 +170,12 @@ def test_bind_log_filtering():
 
     zones = ["example.net"]
     filtered = []
-    # pylint: disable=protected-access
     for line in BindCommand._filter_logs(log_lines, zones):
         filtered.append(line)
     assert filtered == pre_filtered_data_net.split("\n")
 
     zones = ["example.com", "example.net"]
     filtered = []
-    # pylint: disable=protected-access
     for line in BindCommand._filter_logs(log_lines, zones):
         filtered.append(line)
     assert filtered == pre_filtered_data_com_net.split("\n")
@@ -202,14 +198,12 @@ def test_knot_log_filtering():
 
     zones = ["example.net"]
     filtered = []
-    # pylint: disable=protected-access
     for line in KnotCommand._filter_logs(log_lines, zones):
         filtered.append(line)
     assert filtered == pre_filtered_data_net.split("\n")
 
     zones = ["example.com", "example.net"]
     filtered = []
-    # pylint: disable=protected-access
     for line in KnotCommand._filter_logs(log_lines, zones):
         filtered.append(line)
     assert filtered == pre_filtered_data_com_net.split("\n")

@@ -13,7 +13,6 @@ class BindSudoers(SshZoneSudoers):
     """Pre-generate needed BIND sudoers rules"""
 
     def _server_command_rules(self) -> list[str]:
-        # pylint: disable=duplicate-code
         rules: list[str] = []
 
         user: str
@@ -61,7 +60,6 @@ class BindCommand(SshZoneCommand):
         return zone_file
 
     def _dump(self, zone: str) -> None:
-        # pylint: disable=duplicate-code
         logging.info('Outputting "%s" zone content', zone)
 
         lookup_failure = f'Failed to lookup zone file for zone "{zone}"'

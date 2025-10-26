@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-# pylint: disable=invalid-name
-# pylint: disable=missing-module-docstring,missing-class-docstring,missing-function-docstring
 
 import os
 import subprocess
@@ -12,9 +10,7 @@ from integration_cases import TestCase, cases
 
 
 class RunTests:
-    # pylint: disable=too-few-public-methods
     def __init__(self) -> None:
-        # pylint: disable=consider-using-with
         basedir = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), ".."))
         self.ssh_conf_path: Final[str] = os.path.join(basedir, "devel/.generated/ssh_conf")
 
@@ -33,7 +29,6 @@ class RunTests:
         chosen_stdout: str = case.stdout.pick(daemon)
         chosen_stderr: str = case.stderr.pick(daemon)
 
-        # pylint: disable=subprocess-run-check
         result = subprocess.run(full_command, capture_output=True, text=True)
 
         try:

@@ -27,7 +27,6 @@ class SystemConf(BaseModel):
     systemd_unit = ""
 
     @validator("server_user", always=True)
-    # pylint: disable=no-self-argument
     def _default_user(cls, user: str, values: dict[str, str]) -> str:
         if not user:
             try:
@@ -37,7 +36,6 @@ class SystemConf(BaseModel):
         return user
 
     @validator("systemd_unit", always=True)
-    # pylint: disable=no-self-argument
     def _default_unit(cls, systemd_unit: str, values: dict[str, str]) -> str:
         if not systemd_unit:
             try:

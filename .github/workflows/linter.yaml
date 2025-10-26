@@ -43,17 +43,14 @@ jobs:
       - name: Install dependencies
         run: poetry install
 
-      - name: Check import order
-        run: poetry run isort --check ssh_zone_handler/ tests/
+      - name: Check ruff formating
+        run: poetry run ruff format --diff ssh_zone_handler/ tests/
 
-      - name: Check Black formating
-        run: poetry run black --check ssh_zone_handler/ tests/
+      - name: Check ruff linting
+        run: poetry run ruff check ssh_zone_handler/ tests/
 
       - name: Verify type hints
         run: poetry run mypy --strict ssh_zone_handler/
-
-      - name: Run Pylint
-        run: poetry run pylint -rn -sn ssh_zone_handler/ tests/
 
       - name: Run Pytest
         run: poetry run pytest

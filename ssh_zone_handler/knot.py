@@ -12,7 +12,6 @@ class KnotSudoers(SshZoneSudoers):
     """Pre-generate needed Knot sudoers rules"""
 
     def _server_command_rules(self) -> list[str]:
-        # pylint: disable=duplicate-code
         rules: list[str] = []
 
         user: str
@@ -56,7 +55,6 @@ class KnotCommand(SshZoneCommand):
         return "\n".join(filtered)
 
     def _dump(self, zone: str) -> None:
-        # pylint: disable=duplicate-code
         logging.info('Outputting "%s" zone content', zone)
 
         command = self.knotc_prefix + ("zone-read", zone)

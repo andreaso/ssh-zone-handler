@@ -1,6 +1,3 @@
-# pylint: disable=invalid-name,line-too-long
-# pylint: disable=missing-module-docstring,missing-class-docstring,missing-function-docstring
-
 from dataclasses import dataclass
 
 

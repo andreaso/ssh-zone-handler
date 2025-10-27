@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass
@@ -22,8 +22,8 @@ class TestCase:
     name: str
     command: str
     zones: list[str]
-    stdout: PerDaemon = PerDaemon()
-    stderr: PerDaemon = PerDaemon()
+    stdout: PerDaemon = field(default_factory=PerDaemon)
+    stderr: PerDaemon = field(default_factory=PerDaemon)
     rc: int = 0
 
 

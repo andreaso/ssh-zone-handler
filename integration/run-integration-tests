@@ -3,7 +3,6 @@
 import os
 import subprocess
 import sys
-from tempfile import TemporaryDirectory
 from typing import Final
 
 from integration_cases import TestCase, cases
@@ -12,7 +11,9 @@ from integration_cases import TestCase, cases
 class RunTests:
     def __init__(self) -> None:
         basedir = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), ".."))
-        self.ssh_conf_path: Final[str] = os.path.join(basedir, "devel/.generated/ssh_conf")
+        self.ssh_conf_path: Final[str] = os.path.join(
+            basedir, "devel/.generated/ssh_conf"
+        )
 
     def test(self, host: str, daemon: str, case: TestCase) -> None:
         full_command = [

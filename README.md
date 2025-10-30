@@ -28,7 +28,6 @@ list                 List available zones
 dump ZONE            Output full content of ZONE
 logs ZONE1 [ZONE2]   Output the last five days' log entries for ZONE(s)
 retransfer ZONE      Trigger a full (AXFR) retransfer of ZONE
-status ZONE          Show ZONE status
 $
 ```
 

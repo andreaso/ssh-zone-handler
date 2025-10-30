@@ -18,7 +18,7 @@ class KnotSudoers(SshZoneSudoers):
         zones: list[str]
         for user, zones in self.config.zones.items():
             cmd: str
-            for cmd in ["zone-read", "zone-retransfer", "zone-status"]:
+            for cmd in ["zone-read", "zone-retransfer"]:
                 zone: str
                 for zone in zones:
                     rule: str = (
@@ -83,14 +83,3 @@ class KnotCommand(SshZoneCommand):
 
         self._runner(command, failure)
         print(f'Triggering retransfer of zone "{zone}"')
-
-    def _status(self, zone: str) -> None:
-        logging.info('Showing "%s" zone status', zone)
-
-        failure = f'Failed to display status for zone "{zone}"'
-        command = self.knotc_prefix + ("zone-status", zone)
-
-        result: CompletedProcess[str] = self._runner(command, failure)
-
-        zone_status: str = result.stdout.rstrip()
-        print(zone_status)

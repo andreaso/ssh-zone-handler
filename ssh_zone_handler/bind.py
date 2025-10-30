@@ -105,14 +105,3 @@ class BindCommand(SshZoneCommand):
 
         self._runner(command, failure)
         print(f'Triggering retransfer of zone "{zone}"')
-
-    def _status(self, zone: str) -> None:
-        logging.info('Showing "%s" zone status', zone)
-
-        failure = f'Failed to display status for zone "{zone}"'
-        command = self.rndc_prefix + ("zonestatus", zone)
-
-        result: CompletedProcess[str] = self._runner(command, failure)
-
-        zone_status: str = result.stdout.rstrip()
-        print(zone_status)

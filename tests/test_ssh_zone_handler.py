@@ -90,11 +90,8 @@ def test_cli_zone_sudoers(caplog, capsys):
             "alice\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-read example.net",
             "alice\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-retransfer example.com",
             "alice\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-retransfer example.net",
-            "alice\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-status example.com",
-            "alice\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-status example.net",
             "bob\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-read example.org",
-            "bob\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-retransfer example.org",
-            "bob\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-status example.org\n",
+            "bob\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-retransfer example.org\n",
         ]
     )
 
@@ -122,13 +119,6 @@ def test_cli_zone_wrapper(caplog, capsys, mocker):
         wrapper("./tests/data/bind-example-config.yaml")
     captured_invalid = caplog.text
     assert captured_invalid == 'Invalid command, try "help"\n'
-
-    caplog.clear()
-    os.environ["SSH_ORIGINAL_COMMAND"] = "status"
-    with pytest.raises(SystemExit):
-        wrapper("./tests/data/bind-example-config.yaml")
-    captured_no_zone = caplog.text
-    assert captured_no_zone == "No valid zone provided\n"
 
     caplog.clear()
     os.environ["SSH_ORIGINAL_COMMAND"] = "logs example.org"

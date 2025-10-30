@@ -89,7 +89,7 @@ class SshZoneCommand(SshZoneHandler):
         command: Optional[str] = None
         zones: list[str] = []
 
-        if args[0] in ["help", "list", "dump", "logs", "retransfer", "status"]:
+        if args[0] in ["help", "list", "dump", "logs", "retransfer"]:
             command = args[0]
         args.pop(0)
 
@@ -120,7 +120,6 @@ class SshZoneCommand(SshZoneHandler):
         print("dump ZONE\t\tOutput full content of ZONE")
         print("logs ZONE1 [ZONE2]\tOutput the last five days' log entries for ZONE(s)")
         print("retransfer ZONE\t\tTrigger a full (AXFR) retransfer of ZONE")
-        print("status ZONE\t\tShow ZONE status")
 
     @staticmethod
     def _filter_logs(log_lines: list[str], zones: list[str]) -> Iterator[str]:
@@ -144,9 +143,6 @@ class SshZoneCommand(SshZoneHandler):
         raise NotImplementedError("Gets defined in each daemon specific subclass")
 
     def _retransfer(self, zone: str) -> None:
-        raise NotImplementedError("Gets defined in each daemon specific subclass")
-
-    def _status(self, zone: str) -> None:
         raise NotImplementedError("Gets defined in each daemon specific subclass")
 
     def invoke(self, ssh_command: str, username: str) -> None:
@@ -183,5 +179,3 @@ class SshZoneCommand(SshZoneHandler):
             self.__logs(zones)
         elif command == "retransfer":
             self._retransfer(zones[0])
-        elif command == "status":
-            self._status(zones[0])

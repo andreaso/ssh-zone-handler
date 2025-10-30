@@ -17,7 +17,7 @@ def mock_pwd_name(name):
 
 def test_cli_read_config():
     example_config = _read_config("./tests/data/bind-example-config.yaml")
-    assert example_config == {
+    assert example_config.model_dump() == {
         "system": {
             "log_access_user": "log-viewer",
             "server_type": "bind",
@@ -31,7 +31,7 @@ def test_cli_read_config():
     }
 
     alternative_config = _read_config("./tests/data/bind-alternative-config.yaml")
-    assert alternative_config == {
+    assert alternative_config.model_dump() == {
         "system": {
             "log_access_user": "odin",
             "server_type": "bind",
@@ -44,7 +44,7 @@ def test_cli_read_config():
     }
 
     knot_config = _read_config("./tests/data/knot-example-config.yaml")
-    assert knot_config == {
+    assert knot_config.model_dump() == {
         "system": {
             "log_access_user": "log-viewer",
             "server_type": "knot",

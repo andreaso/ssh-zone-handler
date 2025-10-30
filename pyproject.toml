@@ -9,7 +9,7 @@ repository = "https://github.com/andreaso/ssh-zone-handler"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-pydantic = "^1.10.7"
+pydantic = "^2.12"
 pyyaml = "^6.0"
 
 [tool.poetry.group.dev.dependencies]

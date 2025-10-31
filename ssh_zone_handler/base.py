@@ -1,9 +1,9 @@
 """Base classes"""
 
 import logging
-from collections.abc import KeysView, Sequence
+from collections.abc import Iterator, KeysView, Sequence
 from subprocess import CalledProcessError, CompletedProcess, run
-from typing import Final, Iterator, Optional
+from typing import Final
 
 from .types import ZoneHandlerConf
 
@@ -15,7 +15,7 @@ class InvokeError(Exception):
 class SshZoneHandler:
     """Parse shared config, define constants, etc"""
 
-    def __init__(self, config: ZoneHandlerConf):
+    def __init__(self, config: ZoneHandlerConf) -> None:
         self.config: ZoneHandlerConf = config
         self.log_user: Final[str] = config.system.log_access_user
         self.server: Final[str] = config.system.server_type
@@ -63,7 +63,7 @@ class SshZoneSudoers(SshZoneHandler):
 class SshZoneCommand(SshZoneHandler):
     """Command class to runs the actual commands"""
 
-    def __init__(self, config: ZoneHandlerConf):
+    def __init__(self, config: ZoneHandlerConf) -> None:
         super().__init__(config)
 
         self.sudo_prefix: Final[tuple[str, str]] = (
@@ -84,9 +84,9 @@ class SshZoneCommand(SshZoneHandler):
     @staticmethod
     def __parse(
         ssh_command: str, user_zones: Sequence[str]
-    ) -> tuple[Optional[str], list[str]]:
+    ) -> tuple[str | None, list[str]]:
         args: list[str] = ssh_command.split()
-        command: Optional[str] = None
+        command: str | None = None
         zones: list[str] = []
 
         if args[0] in ["help", "list", "dump", "logs", "retransfer"]:
@@ -158,7 +158,7 @@ class SshZoneCommand(SshZoneHandler):
         if not user_zones:
             raise InvokeError(f'No zones configured for user "{username}"')
 
-        command: Optional[str]
+        command: str | None
         zones: list[str]
         command, zones = self.__parse(ssh_command, user_zones)
 

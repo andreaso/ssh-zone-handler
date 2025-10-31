@@ -2,8 +2,9 @@
 
 import logging
 import re
+from collections.abc import Iterator
 from subprocess import CompletedProcess
-from typing import Final, Iterator, Optional
+from typing import Final
 
 from .base import InvokeError, SshZoneCommand, SshZoneSudoers
 from .types import ZoneHandlerConf
@@ -34,21 +35,21 @@ class BindSudoers(SshZoneSudoers):
 class BindCommand(SshZoneCommand):
     """Runs the actual commands, for BIND"""
 
-    def __init__(self, config: ZoneHandlerConf):
+    def __init__(self, config: ZoneHandlerConf) -> None:
         super().__init__(config)
 
         self.rndc_prefix: Final[tuple[str, str, str]] = self.sudo_prefix + (
             "/usr/sbin/rndc",
         )
 
-    def __lookup(self, zone: str, failure: str) -> Optional[str]:
-        zone_file: Optional[str] = None
+    def __lookup(self, zone: str, failure: str) -> str | None:
+        zone_file: str | None = None
         command = self.rndc_prefix + ("zonestatus", zone)
 
         result: CompletedProcess[str] = self._runner(command, failure)
 
         line: str
-        matched: Optional[re.Match[str]]
+        matched: re.Match[str] | None
         pattern = re.compile(r"^([^:]+): (.+)$")
         for line in result.stdout.split("\n"):
             matched = pattern.match(line)
@@ -63,7 +64,7 @@ class BindCommand(SshZoneCommand):
         logging.info('Outputting "%s" zone content', zone)
 
         lookup_failure = f'Failed to lookup zone file for zone "{zone}"'
-        zone_file: Optional[str] = self.__lookup(zone, lookup_failure)
+        zone_file: str | None = self.__lookup(zone, lookup_failure)
         if not zone_file:
             raise InvokeError(lookup_failure)
 

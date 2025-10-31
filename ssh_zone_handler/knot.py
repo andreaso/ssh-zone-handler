@@ -1,8 +1,9 @@
 """Knot specific subclasses"""
 
 import logging
+from collections.abc import Iterator
 from subprocess import CompletedProcess
-from typing import Final, Iterator
+from typing import Final
 
 from .base import SshZoneCommand, SshZoneSudoers
 from .types import ZoneHandlerConf
@@ -33,7 +34,7 @@ class KnotSudoers(SshZoneSudoers):
 class KnotCommand(SshZoneCommand):
     """Runs the actual commands, for Knot"""
 
-    def __init__(self, config: ZoneHandlerConf):
+    def __init__(self, config: ZoneHandlerConf) -> None:
         super().__init__(config)
 
         self.knotc_prefix: Final[tuple[str, str, str]] = self.sudo_prefix + (

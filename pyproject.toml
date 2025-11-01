@@ -28,6 +28,30 @@ dev = [
 szh-sudoers = "ssh_zone_handler.cli:sudoers"
 szh-wrapper = "ssh_zone_handler.cli:wrapper"
 
+[tool.ruff.lint]
+select = [
+  "F",   # Pyflakes
+  "E",   # pycodestyle errors
+  "W",   # pycodestyle warnings
+  "I",   # isort
+  "N",   # pep8-naming
+  "PL",  # pylint
+  "UP",  # pyupgrade
+  "RUF", # ruff
+  "ERA", # eradicate
+  "YTT", # flake8-2020
+  "ANN", # flake8-annotations
+  "S",   # flake8-bandit
+  "B",   # flake8-bugbear
+  "A",   # flake8-builtins
+  "C4",  # flake8-comprehensions
+  "DTZ", # flake8-datetimez
+  "ICN", # flake8-import-conventions
+  "SIM", # flake8-simplify
+  "ARG", # flake8-unused-arguments
+]
+ignore = ["N805", "RUF005", "S603", "SIM105"]
+
 [tool.pytest.ini_options]
 log_format = "%(message)s"
 

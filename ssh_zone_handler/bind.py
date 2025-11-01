@@ -53,10 +53,9 @@ class BindCommand(SshZoneCommand):
         pattern = re.compile(r"^([^:]+): (.+)$")
         for line in result.stdout.split("\n"):
             matched = pattern.match(line)
-            if matched:
-                if matched.group(1) == "files":
-                    zone_file = matched.group(2)
-                    break
+            if matched and matched.group(1) == "files":
+                zone_file = matched.group(2)
+                break
 
         return zone_file
 

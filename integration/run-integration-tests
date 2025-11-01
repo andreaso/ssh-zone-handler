@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# ruff: noqa: PLW1510, S101
 
 import os
 import subprocess
@@ -41,14 +42,14 @@ class RunTests:
         try:
             assert result.stderr == chosen_stderr
         except AssertionError as error:
-            print(f"Expected standard error:  {repr(chosen_stderr)}")
-            print(f"Resulted standard error:  {repr(result.stderr)}")
+            print(f"Expected standard error:  {chosen_stderr!r}")
+            print(f"Resulted standard error:  {result.stderr!r}")
             raise error
         try:
             assert result.stdout == chosen_stdout
         except AssertionError as error:
-            print(f"Expected standard output:  {repr(chosen_stdout)}")
-            print(f"Resulted standard output:  {repr(result.stdout)}")
+            print(f"Expected standard output:  {chosen_stdout!r}")
+            print(f"Resulted standard output:  {result.stdout!r}")
             raise error
 
 

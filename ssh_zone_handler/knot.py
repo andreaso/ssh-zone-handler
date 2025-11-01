@@ -49,9 +49,10 @@ class KnotCommand(SshZoneCommand):
         filtered: list[str] = []
 
         for line in lines:
+            no_prefix = line
             if line.startswith(prefix):
-                line = line[offset:]
-            filtered.append(line)
+                no_prefix = line[offset:]
+            filtered.append(no_prefix)
 
         return "\n".join(filtered)
 

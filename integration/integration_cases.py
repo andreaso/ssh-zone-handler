@@ -1,3 +1,5 @@
+# ruff: noqa: E501
+
 from dataclasses import dataclass, field
 
 

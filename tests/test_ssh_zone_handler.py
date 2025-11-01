@@ -1,3 +1,4 @@
+# ruff: noqa: ANN001, ANN201, S101
 """Testing top level functionality"""
 
 import os

@@ -12,7 +12,7 @@ class PerDaemon:
     def pick(self, daemon: str) -> str:
         if self.shared is not None:
             return self.shared
-        if self.bind is not None and daemon.lower() == "bind":
+        if self.bind is not None and daemon.lower() == "bind9":
             return self.bind
         if self.knot is not None and daemon.lower() == "knot":
             return self.knot
@@ -49,8 +49,8 @@ cases: list[TestCase] = [
         command="dump",
         zones=["example.com"],
         stdout=PerDaemon(
-            bind="example.com.\t\t\t\t      3600 IN SOA\tprimary.example.com. hostmaster.example.net. 26281038 14400 3600 1209600 1800\nexample.com.\t\t\t\t      3600 IN NS\tprimary.example.com.\nexample.com.\t\t\t\t      3600 IN NS\tsecondary.example.com.\nprimary.example.com.\t\t\t      3600 IN A\t\t198.51.100.10\nsecondary.example.com.\t\t\t      3600 IN A\t\t198.51.100.11\ntertiary.example.com.\t\t\t      3600 IN A\t\t198.51.100.12\n",
-            knot="example.com. 3600 NS primary.example.com.\nexample.com. 3600 NS secondary.example.com.\nexample.com. 3600 SOA primary.example.com. hostmaster.example.net. 26281038 14400 3600 1209600 1800\nprimary.example.com. 3600 A 198.51.100.10\nsecondary.example.com. 3600 A 198.51.100.11\ntertiary.example.com. 3600 A 198.51.100.12\n",
+            bind="example.com.\t\t\t\t      3600 IN SOA\tprimary.example.com. hostmaster.example.net. 26281038 14400 3600 1209600 1800\nexample.com.\t\t\t\t      3600 IN NS\tprimary.example.com.\nexample.com.\t\t\t\t      3600 IN NS\tsecondary.example.com.\nprimary.example.com.\t\t\t      3600 IN A\t\t127.0.0.7\nsecondary.example.com.\t\t\t      3600 IN A\t\t127.0.0.1\n",
+            knot="example.com. 3600 NS primary.example.com.\nexample.com. 3600 NS secondary.example.com.\nexample.com. 3600 SOA primary.example.com. hostmaster.example.net. 26281038 14400 3600 1209600 1800\nprimary.example.com. 3600 A 127.0.0.7\nsecondary.example.com. 3600 A 127.0.0.1\n",
         ),
     ),
     TestCase(

@@ -1,0 +1,5 @@
+
+Match User alice,bob
+     ForceCommand /opt/ssh-zone-handler/bin/szh-wrapper
+     PermitTTY no
+     DisableForwarding yes

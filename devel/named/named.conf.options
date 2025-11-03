@@ -9,5 +9,6 @@ options {
     dnssec-validation no;
     notify explicit;
 
-    listen-on { any; };
+    listen-on { 127.0.0.1; };
+    listen-on-v6 { none; };
 };

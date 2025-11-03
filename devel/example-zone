@@ -10,6 +10,5 @@ $TTL    3600
 
 @            IN      NS      primary
 @            IN      NS      secondary
-primary      IN      A       198.51.100.10
-secondary    IN      A       198.51.100.11
-tertiary     IN      A       198.51.100.12
+primary      IN      A       127.0.0.7
+secondary    IN      A       127.0.0.1

@@ -1,0 +1,5 @@
+/etc/primary/** r,
+/var/cache/primary/** lrw,
+/var/cache/primary/ rw,
+/run/primary/named.pid w,
+/run/primary/session.key w,

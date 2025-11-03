@@ -2,17 +2,17 @@
 zone "example.com" {
     type secondary;
     file "/var/cache/bind/example.com.zone";
-    primaries { __PRIMARY_IP__; };
+    primaries { 127.0.0.7; };
 };
 
 zone "example.net" {
     type secondary;
     file "/var/cache/bind/example.net.zone";
-    primaries { __PRIMARY_IP__; };
+    primaries { 127.0.0.7; };
 };
 
 zone "example.org" {
     type secondary;
     file "/var/cache/bind/example.org.zone";
-    primaries { __PRIMARY_IP__; };
+    primaries { 127.0.0.7; };
 };

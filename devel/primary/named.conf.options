@@ -1,0 +1,19 @@
+options {
+    directory "/var/cache/primary";
+    pid-file "/run/primary/named.pid";
+    session-keyfile "/run/primary/session.key";
+
+    allow-query { any; };
+    allow-query-cache { none; };
+    allow-transfer { none; };
+
+    recursion no;
+    dnssec-validation no;
+    notify explicit;
+
+    notify-source 127.0.0.7;
+    listen-on { 127.0.0.7; };
+    listen-on-v6 { none; };
+};
+
+controls {};

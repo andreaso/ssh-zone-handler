@@ -1,0 +1,6 @@
+
+Host szh-named szh-knot
+     Hostname 127.0.0.1
+     User alice
+     IdentitiesOnly yes
+     IdentityFile ~/.ssh/id_alice_ed25519

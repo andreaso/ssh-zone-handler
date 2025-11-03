@@ -1,0 +1,21 @@
+
+zone "example.com" {
+    type primary;
+    file "/etc/primary/zones/example.com.zone";
+    allow-transfer { 127.0.0.1; };
+    also-notify { 127.0.0.1; };
+};
+
+zone "example.net" {
+    type primary;
+    file "/etc/primary/zones/example.net.zone";
+    allow-transfer { 127.0.0.1; };
+    also-notify { 127.0.0.1; };
+};
+
+zone "example.org" {
+    type primary;
+    file "/etc/primary/zones/example.org.zone";
+    allow-transfer { 127.0.0.1; };
+    also-notify { 127.0.0.1; };
+};

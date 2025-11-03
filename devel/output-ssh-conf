@@ -4,19 +4,19 @@ set -o nounset
 set -o noglob
 set -o pipefail
 
-generated_path="$(dirname "$(realpath "$0")")/.generated"
-mp_info_path="${generated_path}/multipass_info.json"
-ssh_key_path="${generated_path}/id_alice_ed25519"
+dynamic_path="$(dirname "$(realpath "$0")")/.dynamic"
+mp_info_path="${dynamic_path}/multipass_info.json"
+ssh_key_path="${dynamic_path}/id_alice_ed25519"
 
-secondary_ip=$(jq -r '.info."szh-secondary".ipv4[0]' < "$mp_info_path")
-tertiary_ip=$(jq -r '.info."szh-tertiary".ipv4[0]' < "$mp_info_path")
+named_ip=$(jq -r '.info."szh-named".ipv4[0]' < "$mp_info_path")
+knot_ip=$(jq -r '.info."szh-knot".ipv4[0]' < "$mp_info_path")
 
 cat <<EOF
-Host szh-secondary
-     Hostname $secondary_ip
+Host szh-named
+     Hostname $named_ip
 
-Host szh-tertiary
-     Hostname $tertiary_ip
+Host szh-knot
+     Hostname $knot_ip
 
 Host *
      User alice

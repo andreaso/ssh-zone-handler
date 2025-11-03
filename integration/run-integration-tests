@@ -13,10 +13,10 @@ class RunTests:
     def __init__(self) -> None:
         basedir = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), ".."))
         self.ssh_conf_path: Final[str] = os.path.join(
-            basedir, "devel/.generated/ssh_conf"
+            basedir, "devel/.dynamic/ssh_conf"
         )
 
-    def test(self, host: str, daemon: str, case: TestCase) -> None:
+    def test(self, host: str, daemon: str, tc: TestCase) -> None:
         full_command = [
             "ssh",
             "-F",
@@ -24,19 +24,19 @@ class RunTests:
             "-l",
             "alice",
             host,
-            case.command,
+            tc.command,
         ]
-        full_command += case.zones
+        full_command += tc.zones
 
-        chosen_stdout: str = case.stdout.pick(daemon)
-        chosen_stderr: str = case.stderr.pick(daemon)
+        chosen_stdout: str = tc.stdout.pick(daemon)
+        chosen_stderr: str = tc.stderr.pick(daemon)
 
         result = subprocess.run(full_command, capture_output=True, text=True)
 
         try:
-            assert result.returncode == case.rc
+            assert result.returncode == tc.rc
         except AssertionError as error:
-            print(f"Expected return code: {case.rc}")
+            print(f"Expected return code: {tc.rc}")
             print(f"Resulted return code: {result.returncode}")
             raise error
         try:
@@ -56,17 +56,30 @@ class RunTests:
 def main() -> None:
     rt = RunTests()
 
-    for host, daemon in [("szh-secondary", "BIND"), ("szh-tertiary", "Knot")]:
-        print(f"* Testing {host} {daemon} host")
-        case: TestCase
-        for case in cases:
-            print(f"** Test {case.name}")
-            try:
-                rt.test(host, daemon, case)
-            except AssertionError:
-                print("\nTest failed. Aborting.")
-                sys.exit(1)
-        print()
+    try:
+        daemon = sys.argv[1]
+    except IndexError:
+        print(f"Usage: {sys.argv[0]} DAEMON", file=sys.stderr)
+        sys.exit(1)
+
+    if daemon == "BIND9":
+        host = "szh-named"
+    elif daemon == "Knot":
+        host = "szh-knot"
+    else:
+        raise ValueError("Unsupported daemon")
+
+    print(f"* Testing {host} {daemon} host")
+    tc: TestCase
+    for tc in cases:
+        print(f"** Test {tc.name}")
+        try:
+            rt.test(host, daemon, tc)
+        except AssertionError:
+            print(
+                "\nTest failed. Aborting.",
+            )
+            sys.exit(1)
 
 
 if __name__ == "__main__":

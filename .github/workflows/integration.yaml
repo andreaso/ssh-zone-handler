@@ -1,0 +1,158 @@
+---
+
+name: Integration
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  integration:
+    name: Integration
+    runs-on: ubuntu-24.04
+
+    strategy:
+      matrix:
+        py_version: ["3.10", "3.11", "3.12", "3.13"]
+        secondary: ["BIND9", "Knot"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Enable Python ${{ matrix.py_version }}
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.py_version }}
+
+      - name: Set BIND9 test environment variables
+        if: matrix.secondary == 'BIND9'
+        run: |
+          echo "GHA_SZH_DAEMON=BIND9" >> "$GITHUB_ENV"
+          echo "GHA_SZH_CFILE=zone-handler.yaml.bind.example" >> "$GITHUB_ENV"
+
+      - name: Set Knot test environment variables
+        if: matrix.secondary == 'Knot'
+        run: |
+          echo "GHA_SZH_DAEMON=Knot" >> "$GITHUB_ENV"
+          echo "GHA_SZH_CFILE=zone-handler.yaml.knot.example" >> "$GITHUB_ENV"
+
+      - name: Install Knot
+        if: matrix.secondary == 'Knot'
+        run: |
+          sudo ln -s /dev/null /etc/systemd/system/knot.service
+          sudo apt-get install --yes knot
+
+      - name: Install named
+        run: |
+          sudo ln -s /dev/null /etc/systemd/system/named.service
+          sudo apt-get install --yes bind9
+
+      - name: Extend named apparmor profile
+        run: |
+          sudo install --owner=root --group=root --mode=0644 --no-target-directory devel/apparmor_local_named /etc/apparmor.d/local/usr.sbin.named
+          sudo apparmor_parser -r /etc/apparmor.d/usr.sbin.named
+
+      - name: Create system user for primary named service
+        run: sudo adduser --no-create-home --home /var/cache/primary --group --system primary
+
+      - name: Bind to additional localhost ip for primary named service
+        run: sudo ip address add 127.0.0.7/8 dev lo
+
+      - name: Create directories for primary named service
+        run: |
+          sudo install --owner=root --group=root --mode=0755 --directory /etc/primary /etc/primary/zones
+          sudo install --owner=root --group=primary --mode=0775 --directory /var/cache/primary
+
+      - name: Install example zone(s) on primary named service
+        run: |
+          sudo install --owner=root --group=root --mode=0644 --no-target-directory devel/example-zone /etc/primary/zones/example.com.zone
+          sudo install --owner=root --group=root --mode=0644 --no-target-directory devel/example-zone /etc/primary/zones/example.net.zone
+          sudo install --owner=root --group=root --mode=0644 --no-target-directory devel/example-zone /etc/primary/zones/example.org.zone
+
+      - name: Provide configuration for primary named service
+        run: >
+          sudo install --owner=root --group=root --mode=0644
+          devel/primary/named.conf devel/primary/named.conf.options devel/primary/named.conf.local
+          /etc/primary/
+
+      - name: Provide systemd service for primary named service
+        run: sudo install --owner=root --group=root --mode=0644 devel/primary/primary.service /etc/systemd/system/
+
+      - name: Start primary named services
+        run: sudo systemctl start primary.service
+
+      - name: Provide configuration for secondary regular named service
+        if: matrix.secondary == 'BIND9'
+        run: >
+          sudo install --owner=root --group=root --mode=0644
+          devel/named/named.conf.options devel/named/named.conf.local
+          /etc/bind/
+
+      - name: Start secondary named services
+        if: matrix.secondary == 'BIND9'
+        run: |
+          sudo rm /etc/systemd/system/named.service
+          sudo systemctl start named.service
+
+      - name: Provide configuration for Knot
+        if: matrix.secondary == 'Knot'
+        run: sudo install --owner=root --group=root --mode=0644 devel/knot/knot.conf /etc/knot/
+
+      - name: Start Knot services
+        if: matrix.secondary == 'Knot'
+        run: |
+          sudo rm /etc/systemd/system/knot.service
+          sudo systemctl start knot.service
+
+      - name: Install ssh-zone-handler
+        run: |
+          "$python_binary" -m venv /opt/ssh-zone-handler
+          /opt/ssh-zone-handler/bin/pip3 install .
+          sudo install --owner=root --group=root --mode=0644 --no-target-directory "$GHA_SZH_CFILE" /etc/zone-handler.yaml
+        env:
+          python_binary: python${{ matrix.py_version }}
+
+      - name: Create Alice's ssh key
+        run: ssh-keygen -t ed25519 -N '' -f ~/.ssh/id_alice_ed25519 -C alice
+
+      - name: Setup Alice's user
+        run: |
+          sudo adduser --quiet --disabled-password --gecos "Alice,,,,Living Next Door" alice
+          sudo install --owner=alice --group=alice --mode=0700 --directory ~alice/.ssh
+          sudo install --owner=alice --group=alice --mode=0644 --no-target-directory ~runner/.ssh/id_alice_ed25519.pub ~alice/.ssh/authorized_keys
+
+      - name: Setup log-viewer user
+        run: sudo adduser --system --ingroup systemd-journal log-viewer
+
+      - name: Generate sudoers file
+        run: >
+          /opt/ssh-zone-handler/bin/szh-sudoers
+          | sudo EDITOR="tee" visudo -f /etc/sudoers.d/zone-handler
+
+      - name: Install sshd
+        run: sudo apt-get install --yes openssh-server
+
+      - name: Update sshd configuration
+        run: |
+          # shellcheck disable=SC2002
+          cat devel/sshd_match | sudo tee --append /etc/ssh/sshd_config
+          sudo systemctl restart ssh.service
+
+      - name: Prime ~/.ssh/known_hosts
+        run: echo "127.0.0.1 $(cat /etc/ssh/ssh_host_ed25519_key.pub)" >> ~/.ssh/known_hosts
+
+      - name: Run test
+        run: |
+          mkdir ./devel/.dynamic
+          cp ./devel/gha_alice_ssh_conf ./devel/.dynamic/ssh_conf
+          /usr/bin/python3 ./integration/run-integration-tests "$GHA_SZH_DAEMON"

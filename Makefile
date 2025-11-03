@@ -4,30 +4,27 @@ default: moo
 moo:
 	@apt moo
 
-devel/.generated:
-	mkdir devel/.generated
+devel/.dynamic:
+	mkdir -m700 "$@"
 
-devel/.generated/id_alice_ed25519: devel/.generated
-	ssh-keygen -q -t ed25519 -N '' -f "$@" -C alice
+vm-create: devel/.dynamic
+	multipass launch --name szh-named --cloud-init ./devel/init.yaml --mount $(shell pwd):/mp noble
+	multipass launch --name szh-knot --cloud-init ./devel/init.yaml --mount $(shell pwd):/mp noble
+	multipass info --format=json > ./devel/.dynamic/multipass_info.json
+	./devel/output-ssh-conf > ./devel/.dynamic/ssh_conf
+	ssh-keygen -q -t ed25519 -N '' -f "./devel/.dynamic/id_alice_ed25519" -C alice
+	multipass exec szh-named -- sudo bash /mp/devel/setup.named.sh
+	multipass exec szh-knot -- sudo bash /mp/devel/setup.knot.sh
 
-vm-create: devel/.generated/id_alice_ed25519
-	multipass launch --name szh-primary --cloud-init ./devel/init.primary.yaml --mount $(shell pwd):/mp noble
-	multipass launch --name szh-secondary --cloud-init ./devel/init.secondary.yaml --mount $(shell pwd):/mp noble
-	multipass launch --name szh-tertiary --cloud-init ./devel/init.tertiary.yaml --mount $(shell pwd):/mp noble
-	multipass info --format=json > ./devel/.generated/multipass_info.json
-	./devel/output-ssh-conf > ./devel/.generated/ssh_conf
-	multipass exec szh-primary -- sudo bash /mp/devel/setup.primary.sh
-	multipass exec szh-secondary -- sudo bash /mp/devel/setup.secondary.sh
-	multipass exec szh-tertiary -- sudo bash /mp/devel/setup.tertiary.sh
 
 vm-boot:
-	multipass start szh-primary szh-secondary szh-tertiary
+	multipass start szh-named szh-knot
 
 vm-shutdown:
-	multipass stop szh-primary szh-secondary szh-tertiary
+	multipass stop szh-named szh-knot
 
 vm-destroy: vm-shutdown
-	multipass delete --purge szh-primary szh-secondary szh-tertiary
-	rm -rf ./devel/.generated
+	multipass delete --purge szh-named szh-knot
+	rm -rf  ./devel/.dynamic/
 
 .PHONY: default moo vm-create vm-boot vm-shutdown vm-destroy

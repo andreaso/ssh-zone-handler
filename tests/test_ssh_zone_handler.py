@@ -3,6 +3,7 @@
 
 import os
 import pwd
+from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
@@ -17,7 +18,7 @@ def mock_pwd_name(name):
 
 
 def test_cli_read_config():
-    example_config = _read_config("./tests/data/bind-example-config.yaml")
+    example_config = _read_config(Path("./tests/data/bind-example-config.yaml"))
     assert example_config.model_dump() == {
         "system": {
             "log_access_user": "log-viewer",
@@ -31,7 +32,7 @@ def test_cli_read_config():
         },
     }
 
-    alternative_config = _read_config("./tests/data/bind-alternative-config.yaml")
+    alternative_config = _read_config(Path("./tests/data/bind-alternative-config.yaml"))
     assert alternative_config.model_dump() == {
         "system": {
             "log_access_user": "odin",
@@ -44,7 +45,7 @@ def test_cli_read_config():
         },
     }
 
-    knot_config = _read_config("./tests/data/knot-example-config.yaml")
+    knot_config = _read_config(Path("./tests/data/knot-example-config.yaml"))
     assert knot_config.model_dump() == {
         "system": {
             "log_access_user": "log-viewer",
@@ -59,11 +60,11 @@ def test_cli_read_config():
     }
 
     with pytest.raises(ValidationError):
-        _read_config("./tests/data/outdated-config.yaml")
+        _read_config(Path("./tests/data/outdated-config.yaml"))
 
 
 def test_cli_zone_sudoers(caplog, capsys):
-    sudoers("./tests/data/bind-example-config.yaml")
+    sudoers(Path("./tests/data/bind-example-config.yaml"))
     captured_expected = capsys.readouterr()
 
     assert captured_expected.out == "\n".join(
@@ -80,7 +81,7 @@ def test_cli_zone_sudoers(caplog, capsys):
     )
 
     caplog.clear()
-    sudoers("./tests/data/knot-example-config.yaml")
+    sudoers(Path("./tests/data/knot-example-config.yaml"))
     captured_knot_expected = capsys.readouterr()
 
     assert captured_knot_expected.out == "\n".join(
@@ -98,7 +99,7 @@ def test_cli_zone_sudoers(caplog, capsys):
 
     caplog.clear()
     with pytest.raises(SystemExit):
-        sudoers("./tests/data/outdated-config.yaml")
+        sudoers(Path("./tests/data/outdated-config.yaml"))
     captured_outdated = caplog.text
     assert (
         "Invalid server side config file\n\n1 validation error for ZoneHandlerConf"
@@ -110,28 +111,28 @@ def test_cli_zone_wrapper(caplog, capsys, mocker):
     mocker.patch("pwd.getpwuid", return_value=mock_pwd_name("alice"))
 
     os.environ["SSH_ORIGINAL_COMMAND"] = "list"
-    wrapper("./tests/data/bind-example-config.yaml")
+    wrapper(Path("./tests/data/bind-example-config.yaml"))
     captured_passing = capsys.readouterr()
     assert captured_passing.out == "example.com\nexample.net\n"
 
     caplog.clear()
     os.environ["SSH_ORIGINAL_COMMAND"] = "sing"
     with pytest.raises(SystemExit):
-        wrapper("./tests/data/bind-example-config.yaml")
+        wrapper(Path("./tests/data/bind-example-config.yaml"))
     captured_invalid = caplog.text
     assert captured_invalid == 'Invalid command, try "help"\n'
 
     caplog.clear()
     os.environ["SSH_ORIGINAL_COMMAND"] = "logs example.org"
     with pytest.raises(SystemExit):
-        wrapper("./tests/data/bind-example-config.yaml")
+        wrapper(Path("./tests/data/bind-example-config.yaml"))
     captured_wrong_zone = caplog.text
     assert captured_wrong_zone == "No valid zone provided\n"
 
     caplog.clear()
     os.environ["SSH_ORIGINAL_COMMAND"] = "list"
     with pytest.raises(SystemExit):
-        wrapper("./tests/data/outdated-config.yaml")
+        wrapper(Path("./tests/data/outdated-config.yaml"))
     captured_outdated = caplog.text
     assert captured_outdated == "Invalid server side config file\n"
 
@@ -139,62 +140,54 @@ def test_cli_zone_wrapper(caplog, capsys, mocker):
     mocker.patch("pwd.getpwuid", return_value=mock_pwd_name("mallory"))
     os.environ["SSH_ORIGINAL_COMMAND"] = "help"
     with pytest.raises(SystemExit):
-        wrapper("./tests/data/bind-example-config.yaml")
+        wrapper(Path("./tests/data/bind-example-config.yaml"))
     captured_unconf_user = caplog.text
     assert captured_unconf_user == 'No zones configured for user "mallory"\n'
 
 
 def test_bind_log_filtering():
-    pre_filtered_file_net = "./tests/data/filtered-named-example-net.txt"
-    with open(pre_filtered_file_net, encoding="utf-8") as fin:
-        pre_filtered_data_net = fin.read().rstrip()
+    filtered_file_net = Path("./tests/data/filtered-named-example-net.txt")
+    filtered_data_net = filtered_file_net.read_text(encoding="utf-8").rstrip()
 
-    pre_filtered_file_com_net = "./tests/data/filtered-named-example-com-net.txt"
-    with open(pre_filtered_file_com_net, encoding="utf-8") as fin:
-        pre_filtered_data_com_net = fin.read().rstrip()
+    filtered_file_com_net = Path("./tests/data/filtered-named-example-com-net.txt")
+    filtered_data_com_net = filtered_file_com_net.read_text(encoding="utf-8").rstrip()
 
-    log_file = "./tests/data/journald-named.txt"
-    with open(log_file, encoding="utf-8") as fin:
-        log_data = fin.read()
-
+    log_file = Path("./tests/data/journald-named.txt")
+    log_data = log_file.read_text(encoding="utf-8")
     log_lines = log_data.split("\n")
 
     zones = ["example.net"]
     filtered = []
     for line in BindCommand._filter_logs(log_lines, zones):
         filtered.append(line)
-    assert filtered == pre_filtered_data_net.split("\n")
+    assert filtered == filtered_data_net.split("\n")
 
     zones = ["example.com", "example.net"]
     filtered = []
     for line in BindCommand._filter_logs(log_lines, zones):
         filtered.append(line)
-    assert filtered == pre_filtered_data_com_net.split("\n")
+    assert filtered == filtered_data_com_net.split("\n")
 
 
 def test_knot_log_filtering():
-    pre_filtered_file_net = "./tests/data/filtered-knot-example-net.txt"
-    with open(pre_filtered_file_net, encoding="utf-8") as fin:
-        pre_filtered_data_net = fin.read().rstrip()
+    filtered_file_net = Path("./tests/data/filtered-knot-example-net.txt")
+    filtered_data_net = filtered_file_net.read_text(encoding="utf-8").rstrip()
 
-    pre_filtered_file_com_net = "./tests/data/filtered-knot-example-com-net.txt"
-    with open(pre_filtered_file_com_net, encoding="utf-8") as fin:
-        pre_filtered_data_com_net = fin.read().rstrip()
+    filtered_file_com_net = Path("./tests/data/filtered-knot-example-com-net.txt")
+    filtered_data_com_net = filtered_file_com_net.read_text(encoding="utf-8").rstrip()
 
-    log_file = "./tests/data/journald-knot.txt"
-    with open(log_file, encoding="utf-8") as fin:
-        log_data = fin.read()
-
+    log_file = Path("./tests/data/journald-knot.txt")
+    log_data = log_file.read_text(encoding="utf-8")
     log_lines = log_data.split("\n")
 
     zones = ["example.net"]
     filtered = []
     for line in KnotCommand._filter_logs(log_lines, zones):
         filtered.append(line)
-    assert filtered == pre_filtered_data_net.split("\n")
+    assert filtered == filtered_data_net.split("\n")
 
     zones = ["example.com", "example.net"]
     filtered = []
     for line in KnotCommand._filter_logs(log_lines, zones):
         filtered.append(line)
-    assert filtered == pre_filtered_data_com_net.split("\n")
+    assert filtered == filtered_data_com_net.split("\n")

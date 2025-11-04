@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # ruff: noqa: PLW1510, S101
 
-import os
 import subprocess
 import sys
+from pathlib import Path
 from typing import Final
 
 from integration_cases import TestCase, cases
@@ -11,16 +11,15 @@ from integration_cases import TestCase, cases
 
 class RunTests:
     def __init__(self) -> None:
-        basedir = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), ".."))
-        self.ssh_conf_path: Final[str] = os.path.join(
-            basedir, "devel/.dynamic/ssh_conf"
+        self.ssh_conf_path: Final[Path] = (
+            Path(__file__).parent.parent / "devel/.dynamic/ssh_conf"
         )
 
     def test(self, host: str, daemon: str, tc: TestCase) -> None:
         full_command = [
             "ssh",
             "-F",
-            self.ssh_conf_path,
+            str(self.ssh_conf_path),
             "-l",
             "alice",
             host,

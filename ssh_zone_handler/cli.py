@@ -5,6 +5,7 @@ import logging.config
 import os
 import pwd
 import sys
+from pathlib import Path
 from typing import Final
 
 import yaml
@@ -16,7 +17,7 @@ from .knot import KnotCommand, KnotSudoers
 from .static import LOGCONF
 from .types import ZoneHandlerConf
 
-CONFIG_FILE: Final[str] = "/etc/zone-handler.yaml"
+CONFIG_FILE: Final[Path] = Path("/etc/zone-handler.yaml")
 
 logging.config.dictConfig(LOGCONF)
 
@@ -26,14 +27,14 @@ def _error_out(message: str) -> None:
     sys.exit(1)
 
 
-def _read_config(config_file: str) -> ZoneHandlerConf:
-    with open(config_file, encoding="utf-8") as fin:
+def _read_config(config_file: Path) -> ZoneHandlerConf:
+    with config_file.open(encoding="utf-8") as fin:
         config = ZoneHandlerConf(**yaml.safe_load(fin))
 
     return config
 
 
-def sudoers(config_file: str = CONFIG_FILE) -> None:
+def sudoers(config_file: Path = CONFIG_FILE) -> None:
     """
     Entry point for the szh-sudoers script
 
@@ -61,7 +62,7 @@ def sudoers(config_file: str = CONFIG_FILE) -> None:
     szh.generate()
 
 
-def wrapper(config_file: str = CONFIG_FILE) -> None:
+def wrapper(config_file: Path = CONFIG_FILE) -> None:
     """
     Entry point for the szh-wrapper script
 

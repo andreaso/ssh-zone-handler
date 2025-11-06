@@ -25,6 +25,7 @@ dev = [
 ]
 
 [project.scripts]
+szh-verify  = "ssh_zone_handler.cli:verifier"
 szh-sudoers = "ssh_zone_handler.cli:sudoers"
 szh-wrapper = "ssh_zone_handler.cli:wrapper"
 

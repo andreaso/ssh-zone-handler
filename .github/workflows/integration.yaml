@@ -122,6 +122,24 @@ jobs:
         env:
           python_binary: python${{ matrix.py_version }}
 
+      - name: Run szh-verify command against known good config files
+        run: |
+          /opt/ssh-zone-handler/bin/szh-verify ./tests/data/knot-example-config.yaml
+          /opt/ssh-zone-handler/bin/szh-verify ./tests/data/bind-example-config.yaml
+          /opt/ssh-zone-handler/bin/szh-verify ./tests/data/bind-alternative-config.yaml
+
+      - name: Run szh-verify command against non-existing config file
+        run: |
+          if /opt/ssh-zone-handler/bin/szh-verify ./completly-bogus-filename; then
+              echo "Failed to fail expected fail."; exit 1
+          fi
+
+      - name: Run szh-verify command against invalid config file
+        run: |
+          if /opt/ssh-zone-handler/bin/szh-verify ./tests/data/outdated-config.yaml; then
+              echo "Failed to fail expected fail."; exit 1
+          fi
+
       - name: Create Alice's ssh key
         run: ssh-keygen -t ed25519 -N '' -f ~/.ssh/id_alice_ed25519 -C alice
 

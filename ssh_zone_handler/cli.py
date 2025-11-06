@@ -34,6 +34,30 @@ def _read_config(config_file: Path) -> ZoneHandlerConf:
     return config
 
 
+def verifier() -> None:
+    """
+    Entry point for the szh-verify script
+
+    Verifies the syntax of a not-yet-installed config file
+
+    Usage: /path/to/szh-verify /new/zone-handler.yaml
+    """
+
+    try:
+        config_file = Path(sys.argv[1])
+    except IndexError:
+        _error_out(f"Usage: {sys.argv[0]} /path/to/zone-handler.yaml")
+
+    try:
+        _read_config(config_file)
+    except (FileNotFoundError, PermissionError):
+        _error_out(f"Unable to access {config_file.absolute()}")
+    except yaml.YAMLError:
+        _error_out(f"Malformed YAML in {config_file.absolute()}")
+    except ValidationError as vle:
+        _error_out(f"Invalid {config_file.absolute()}\n\n{vle}")
+
+
 def sudoers(config_file: Path = CONFIG_FILE) -> None:
     """
     Entry point for the szh-sudoers script

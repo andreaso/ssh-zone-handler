@@ -14,12 +14,13 @@ permissions:
   contents: read
 
 jobs:
-  poetry:
-    name: Poetry
+  python:
+    name: Python linting
 
     strategy:
       matrix:
         py_version: ["3.10", "3.11", "3.12", "3.13"]
+        dependencies: ["constrained", "unconstrained"]
 
     runs-on: ubuntu-24.04
 
@@ -40,8 +41,15 @@ jobs:
       - name: Use Python ${{ matrix.py_version }} with Poetry
         run: poetry env use python${{ matrix.py_version }}
 
+      - name: Poetry self-check
+        run: poetry check
+
       - name: Install dependencies
         run: poetry install
+
+      - name: Update dependencies
+        if: matrix.dependencies == 'unconstrained'
+        run: poetry update
 
       - name: Check ruff formating
         run: poetry run ruff format --diff ssh_zone_handler/ tests/

@@ -26,9 +26,13 @@ def test_cli_read_config():
             "server_user": "bind",
             "systemd_unit": "named.service",
         },
-        "zones": {
-            "alice": ["example.com", "example.net"],
-            "bob": ["example.org"],
+        "users": {
+            "alice": {
+                "zones": ["example.com", "example.net"],
+            },
+            "bob": {
+                "zones": ["example.org"],
+            },
         },
     }
 
@@ -40,8 +44,10 @@ def test_cli_read_config():
             "server_user": "named",
             "systemd_unit": "bind9.service",
         },
-        "zones": {
-            "bob": ["example.org"],
+        "users": {
+            "bob": {
+                "zones": ["example.org"],
+            },
         },
     }
 
@@ -53,9 +59,13 @@ def test_cli_read_config():
             "server_user": "knot",
             "systemd_unit": "knot.service",
         },
-        "zones": {
-            "alice": ["example.com", "example.net"],
-            "bob": ["example.org"],
+        "users": {
+            "alice": {
+                "zones": ["example.com", "example.net"],
+            },
+            "bob": {
+                "zones": ["example.org"],
+            },
         },
     }
 

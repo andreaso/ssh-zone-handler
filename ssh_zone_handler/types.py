@@ -4,6 +4,7 @@ from typing import Annotated, Final, Literal
 
 from pydantic import BaseModel, Field, ValidationInfo, field_validator
 
+InternalUser = Annotated[str, Field(pattern=r"^[a-z][a-z0-9.@_-]*[a-z0-9]$")]
 SystemUser = Annotated[str, Field(pattern=r"^[a-z_][a-z0-9_-]*[a-z0-9]$")]
 ServiceUnit = Annotated[str, Field(pattern=r"^[a-z][a-z0-9_-]*[a-z0-9]\.service$")]
 FwdZone = Annotated[str, Field(pattern=r"^([a-z0-9][a-z0-9-]+[a-z0-9]\.)+[a-z]+$")]
@@ -52,10 +53,18 @@ class SystemConf(BaseModel, extra="forbid", frozen=True):
         return systemd_unit
 
 
+class UserConf(BaseModel, extra="forbid", frozen=True):
+    """
+    Subset of ZoneHandlerConf
+    """
+
+    zones: list[Zone]
+
+
 class ZoneHandlerConf(BaseModel, extra="forbid", frozen=True):
     """
     zone-handler.yaml structure
     """
 
     system: SystemConf
-    zones: dict[str, list[Zone]]
+    users: dict[InternalUser, UserConf]

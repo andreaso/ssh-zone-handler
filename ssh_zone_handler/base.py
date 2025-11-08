@@ -34,7 +34,7 @@ class SshZoneSudoers(SshZoneHandler):
     """Common class to pre-generate needed sudoers rules"""
 
     def __log_rules(self) -> list[str]:
-        users: KeysView[str] = self.config.zones.keys()
+        users: KeysView[str] = self.config.users.keys()
         command: str = " ".join(self.journal_cmd)
         rules: list[str] = []
 
@@ -75,7 +75,7 @@ class SshZoneCommand(SshZoneHandler):
         user_zones: Sequence[str] = ()
 
         try:
-            user_zones = tuple(self.config.zones[username])
+            user_zones = tuple(self.config.users[username].zones)
         except KeyError:
             pass
 

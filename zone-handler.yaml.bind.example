@@ -5,9 +5,11 @@ system:
   server_type: bind
   # server_user: bind
   # systemd_unit: named.service
-zones:
+users:
   alice:
-    - example.com
-    - example.net
+    zones:
+      - example.com
+      - example.net
   bob:
-    - example.org
+    zones:
+      - example.org

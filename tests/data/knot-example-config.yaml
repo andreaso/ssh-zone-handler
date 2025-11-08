@@ -3,9 +3,11 @@
 system:
   log_access_user: log-viewer
   server_type: knot
-zones:
+users:
   alice:
-    - example.com
-    - example.net
+    zones:
+      - example.com
+      - example.net
   bob:
-    - example.org
+    zones:
+      - example.org

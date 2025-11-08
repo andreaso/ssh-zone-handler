@@ -5,9 +5,11 @@ system:
   server_type: knot
   # server_user: knot
   # systemd_unit: knot.service
-zones:
+users:
   alice:
-    - example.com
-    - example.net
+    zones:
+      - example.com
+      - example.net
   bob:
-    - example.org
+    zones:
+      - example.org

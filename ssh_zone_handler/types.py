@@ -1,8 +1,15 @@
 """Custom types"""
 
-from typing import Final, Literal
+from typing import Annotated, Final, Literal
 
 from pydantic import BaseModel, Field, ValidationInfo, field_validator
+
+SystemUser = Annotated[str, Field(pattern=r"^[a-z0-9_][a-z0-9_-]*[a-z0-9]$")]
+ServiceUnit = Annotated[str, Field(pattern=r"^[a-z0-9][a-z0-9_-]*[a-z0-9]\.service$")]
+FwdZone = Annotated[str, Field(pattern=r"^([a-z0-9][a-z0-9-]+[a-z0-9]\.)+[a-z]+$")]
+Ptr4Zone = Annotated[str, Field(pattern=r"^[0-9/]+\.([0-9]+\.)+in-addr\.arpa$")]
+Ptr6Zone = Annotated[str, Field(pattern=r"^([a-f0-9]\.)+ip6\.arpa$")]
+Zone = FwdZone | Ptr4Zone | Ptr6Zone
 
 SERVICE_DEFAULTS: Final[dict[str, dict[str, str]]] = {
     "bind": {
@@ -16,17 +23,17 @@ SERVICE_DEFAULTS: Final[dict[str, dict[str, str]]] = {
 }
 
 
-class SystemConf(BaseModel):
+class SystemConf(BaseModel, extra="forbid", frozen=True):
     """
     Subset of ZoneHandlerConf
     """
 
-    log_access_user: str
+    log_access_user: SystemUser
     server_type: Literal["bind", "knot"]
-    server_user: str = Field(default="", validate_default=True)
-    systemd_unit: str = Field(default="", validate_default=True)
+    server_user: SystemUser = Field(default="", validate_default=True)
+    systemd_unit: ServiceUnit = Field(default="", validate_default=True)
 
-    @field_validator("server_user", mode="after")
+    @field_validator("server_user", mode="before")
     def _default_user(cls, user: str, values: ValidationInfo) -> str:
         if not user:
             try:
@@ -35,7 +42,7 @@ class SystemConf(BaseModel):
                 user = "nobody"
         return user
 
-    @field_validator("systemd_unit", mode="after")
+    @field_validator("systemd_unit", mode="before")
     def _default_unit(cls, systemd_unit: str, values: ValidationInfo) -> str:
         if not systemd_unit:
             try:
@@ -45,10 +52,10 @@ class SystemConf(BaseModel):
         return systemd_unit
 
 
-class ZoneHandlerConf(BaseModel):
+class ZoneHandlerConf(BaseModel, extra="forbid", frozen=True):
     """
-    zone-handler.json structure
+    zone-handler.yaml structure
     """
 
     system: SystemConf
-    zones: dict[str, list[str]]
+    zones: dict[str, list[Zone]]

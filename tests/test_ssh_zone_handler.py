@@ -102,7 +102,7 @@ def test_cli_zone_sudoers(caplog, capsys):
         sudoers(Path("./tests/data/outdated-config.yaml"))
     captured_outdated = caplog.text
     assert (
-        "Invalid server side config file\n\n1 validation error for ZoneHandlerConf"
+        "Invalid server side config file\n\n2 validation errors for ZoneHandlerConf"
         in captured_outdated
     )
 

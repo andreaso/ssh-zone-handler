@@ -3,11 +3,9 @@
 system:
   log_access_user: log-viewer
   server_type: bind
-users:
+zones:
   alice:
-    zones:
-      - example.com
-      - example.net
+    - example.com
+    - example.net
   bob:
-    zones:
-      - example.org
+    - example.org

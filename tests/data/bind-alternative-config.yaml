@@ -5,6 +5,7 @@ system:
   server_type: bind
   server_user: named
   systemd_unit: bind9.service
-zones:
+users:
   bob:
-    - example.org
+    zones:
+      - example.org

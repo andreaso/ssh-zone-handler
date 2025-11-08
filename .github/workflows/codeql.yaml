@@ -2,15 +2,7 @@
 
 name: CodeQL
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-  schedule:
-    - cron: "15 4 * * 6"
+on: push
 
 permissions:
   actions: read

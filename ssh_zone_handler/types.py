@@ -4,8 +4,8 @@ from typing import Annotated, Final, Literal
 
 from pydantic import BaseModel, Field, ValidationInfo, field_validator
 
-SystemUser = Annotated[str, Field(pattern=r"^[a-z0-9_][a-z0-9_-]*[a-z0-9]$")]
-ServiceUnit = Annotated[str, Field(pattern=r"^[a-z0-9][a-z0-9_-]*[a-z0-9]\.service$")]
+SystemUser = Annotated[str, Field(pattern=r"^[a-z_][a-z0-9_-]*[a-z0-9]$")]
+ServiceUnit = Annotated[str, Field(pattern=r"^[a-z][a-z0-9_-]*[a-z0-9]\.service$")]
 FwdZone = Annotated[str, Field(pattern=r"^([a-z0-9][a-z0-9-]+[a-z0-9]\.)+[a-z]+$")]
 Ptr4Zone = Annotated[str, Field(pattern=r"^[0-9/]+\.([0-9]+\.)+in-addr\.arpa$")]
 Ptr6Zone = Annotated[str, Field(pattern=r"^([a-f0-9]\.)+ip6\.arpa$")]

@@ -22,14 +22,28 @@ CONFIG_FILE: Final[Path] = Path("/etc/zone-handler.yaml")
 logging.config.dictConfig(LOGCONF)
 
 
+class ConfigFileError(Exception):
+    """Summarizes config file parsing exceptions"""
+
+
 def _error_out(message: str) -> None:
     logging.critical(message)
     sys.exit(1)
 
 
 def _read_config(config_file: Path) -> ZoneHandlerConf:
-    with config_file.open(encoding="utf-8") as fin:
-        config = ZoneHandlerConf(**yaml.safe_load(fin))
+    try:
+        with open(config_file, encoding="utf-8") as fin:
+            config = ZoneHandlerConf(**yaml.safe_load(fin))
+    except (FileNotFoundError, PermissionError) as fae:
+        msg_fae = f"Unable to access {config_file.absolute()}"
+        raise ConfigFileError(msg_fae) from fae
+    except yaml.YAMLError as yme:
+        msg_yme = f"Malformed YAML in {config_file.absolute()}"
+        raise ConfigFileError(msg_yme) from yme
+    except ValidationError as vle:
+        msg_vle = f"Invalid {config_file.absolute()}\n\n{vle}"
+        raise ConfigFileError(msg_vle) from vle
 
     return config
 
@@ -50,12 +64,8 @@ def verifier() -> None:
 
     try:
         _read_config(config_file)
-    except (FileNotFoundError, PermissionError):
-        _error_out(f"Unable to access {config_file.absolute()}")
-    except yaml.YAMLError:
-        _error_out(f"Malformed YAML in {config_file.absolute()}")
-    except ValidationError as vle:
-        _error_out(f"Invalid {config_file.absolute()}\n\n{vle}")
+    except ConfigFileError as cfe:
+        _error_out(str(cfe))
 
 
 def sudoers(config_file: Path = CONFIG_FILE) -> None:
@@ -69,12 +79,8 @@ def sudoers(config_file: Path = CONFIG_FILE) -> None:
 
     try:
         config: ZoneHandlerConf = _read_config(config_file)
-    except (FileNotFoundError, PermissionError):
-        _error_out("Unable to access server side config file")
-    except yaml.YAMLError:
-        _error_out("Malformed YAML in server side config file")
-    except ValidationError as vle:
-        _error_out(f"Invalid server side config file\n\n{vle}")
+    except ConfigFileError as cfe:
+        _error_out(str(cfe))
 
     szh: BindSudoers | KnotSudoers
     if config.system.server_type == "bind":
@@ -103,12 +109,8 @@ def wrapper(config_file: Path = CONFIG_FILE) -> None:
     username: str = pwd.getpwuid(os.getuid()).pw_name
     try:
         config: ZoneHandlerConf = _read_config(config_file)
-    except (FileNotFoundError, PermissionError):
-        _error_out("Unable to access server side config file")
-    except yaml.YAMLError:
-        _error_out("Malformed YAML in server side config file")
-    except ValidationError:
-        _error_out("Invalid server side config file")
+    except ConfigFileError as cfe:
+        _error_out(str(cfe))
 
     ssh_command = "help"
     try:

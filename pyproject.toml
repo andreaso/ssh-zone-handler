@@ -51,7 +51,7 @@ select = [
   "SIM", # flake8-simplify
   "ARG", # flake8-unused-arguments
 ]
-ignore = ["N805", "RUF005", "S603", "SIM105"]
+ignore = ["E501", "N805", "RUF005", "S603", "SIM105"]
 
 [tool.pytest.ini_options]
 log_format = "%(message)s"

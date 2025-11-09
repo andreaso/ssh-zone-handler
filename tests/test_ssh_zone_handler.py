@@ -28,9 +28,14 @@ def test_cli_read_config():
         },
         "users": {
             "alice": {
+                "ssh_keys": [
+                    "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIGlLAm/yjw76GuHsUDlqEJMrIRiyHSMlXlx/XlpRn1dfAAAABHNzaDo=",
+                    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIOy9uTo12niUl2JCWUebyzr/5pMa64BuFc/0nGjtQad andreas@corrino",
+                ],
                 "zones": ["example.com", "example.net"],
             },
             "bob": {
+                "ssh_keys": [],
                 "zones": ["example.org"],
             },
         },
@@ -46,6 +51,7 @@ def test_cli_read_config():
         },
         "users": {
             "bob": {
+                "ssh_keys": [],
                 "zones": ["example.org"],
             },
         },
@@ -61,9 +67,13 @@ def test_cli_read_config():
         },
         "users": {
             "alice": {
+                "ssh_keys": [],
                 "zones": ["example.com", "example.net"],
             },
             "bob": {
+                "ssh_keys": [
+                    "sk-ecdsa-sha2-nistp256@openssh.com AAAAInNrLWVjZHNhLXNoYTItbmlzdHAyNTZAb3BlbnNzaC5jb20AAAAIbmlzdHAyNTYAAABBBPnGjVz9axrV3stm+5onXYSO/MIOdggKBw5Y5jYJReqwnkIuQ+OMME6oQUuvev+hCURpnKBlfC8zcHRKWUYFF1IAAAAEc3NoOg== |-o-|",
+                ],
                 "zones": ["example.org"],
             },
         },
@@ -79,8 +89,8 @@ def test_cli_zone_sudoers(caplog, capsys):
 
     assert captured_expected.out == "\n".join(
         [
-            "alice\tALL=(log-viewer) NOPASSWD: /usr/bin/journalctl --unit=named.service --since=-5days --utc",  # noqa: E501
-            "bob\tALL=(log-viewer) NOPASSWD: /usr/bin/journalctl --unit=named.service --since=-5days --utc",  # noqa: E501
+            "alice\tALL=(log-viewer) NOPASSWD: /usr/bin/journalctl --unit=named.service --since=-5days --utc",
+            "bob\tALL=(log-viewer) NOPASSWD: /usr/bin/journalctl --unit=named.service --since=-5days --utc",
             "alice\tALL=(bind) NOPASSWD: /usr/sbin/rndc retransfer example.com",
             "alice\tALL=(bind) NOPASSWD: /usr/sbin/rndc retransfer example.net",
             "alice\tALL=(bind) NOPASSWD: /usr/sbin/rndc zonestatus example.com",
@@ -96,8 +106,8 @@ def test_cli_zone_sudoers(caplog, capsys):
 
     assert captured_knot_expected.out == "\n".join(
         [
-            "alice\tALL=(log-viewer) NOPASSWD: /usr/bin/journalctl --unit=knot.service --since=-5days --utc",  # noqa: E501
-            "bob\tALL=(log-viewer) NOPASSWD: /usr/bin/journalctl --unit=knot.service --since=-5days --utc",  # noqa: E501
+            "alice\tALL=(log-viewer) NOPASSWD: /usr/bin/journalctl --unit=knot.service --since=-5days --utc",
+            "bob\tALL=(log-viewer) NOPASSWD: /usr/bin/journalctl --unit=knot.service --since=-5days --utc",
             "alice\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-read example.com",
             "alice\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-read example.net",
             "alice\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-retransfer example.com",

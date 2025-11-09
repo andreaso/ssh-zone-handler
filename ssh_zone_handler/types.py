@@ -12,6 +12,8 @@ Ptr4Zone = Annotated[str, Field(pattern=r"^[0-9/]+\.([0-9]+\.)+in-addr\.arpa$")]
 Ptr6Zone = Annotated[str, Field(pattern=r"^([a-f0-9]\.)+ip6\.arpa$")]
 Zone = FwdZone | Ptr4Zone | Ptr6Zone
 
+SSHKey = Annotated[str, Field(pattern=r"^(ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNT|ecdsa-sha2-nistp384 AAAAE2VjZHNhLXNoYTItbmlzdHAzOD|ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1Mj|sk-ecdsa-sha2-nistp256@openssh.com AAAAInNrLWVjZHNhLXNoYTItbmlzdHAyNTZAb3BlbnNzaC5jb2|ssh-ed25519 AAAAC3NzaC1lZDI1NTE5|sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29t|ssh-rsa AAAAB3NzaC1yc2)[0-9A-Za-z+/]+[=]{0,3}(\s.*)?$")]  # fmt: skip
+
 SERVICE_DEFAULTS: Final[dict[str, dict[str, str]]] = {
     "bind": {
         "unit": "named.service",
@@ -58,6 +60,7 @@ class UserConf(BaseModel, extra="forbid", frozen=True):
     Subset of ZoneHandlerConf
     """
 
+    ssh_keys: list[SSHKey] = []
     zones: list[Zone]
 
 

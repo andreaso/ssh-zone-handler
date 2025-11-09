@@ -5,6 +5,9 @@ system:
   server_type: bind
 users:
   alice:
+    ssh_keys:
+      - sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIGlLAm/yjw76GuHsUDlqEJMrIRiyHSMlXlx/XlpRn1dfAAAABHNzaDo=
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIOy9uTo12niUl2JCWUebyzr/5pMa64BuFc/0nGjtQad andreas@corrino
     zones:
       - example.com
       - example.net

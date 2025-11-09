@@ -7,6 +7,8 @@ system:
   # systemd_unit: knot.service
 users:
   alice:
+    ssh_keys:
+      - sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIIwOpcO7/x2WO4ftTt2VCdi+71D9Neo7e+5TzXsBpkWpAAAABHNzaDo= nano@laptop
     zones:
       - example.com
       - example.net

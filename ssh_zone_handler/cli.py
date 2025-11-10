@@ -11,7 +11,7 @@ from typing import Final, Literal
 import yaml
 from pydantic import ValidationError
 
-from .base import InvokeError
+from .base import InvokeError, SshAuthorizedKeys
 from .bind import BindCommand, BindSudoers
 from .knot import KnotCommand, KnotSudoers
 from .static import LOGCONF
@@ -70,6 +70,25 @@ def verifier() -> None:
         _read_config(config_file, errors="verbose")
     except ConfigFileError as cfe:
         _error_out(str(cfe))
+
+
+def ssh_commands(config_file: Path = CONFIG_FILE) -> None:
+    """
+    Entry point for the szh-sshcmd script
+
+    Used as an AuthorizedKeysCommand
+
+    ...
+    """
+
+    try:
+        config: ZoneHandlerConf = _read_config(config_file)
+    except ConfigFileError as cfe:
+        logging.debug(str(cfe))
+        sys.exit(1)
+
+    szh = SshAuthorizedKeys(config)
+    szh.output()
 
 
 def sudoers(config_file: Path = CONFIG_FILE) -> None:

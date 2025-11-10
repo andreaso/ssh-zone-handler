@@ -30,7 +30,7 @@ systemctl enable --now primary.service named.service
 
 python3 -m venv /opt/ssh-zone-handler
 /opt/ssh-zone-handler/bin/pip3 install --editable /mp/
-install --owner=root --group=root --mode=0644 --no-target-directory /mp/zone-handler.yaml.bind.example /etc/zone-handler.yaml
+install --owner=root --group=root --mode=0644 --no-target-directory /mp/tests/data/bind-example-config.yaml /etc/zone-handler.yaml
 
 adduser --quiet --disabled-password --gecos "Alice,,,,Living Next Door" alice
 install --owner=alice --group=alice --mode=0700 --directory /home/alice/.ssh

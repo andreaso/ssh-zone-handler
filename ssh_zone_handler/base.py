@@ -1,7 +1,9 @@
 """Base classes"""
 
 import logging
+import sys
 from collections.abc import Iterator, KeysView, Sequence
+from pathlib import Path
 from subprocess import CalledProcessError, CompletedProcess, run
 from typing import Final
 
@@ -28,6 +30,20 @@ class SshZoneHandler:
             "--since=-5days",
             "--utc",
         )
+
+
+class SshAuthorizedKeys(SshZoneHandler):
+    """Common class to output authorized_keys entries"""
+
+    def output(self) -> None:
+        """Outputs all the configured ssh keys"""
+
+        wrapper = Path(sys.argv[0]).absolute().parent / "szh-wrapper"
+
+        for user, conf in self.config.users.items():
+            for ssh_key in conf.ssh_keys:
+                clean_key = " ".join(ssh_key.split()[:2])
+                print(f'command="{wrapper} {user}",restrict {clean_key}')
 
 
 class SshZoneSudoers(SshZoneHandler):

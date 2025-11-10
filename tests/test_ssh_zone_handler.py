@@ -6,10 +6,9 @@ import pwd
 from pathlib import Path
 
 import pytest
-from pydantic import ValidationError
 
 from ssh_zone_handler.bind import BindCommand
-from ssh_zone_handler.cli import _read_config, sudoers, wrapper
+from ssh_zone_handler.cli import ConfigFileError, _read_config, sudoers, wrapper
 from ssh_zone_handler.knot import KnotCommand
 
 
@@ -59,7 +58,7 @@ def test_cli_read_config():
         },
     }
 
-    with pytest.raises(ValidationError):
+    with pytest.raises(ConfigFileError):
         _read_config(Path("./tests/data/outdated-config.yaml"))
 
 

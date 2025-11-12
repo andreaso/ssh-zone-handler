@@ -30,13 +30,14 @@ systemctl enable --now primary.service named.service
 
 python3 -m venv /opt/ssh-zone-handler
 /opt/ssh-zone-handler/bin/pip3 install --editable /mp/
-install --owner=root --group=root --mode=0644 --no-target-directory /mp/tests/data/bind-example-config.yaml /etc/zone-handler.yaml
 
-adduser --quiet --disabled-password --gecos "Alice,,,,Living Next Door" alice
-install --owner=alice --group=alice --mode=0700 --directory /home/alice/.ssh
-install --owner=alice --group=alice --mode=0644 --no-target-directory /mp/devel/.dynamic/id_alice_ed25519.pub /home/alice/.ssh/authorized_keys
-
+adduser --disabled-password --gecos "Zone Handler" zones
 adduser --quiet --system --ingroup systemd-journal log-viewer
+adduser --system szh-sshdcmd
+
+sed -e "s#__ALICE_SSH_KEY__#$(cat /mp/devel/.dynamic/id_alice_ed25519.pub)#" < /mp/devel/zone-handler.yaml.bind.in \
+    | install --owner=root --group=root --mode=0644 --no-target-directory /dev/stdin /etc/zone-handler.yaml
+
 /opt/ssh-zone-handler/bin/szh-sudoers | EDITOR="tee" visudo -f /etc/sudoers.d/zone-handler
 
 cat /mp/devel/sshd_match >> /etc/ssh/sshd_config

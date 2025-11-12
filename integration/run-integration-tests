@@ -21,7 +21,7 @@ class RunTests:
             "-F",
             str(self.ssh_conf_path),
             "-l",
-            "alice",
+            "zones",
             host,
             tc.command,
         ]

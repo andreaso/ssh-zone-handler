@@ -1,0 +1,17 @@
+---
+
+system:
+  log_access_user: log-viewer
+  server_type: bind
+  # server_user: bind
+  # systemd_unit: named.service
+users:
+  alice:
+    ssh_keys:
+      - __ALICE_SSH_KEY__
+    zones:
+      - example.com
+      - example.net
+  bob:
+    zones:
+      - example.org

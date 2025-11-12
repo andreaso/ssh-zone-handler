@@ -3,7 +3,6 @@
 import logging
 import logging.config
 import os
-import pwd
 import sys
 from pathlib import Path
 from typing import Final, Literal
@@ -72,9 +71,9 @@ def verifier() -> None:
         _error_out(str(cfe))
 
 
-def ssh_commands(config_file: Path = CONFIG_FILE) -> None:
+def ssh_keys(config_file: Path = CONFIG_FILE) -> None:
     """
-    Entry point for the szh-sshcmd script
+    Entry point for the szh-sshkeys script
 
     Used as an AuthorizedKeysCommand
 
@@ -129,7 +128,11 @@ def wrapper(config_file: Path = CONFIG_FILE) -> None:
         X11Forwarding no
     """
 
-    username: str = pwd.getpwuid(os.getuid()).pw_name
+    try:
+        username = sys.argv[1]
+    except IndexError:
+        _error_out(f"Usage: {sys.argv[0]} username")
+
     try:
         config: ZoneHandlerConf = _read_config(config_file)
     except ConfigFileError as cfe:

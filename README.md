@@ -51,10 +51,12 @@ $
 
 ## Setup instructions
 
-### Create log viewer user with journald access
+### Create user accounts
 
 ```
-adduser --system --no-create-home --home /nonexistent --shell /usr/sbin/nologin --ingroup systemd-journal log-viewer
+adduser --system  --ingroup systemd-journal szh-logviewer
+adduser --system szh-sshdcmd
+adduser --disabled-password --gecos "Zone Handler" zones
 ```
 
 
@@ -83,11 +85,12 @@ python3 -m venv /opt/ssh-zone-handler
 ### Configure sshd
 
 ```
-Match User alice,bob
-     ForceCommand /opt/ssh-zone-handler/bin/szh-wrapper
+Match User zones
+     AuthorizedKeysFile none
+     AuthorizedKeysCommandUser szh-sshdcmd
+     AuthorizedKeysCommand /opt/ssh-zone-handler/bin/szh-sshkeys
+     DisableForwarding yes
      PermitTTY no
-     AllowTcpForwarding no
-     X11Forwarding no
 ```
 
 

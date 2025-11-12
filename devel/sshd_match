@@ -3,3 +3,10 @@ Match User alice,bob
      ForceCommand /opt/ssh-zone-handler/bin/szh-wrapper
      PermitTTY no
      DisableForwarding yes
+
+Match User zones
+     AuthorizedKeysFile none
+     AuthorizedKeysCommandUser szh-sshdcmd
+     AuthorizedKeysCommand /opt/ssh-zone-handler/bin/szh-sshkeys
+     DisableForwarding yes
+     PermitTTY no

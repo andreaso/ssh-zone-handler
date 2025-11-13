@@ -32,6 +32,7 @@ class SystemConf(BaseModel, extra="forbid", frozen=True):
     """
 
     log_access_user: SystemUser
+    login_user: SystemUser
     server_type: Literal["bind", "knot"]
     server_user: SystemUser = Field(default="", validate_default=True)
     systemd_unit: ServiceUnit = Field(default="", validate_default=True)

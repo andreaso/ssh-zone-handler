@@ -2,6 +2,7 @@
 
 system:
   log_access_user: log-viewer
+  login_user: zones
   server_type: bind
   # server_user: bind
   # systemd_unit: named.service

@@ -2,7 +2,7 @@
 
 import logging
 import sys
-from collections.abc import Iterator, KeysView, Sequence
+from collections.abc import Iterator, Sequence
 from pathlib import Path
 from subprocess import CalledProcessError, CompletedProcess, run
 from typing import Final
@@ -20,6 +20,7 @@ class SshZoneHandler:
     def __init__(self, config: ZoneHandlerConf) -> None:
         self.config: ZoneHandlerConf = config
         self.log_user: Final[str] = config.system.log_access_user
+        self.login_user: Final[str] = config.system.login_user
         self.server: Final[str] = config.system.server_type
         self.service_user: Final[str] = config.system.server_user
         service_unit: Final[str] = config.system.systemd_unit
@@ -49,17 +50,10 @@ class SshAuthorizedKeys(SshZoneHandler):
 class SshZoneSudoers(SshZoneHandler):
     """Common class to pre-generate needed sudoers rules"""
 
-    def __log_rules(self) -> list[str]:
-        users: KeysView[str] = self.config.users.keys()
+    def __log_rule(self) -> list[str]:
         command: str = " ".join(self.journal_cmd)
-        rules: list[str] = []
-
-        user: str
-        for user in users:
-            rule = f"{user}\tALL=({self.log_user}) NOPASSWD: {command}"
-            rules.append(rule)
-
-        return rules
+        rule = f"{self.login_user}\tALL=({self.log_user}) NOPASSWD: {command}"
+        return [rule]
 
     def _server_command_rules(self) -> list[str]:
         raise NotImplementedError("Gets defined in each daemon specific subclass")
@@ -68,7 +62,7 @@ class SshZoneSudoers(SshZoneHandler):
         """Outputs all the needed sudoers rules."""
 
         all_rules: list[str] = []
-        all_rules += self.__log_rules()
+        all_rules += self.__log_rule()
         all_rules += self._server_command_rules()
 
         rule: str

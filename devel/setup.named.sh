@@ -31,7 +31,7 @@ systemctl enable --now primary.service named.service
 python3 -m venv /opt/ssh-zone-handler
 /opt/ssh-zone-handler/bin/pip3 install --editable /mp/
 
-adduser --disabled-password --gecos "Zone Handler" zones
+adduser --comment "Zone Handler" --disabled-password --shell /bin/dash zones
 adduser --quiet --system --ingroup systemd-journal log-viewer
 adduser --system szh-sshdcmd
 

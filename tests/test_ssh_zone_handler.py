@@ -21,6 +21,7 @@ def test_cli_read_config():
     assert example_config.model_dump() == {
         "system": {
             "log_access_user": "log-viewer",
+            "login_user": "zones",
             "server_type": "bind",
             "server_user": "bind",
             "systemd_unit": "named.service",
@@ -46,6 +47,7 @@ def test_cli_read_config():
     assert alternative_config.model_dump() == {
         "system": {
             "log_access_user": "odin",
+            "login_user": "zones",
             "server_type": "bind",
             "server_user": "named",
             "systemd_unit": "bind9.service",
@@ -62,6 +64,7 @@ def test_cli_read_config():
     assert knot_config.model_dump() == {
         "system": {
             "log_access_user": "log-viewer",
+            "login_user": "zones",
             "server_type": "knot",
             "server_user": "knot",
             "systemd_unit": "knot.service",
@@ -93,14 +96,13 @@ def test_cli_zone_sudoers(caplog, capsys):
 
     assert captured_expected.out == "\n".join(
         [
-            "alice\tALL=(log-viewer) NOPASSWD: /usr/bin/journalctl --unit=named.service --since=-5days --utc",
-            "bob\tALL=(log-viewer) NOPASSWD: /usr/bin/journalctl --unit=named.service --since=-5days --utc",
-            "alice\tALL=(bind) NOPASSWD: /usr/sbin/rndc retransfer example.com",
-            "alice\tALL=(bind) NOPASSWD: /usr/sbin/rndc retransfer example.net",
-            "alice\tALL=(bind) NOPASSWD: /usr/sbin/rndc zonestatus example.com",
-            "alice\tALL=(bind) NOPASSWD: /usr/sbin/rndc zonestatus example.net",
-            "bob\tALL=(bind) NOPASSWD: /usr/sbin/rndc retransfer example.org",
-            "bob\tALL=(bind) NOPASSWD: /usr/sbin/rndc zonestatus example.org\n",
+            "zones\tALL=(log-viewer) NOPASSWD: /usr/bin/journalctl --unit=named.service --since=-5days --utc",
+            "zones\tALL=(bind) NOPASSWD: /usr/sbin/rndc retransfer example.com",
+            "zones\tALL=(bind) NOPASSWD: /usr/sbin/rndc retransfer example.net",
+            "zones\tALL=(bind) NOPASSWD: /usr/sbin/rndc retransfer example.org",
+            "zones\tALL=(bind) NOPASSWD: /usr/sbin/rndc zonestatus example.com",
+            "zones\tALL=(bind) NOPASSWD: /usr/sbin/rndc zonestatus example.net",
+            "zones\tALL=(bind) NOPASSWD: /usr/sbin/rndc zonestatus example.org\n",
         ]
     )
 
@@ -110,14 +112,13 @@ def test_cli_zone_sudoers(caplog, capsys):
 
     assert captured_knot_expected.out == "\n".join(
         [
-            "alice\tALL=(log-viewer) NOPASSWD: /usr/bin/journalctl --unit=knot.service --since=-5days --utc",
-            "bob\tALL=(log-viewer) NOPASSWD: /usr/bin/journalctl --unit=knot.service --since=-5days --utc",
-            "alice\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-read example.com",
-            "alice\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-read example.net",
-            "alice\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-retransfer example.com",
-            "alice\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-retransfer example.net",
-            "bob\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-read example.org",
-            "bob\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-retransfer example.org\n",
+            "zones\tALL=(log-viewer) NOPASSWD: /usr/bin/journalctl --unit=knot.service --since=-5days --utc",
+            "zones\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-read example.com",
+            "zones\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-read example.net",
+            "zones\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-read example.org",
+            "zones\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-retransfer example.com",
+            "zones\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-retransfer example.net",
+            "zones\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-retransfer example.org\n",
         ]
     )
 
@@ -126,13 +127,13 @@ def test_cli_zone_sudoers(caplog, capsys):
         sudoers(Path("./tests/data/outdated-config.yaml"))
     captured_outdated = caplog.text
     assert (
-        "Invalid server side config file\n\n2 validation errors for ZoneHandlerConf"
+        "Invalid server side config file\n\n3 validation errors for ZoneHandlerConf"
         in captured_outdated
     )
 
 
 def test_cli_zone_wrapper(caplog, capsys, mocker):
-    mocker.patch("pwd.getpwuid", return_value=mock_pwd_name("alice"))
+    mocker.patch("sys.argv", ["_", "alice"])
 
     os.environ["SSH_ORIGINAL_COMMAND"] = "list"
     wrapper(Path("./tests/data/bind-example-config.yaml"))
@@ -161,7 +162,7 @@ def test_cli_zone_wrapper(caplog, capsys, mocker):
     assert captured_outdated == "Invalid server side config file\n"
 
     caplog.clear()
-    mocker.patch("pwd.getpwuid", return_value=mock_pwd_name("mallory"))
+    mocker.patch("sys.argv", ["_", "mallory"])
     os.environ["SSH_ORIGINAL_COMMAND"] = "help"
     with pytest.raises(SystemExit):
         wrapper(Path("./tests/data/bind-example-config.yaml"))

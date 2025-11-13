@@ -164,6 +164,12 @@ jobs:
       - name: Prime ~/.ssh/known_hosts
         run: echo "127.0.0.1 $(cat /etc/ssh/ssh_host_ed25519_key.pub)" >> ~/.ssh/known_hosts
 
+      - name: Debug 0
+        run: |
+          getent passwd zones
+          cat /etc/ssh/sshd_config
+          sudo systemctl status ssh.service
+
       - name: Debug 1
         run: sudo -u szh-sshdcmd /opt/ssh-zone-handler/bin/szh-sshkeys | ssh-keygen -l -f -
 

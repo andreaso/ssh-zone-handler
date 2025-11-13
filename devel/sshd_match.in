@@ -2,6 +2,6 @@
 Match User zones
      AuthorizedKeysFile none
      AuthorizedKeysCommandUser szh-sshdcmd
-     AuthorizedKeysCommand /opt/ssh-zone-handler/bin/szh-sshkeys
+     AuthorizedKeysCommand __INSTALL_PATH__/bin/szh-sshkeys
      DisableForwarding yes
      PermitTTY no

@@ -161,8 +161,7 @@ jobs:
 
       - name: Update sshd configuration
         run: |
-          # shellcheck disable=SC2002
-          cat devel/sshd_gha_match | sudo tee --append /etc/ssh/sshd_config
+          sed -e "s#__INSTALL_PATH__#/opt2/ssh-zone-handler#" < devel/sshd_match.in | sudo tee --append /etc/ssh/sshd_config
           sudo systemctl restart ssh.service
 
       - name: Prime ~/.ssh/known_hosts

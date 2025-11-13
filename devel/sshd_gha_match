@@ -1,7 +1,0 @@
-
-Match User zones
-     AuthorizedKeysFile none
-     AuthorizedKeysCommandUser szh-sshdcmd
-     AuthorizedKeysCommand /opt2/ssh-zone-handler/bin/szh-sshkeys
-     DisableForwarding yes
-     PermitTTY no

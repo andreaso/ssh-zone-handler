@@ -41,5 +41,5 @@ sed -e "s#__ALICE_SSH_KEY__#$(cat /mp/devel/.dynamic/id_alice_ed25519.pub)#" < /
 
 /opt/ssh-zone-handler/bin/szh-sudoers | EDITOR="tee" visudo -f /etc/sudoers.d/zone-handler
 
-cat /mp/devel/sshd_match >> /etc/ssh/sshd_config
+sed -e "s#__INSTALL_PATH__#/opt/ssh-zone-handler#" < /mp/devel/sshd_match.in >> /etc/ssh/sshd_config
 systemctl restart ssh.service

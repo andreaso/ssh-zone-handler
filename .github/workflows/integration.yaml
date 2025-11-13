@@ -32,13 +32,13 @@ jobs:
         if: matrix.secondary == 'BIND9'
         run: |
           echo "GHA_SZH_DAEMON=BIND9" >> "$GITHUB_ENV"
-          echo "GHA_SZH_CFILE=zone-handler.yaml.bind.example" >> "$GITHUB_ENV"
+          echo "GHA_SZH_CFILE=devel/zone-handler.yaml.bind.in" >> "$GITHUB_ENV"
 
       - name: Set Knot test environment variables
         if: matrix.secondary == 'Knot'
         run: |
           echo "GHA_SZH_DAEMON=Knot" >> "$GITHUB_ENV"
-          echo "GHA_SZH_CFILE=zone-handler.yaml.knot.example" >> "$GITHUB_ENV"
+          echo "GHA_SZH_CFILE=devel/zone-handler.yaml.knot.in" >> "$GITHUB_ENV"
 
       - name: Install Knot
         if: matrix.secondary == 'Knot'
@@ -112,9 +112,16 @@ jobs:
         run: |
           "$python_binary" -m venv /opt/ssh-zone-handler
           /opt/ssh-zone-handler/bin/pip3 install .
-          sudo install --owner=root --group=root --mode=0644 --no-target-directory "$GHA_SZH_CFILE" /etc/zone-handler.yaml
         env:
           python_binary: python${{ matrix.py_version }}
+
+      - name: Create Alice's ssh key
+        run: ssh-keygen -t ed25519 -N '' -f ~/.ssh/id_alice_ed25519 -C alice
+
+      - name: Generate /etc/zone-handler.yaml
+        run: >-
+          sed -e "s#__ALICE_SSH_KEY__#$(cat /mp/devel/.dynamic/id_alice_ed25519.pub)#" < "$GHA_SZH_CFILE"
+          | sudo install --owner=root --group=root --mode=0644 --no-target-directory /dev/stdin /etc/zone-handler.yaml
 
       - name: Run szh-verify command against known good config files
         run: |
@@ -134,17 +141,11 @@ jobs:
               echo "Failed to fail expected fail."; exit 1
           fi
 
-      - name: Create Alice's ssh key
-        run: ssh-keygen -t ed25519 -N '' -f ~/.ssh/id_alice_ed25519 -C alice
-
-      - name: Setup Alice's user
+      - name: Setup user accounts
         run: |
-          sudo adduser --quiet --disabled-password --gecos "Alice,,,,Living Next Door" alice
-          sudo install --owner=alice --group=alice --mode=0700 --directory ~alice/.ssh
-          sudo install --owner=alice --group=alice --mode=0644 --no-target-directory ~runner/.ssh/id_alice_ed25519.pub ~alice/.ssh/authorized_keys
-
-      - name: Setup log-viewer user
-        run: sudo adduser --system --ingroup systemd-journal log-viewer
+          sudo adduser --comment "Zone Handler" --disabled-password --shell /bin/dash zones
+          sudo adduser --system --ingroup systemd-journal log-viewer
+          sudo adduser --system szh-sshdcmd
 
       - name: Generate sudoers file
         run: >

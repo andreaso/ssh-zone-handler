@@ -148,7 +148,7 @@ jobs:
       - name: Setup user accounts
         run: |
           sudo adduser --comment "Zone Handler" --disabled-password --shell /bin/dash zones
-          sudo adduser --system --ingroup systemd-journal log-viewer
+          sudo adduser --system --ingroup systemd-journal szh-logviewer
           sudo adduser --system szh-sshdcmd
 
       - name: Generate sudoers file

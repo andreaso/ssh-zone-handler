@@ -1,7 +1,7 @@
 ---
 
 system:
-  log_access_user: odin
+  journalctl_user: odin
   login_user: zones
   server_type: bind
   server_user: named

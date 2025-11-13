@@ -16,11 +16,11 @@ $ make vm-create
 ```
 
 ```
-$ alias ssh='ssh -F devel/.generated/ssh_conf'
+$ alias ssh='ssh -F devel/.dynamic/ssh_conf'
 ```
 
 ```
-$ ssh alice@szh-secondary help
+$ ssh zones@szh-named help
 usage: command [ZONE]
 
 help                 Display this help message
@@ -32,19 +32,19 @@ $
 ```
 
 ```
-$ ssh alice@szh-secondary list
+$ ssh zones@szh-named list
 example.com
 example.net
 $
 ```
 
 ```
-$ ssh alice@szh-secondary logs example.net
-Apr 28 17:52:00 szh-secondary named[2821]: zone example.net/IN: Transfer started.
-Apr 28 17:52:00 szh-secondary named[2821]: transfer of 'example.net/IN' from 192.168.63.10#53: connected using 192.168.63.10#53
-Apr 28 17:52:00 szh-secondary named[2821]: zone example.net/IN: transferred serial 26281038
-Apr 28 17:52:00 szh-secondary named[2821]: transfer of 'example.net/IN' from 192.168.63.10#53: Transfer status: success
-Apr 28 17:52:00 szh-secondary named[2821]: transfer of 'example.net/IN' from 192.168.63.10#53: Transfer completed: 1 messages, 6 records, 190 bytes, 0.008 secs (23750 bytes/sec) (serial 26281038)
+$ ssh zones@szh-named logs example.net
+Apr 28 17:52:00 szh-named named[2821]: zone example.net/IN: Transfer started.
+Apr 28 17:52:00 szh-named named[2821]: transfer of 'example.net/IN' from 192.168.63.10#53: connected using 192.168.63.10#53
+Apr 28 17:52:00 szh-named named[2821]: zone example.net/IN: transferred serial 26281038
+Apr 28 17:52:00 szh-named named[2821]: transfer of 'example.net/IN' from 192.168.63.10#53: Transfer status: success
+Apr 28 17:52:00 szh-named named[2821]: transfer of 'example.net/IN' from 192.168.63.10#53: Transfer completed: 1 messages, 6 records, 190 bytes, 0.008 secs (23750 bytes/sec) (serial 26281038)
 $
 ```
 
@@ -96,7 +96,7 @@ Match User zones
 
 ## Known limitations
 
-* Might be Ubuntu distro specific
+* Might be Debian/Ubuntu distro specific
 
 
 [1]: https://documentation.ubuntu.com/multipass/

@@ -33,7 +33,7 @@ python3 -m venv /opt/ssh-zone-handler
 /opt/ssh-zone-handler/bin/pip3 install --editable /mp/
 
 adduser --comment "Zone Handler" --disabled-password --shell /bin/dash zones
-adduser --quiet --system --ingroup systemd-journal log-viewer
+adduser --quiet --system --ingroup systemd-journal szh-logviewer
 adduser --system szh-sshdcmd
 
 sed -e "s#__ALICE_SSH_KEY__#$(cat /mp/devel/.dynamic/id_alice_ed25519.pub)#" < /mp/devel/zone-handler.yaml.knot.in \

@@ -31,7 +31,7 @@ class SystemConf(BaseModel, extra="forbid", frozen=True):
     Subset of ZoneHandlerConf
     """
 
-    log_access_user: SystemUser
+    journalctl_user: SystemUser
     login_user: SystemUser
     server_type: Literal["bind", "knot"]
     server_user: SystemUser = Field(default="", validate_default=True)

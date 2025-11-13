@@ -19,7 +19,7 @@ class SshZoneHandler:
 
     def __init__(self, config: ZoneHandlerConf) -> None:
         self.config: ZoneHandlerConf = config
-        self.log_user: Final[str] = config.system.log_access_user
+        self.journal_user: Final[str] = config.system.journalctl_user
         self.login_user: Final[str] = config.system.login_user
         self.server: Final[str] = config.system.server_type
         self.service_user: Final[str] = config.system.server_user
@@ -52,7 +52,7 @@ class SshZoneSudoers(SshZoneHandler):
 
     def __log_rule(self) -> list[str]:
         command: str = " ".join(self.journal_cmd)
-        rule = f"{self.login_user}\tALL=({self.log_user}) NOPASSWD: {command}"
+        rule = f"{self.login_user}\tALL=({self.journal_user}) NOPASSWD: {command}"
         return [rule]
 
     def _server_command_rules(self) -> list[str]:
@@ -138,7 +138,7 @@ class SshZoneCommand(SshZoneHandler):
     def __logs(self, zones: list[str]) -> None:
         zones_str = ", ".join(zones)
         failure = f"Failed to output log lines for the following zone(s): {zones_str}"
-        command = ("/usr/bin/sudo", f"--user={self.log_user}") + self.journal_cmd
+        command = ("/usr/bin/sudo", f"--user={self.journal_user}") + self.journal_cmd
 
         logging.info("Outputting logs for the following zone(s): %s", zones_str)
 

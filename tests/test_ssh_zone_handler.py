@@ -20,7 +20,7 @@ def test_cli_read_config():
     example_config = _read_config(Path("./tests/data/bind-example-config.yaml"))
     assert example_config.model_dump() == {
         "system": {
-            "log_access_user": "log-viewer",
+            "journalctl_user": "szh-logviewer",
             "login_user": "zones",
             "server_type": "bind",
             "server_user": "bind",
@@ -46,7 +46,7 @@ def test_cli_read_config():
     alternative_config = _read_config(Path("./tests/data/bind-alternative-config.yaml"))
     assert alternative_config.model_dump() == {
         "system": {
-            "log_access_user": "odin",
+            "journalctl_user": "odin",
             "login_user": "zones",
             "server_type": "bind",
             "server_user": "named",
@@ -63,7 +63,7 @@ def test_cli_read_config():
     knot_config = _read_config(Path("./tests/data/knot-example-config.yaml"))
     assert knot_config.model_dump() == {
         "system": {
-            "log_access_user": "log-viewer",
+            "journalctl_user": "szh-logviewer",
             "login_user": "zones",
             "server_type": "knot",
             "server_user": "knot",
@@ -96,7 +96,7 @@ def test_cli_zone_sudoers(caplog, capsys):
 
     assert captured_expected.out == "\n".join(
         [
-            "zones\tALL=(log-viewer) NOPASSWD: /usr/bin/journalctl --unit=named.service --since=-5days --utc",
+            "zones\tALL=(szh-logviewer) NOPASSWD: /usr/bin/journalctl --unit=named.service --since=-5days --utc",
             "zones\tALL=(bind) NOPASSWD: /usr/sbin/rndc retransfer example.com",
             "zones\tALL=(bind) NOPASSWD: /usr/sbin/rndc retransfer example.net",
             "zones\tALL=(bind) NOPASSWD: /usr/sbin/rndc retransfer example.org",
@@ -112,7 +112,7 @@ def test_cli_zone_sudoers(caplog, capsys):
 
     assert captured_knot_expected.out == "\n".join(
         [
-            "zones\tALL=(log-viewer) NOPASSWD: /usr/bin/journalctl --unit=knot.service --since=-5days --utc",
+            "zones\tALL=(szh-logviewer) NOPASSWD: /usr/bin/journalctl --unit=knot.service --since=-5days --utc",
             "zones\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-read example.com",
             "zones\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-read example.net",
             "zones\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-read example.org",
@@ -127,7 +127,7 @@ def test_cli_zone_sudoers(caplog, capsys):
         sudoers(Path("./tests/data/outdated-config.yaml"))
     captured_outdated = caplog.text
     assert (
-        "Invalid server side config file\n\n3 validation errors for ZoneHandlerConf"
+        "Invalid server side config file\n\n5 validation errors for ZoneHandlerConf"
         in captured_outdated
     )
 

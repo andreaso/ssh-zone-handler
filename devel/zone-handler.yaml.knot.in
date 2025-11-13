@@ -1,7 +1,7 @@
 ---
 
 system:
-  log_access_user: log-viewer
+  journalctl_user: szh-logviewer
   login_user: zones
   server_type: knot
   # server_user: knot

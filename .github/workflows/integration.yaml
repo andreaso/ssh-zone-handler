@@ -24,6 +24,7 @@ jobs:
           persist-credentials: false
 
       - name: Enable Python ${{ matrix.py_version }}
+        id: setup-python
         uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.py_version }}
@@ -108,17 +109,12 @@ jobs:
           sudo rm /etc/systemd/system/knot.service
           sudo systemctl start knot.service
 
-      - name: Find Python in path
-        run: which "$python_binary"
-        env:
-          python_binary: python${{ matrix.py_version }}
-
       - name: Install ssh-zone-handler
         run: |
           sudo "$python_binary" -m venv /opt/ssh-zone-handler
           sudo /opt/ssh-zone-handler/bin/pip3 install .
         env:
-          python_binary: python${{ matrix.py_version }}
+          python_binary: ${{ steps.setup-python.outputs.python-path }}
 
       - name: Create Alice's ssh key
         run: ssh-keygen -t ed25519 -N '' -f ~/.ssh/id_alice_ed25519 -C alice

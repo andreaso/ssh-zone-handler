@@ -109,12 +109,20 @@ jobs:
           sudo rm /etc/systemd/system/knot.service
           sudo systemctl start knot.service
 
+      - name: Make /opt safe
+        run: |
+          sudo chown root:root /opt
+          sudo chmod 0755 /opt
+
       - name: Install ssh-zone-handler
         run: |
           sudo "$python_binary" -m venv /opt/ssh-zone-handler
           sudo /opt/ssh-zone-handler/bin/pip3 install .
         env:
           python_binary: ${{ steps.setup-python.outputs.python-path }}
+
+      - name: List /opt
+        run: ls -la /opt/
 
       - name: Create Alice's ssh key
         run: ssh-keygen -t ed25519 -N '' -f ~/.ssh/id_alice_ed25519 -C alice

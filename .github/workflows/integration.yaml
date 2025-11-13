@@ -108,6 +108,11 @@ jobs:
           sudo rm /etc/systemd/system/knot.service
           sudo systemctl start knot.service
 
+      - name: Find Python in path
+        run: which "$python_binary"
+        env:
+          python_binary: python${{ matrix.py_version }}
+
       - name: Install ssh-zone-handler
         run: |
           sudo "$python_binary" -m venv /opt/ssh-zone-handler

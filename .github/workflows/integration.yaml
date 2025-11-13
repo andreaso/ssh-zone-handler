@@ -110,8 +110,8 @@ jobs:
 
       - name: Install ssh-zone-handler
         run: |
-          "$python_binary" -m venv /opt/ssh-zone-handler
-          /opt/ssh-zone-handler/bin/pip3 install .
+          sudo "$python_binary" -m venv /opt/ssh-zone-handler
+          sudo /opt/ssh-zone-handler/bin/pip3 install .
         env:
           python_binary: python${{ matrix.py_version }}
 

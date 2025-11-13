@@ -4,3 +4,4 @@ Host szh-named szh-knot
      User zones
      IdentitiesOnly yes
      IdentityFile ~/.ssh/id_alice_ed25519
+     PreferredAuthentications publickey

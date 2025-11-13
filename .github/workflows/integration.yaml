@@ -109,20 +109,18 @@ jobs:
           sudo rm /etc/systemd/system/knot.service
           sudo systemctl start knot.service
 
-      - name: Make /opt safe
-        run: |
-          sudo chown root:root /opt
-          sudo chmod 0755 /opt
+      - name: Create sanely owned /opt2
+        run: sudo install --owner=root --group=root --mode=0755 --directory /opt2
 
       - name: Install ssh-zone-handler
         run: |
-          sudo "$python_binary" -m venv /opt/ssh-zone-handler
-          sudo /opt/ssh-zone-handler/bin/pip3 install .
+          sudo "$python_binary" -m venv /opt2/ssh-zone-handler
+          sudo /opt2/ssh-zone-handler/bin/pip3 install .
         env:
           python_binary: ${{ steps.setup-python.outputs.python-path }}
 
       - name: List /opt
-        run: ls -la /opt/
+        run: ls -la /opt2/
 
       - name: Create Alice's ssh key
         run: ssh-keygen -t ed25519 -N '' -f ~/.ssh/id_alice_ed25519 -C alice
@@ -134,19 +132,19 @@ jobs:
 
       - name: Run szh-verify command against known good config files
         run: |
-          /opt/ssh-zone-handler/bin/szh-verify ./tests/data/knot-example-config.yaml
-          /opt/ssh-zone-handler/bin/szh-verify ./tests/data/bind-example-config.yaml
-          /opt/ssh-zone-handler/bin/szh-verify ./tests/data/bind-alternative-config.yaml
+          /opt2/ssh-zone-handler/bin/szh-verify ./tests/data/knot-example-config.yaml
+          /opt2/ssh-zone-handler/bin/szh-verify ./tests/data/bind-example-config.yaml
+          /opt2/ssh-zone-handler/bin/szh-verify ./tests/data/bind-alternative-config.yaml
 
       - name: Run szh-verify command against non-existing config file
         run: |
-          if /opt/ssh-zone-handler/bin/szh-verify ./completly-bogus-filename; then
+          if /opt2/ssh-zone-handler/bin/szh-verify ./completly-bogus-filename; then
               echo "Failed to fail expected fail."; exit 1
           fi
 
       - name: Run szh-verify command against invalid config file
         run: |
-          if /opt/ssh-zone-handler/bin/szh-verify ./tests/data/outdated-config.yaml; then
+          if /opt2/ssh-zone-handler/bin/szh-verify ./tests/data/outdated-config.yaml; then
               echo "Failed to fail expected fail."; exit 1
           fi
 
@@ -158,7 +156,7 @@ jobs:
 
       - name: Generate sudoers file
         run: >
-          /opt/ssh-zone-handler/bin/szh-sudoers
+          /opt2/ssh-zone-handler/bin/szh-sudoers
           | sudo EDITOR="tee" visudo -f /etc/sudoers.d/zone-handler
 
       - name: Install sshd
@@ -167,7 +165,7 @@ jobs:
       - name: Update sshd configuration
         run: |
           # shellcheck disable=SC2002
-          cat devel/sshd_match | sudo tee --append /etc/ssh/sshd_config
+          cat devel/sshd_gha_match | sudo tee --append /etc/ssh/sshd_config
           sudo systemctl restart ssh.service
 
       - name: Extra service restart?
@@ -183,7 +181,7 @@ jobs:
           sudo systemctl status ssh.service
 
       - name: Debug 1
-        run: sudo -u szh-sshdcmd /opt/ssh-zone-handler/bin/szh-sshkeys | ssh-keygen -l -f -
+        run: sudo -u szh-sshdcmd /opt2/ssh-zone-handler/bin/szh-sshkeys | ssh-keygen -l -f -
 
       - name: Debug 2
         run: ssh -v -F ./devel/gha_alice_ssh_conf zones@szh-named help

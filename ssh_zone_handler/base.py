@@ -33,7 +33,7 @@ class SshZoneHandler:
         )
 
 
-class SshAuthorizedKeys(SshZoneHandler):
+class SshZoneAuthorizedKeys(SshZoneHandler):
     """Common class to output authorized_keys entries"""
 
     def output(self) -> None:

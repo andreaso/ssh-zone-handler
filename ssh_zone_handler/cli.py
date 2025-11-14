@@ -10,7 +10,7 @@ from typing import Final, Literal
 import yaml
 from pydantic import ValidationError
 
-from .base import InvokeError, SshAuthorizedKeys
+from .base import InvokeError, SshZoneAuthorizedKeys
 from .bind import BindCommand, BindSudoers
 from .knot import KnotCommand, KnotSudoers
 from .static import LOGCONF
@@ -86,7 +86,7 @@ def ssh_keys(config_file: Path = CONFIG_FILE) -> None:
         logging.debug(str(cfe))
         sys.exit(1)
 
-    szh = SshAuthorizedKeys(config)
+    szh = SshZoneAuthorizedKeys(config)
     szh.output()
 
 

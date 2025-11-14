@@ -3,12 +3,19 @@
 
 import os
 import pwd
+import sys
 from pathlib import Path
 
 import pytest
 
 from ssh_zone_handler.bind import BindCommand
-from ssh_zone_handler.cli import ConfigFileError, _read_config, sudoers, wrapper
+from ssh_zone_handler.cli import (
+    ConfigFileError,
+    _read_config,
+    ssh_keys,
+    sudoers,
+    wrapper,
+)
 from ssh_zone_handler.knot import KnotCommand
 
 
@@ -88,6 +95,27 @@ def test_cli_read_config():
 
     with pytest.raises(ConfigFileError):
         _read_config(Path("./tests/data/outdated-config.yaml"))
+
+
+def test_cli_zone_ssh_keys(caplog, capsys):
+    wrapper = Path(sys.argv[0]).absolute().parent / "szh-wrapper"
+
+    ssh_keys(Path("./tests/data/bind-example-config.yaml"))
+    captured_expected = capsys.readouterr()
+
+    assert captured_expected.out == "\n".join(
+        [
+            f'command="{wrapper} alice",restrict sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIGlLAm/yjw76GuHsUDlqEJMrIRiyHSMlXlx/XlpRn1dfAAAABHNzaDo=',
+            'command="/home/andreas/git/ssh-zone-handler/.venv/bin/szh-wrapper alice",restrict ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIOy9uTo12niUl2JCWUebyzr/5pMa64BuFc/0nGjtQad',
+            'command="/home/andreas/git/ssh-zone-handler/.venv/bin/szh-wrapper bob",restrict sk-ecdsa-sha2-nistp256@openssh.com AAAAInNrLWVjZHNhLXNoYTItbmlzdHAyNTZAb3BlbnNzaC5jb20AAAAIbmlzdHAyNTYAAABBBPnGjVz9axrV3stm+5onXYSO/MIOdggKBw5Y5jYJReqwnkIuQ+OMME6oQUuvev+hCURpnKBlfC8zcHRKWUYFF1IAAAAEc3NoOg==\n',
+        ]
+    )
+
+    caplog.clear()
+    ssh_keys(Path("./tests/data/bind-alternative-config.yaml"))
+    captured_alternate_expected = capsys.readouterr()
+
+    assert captured_alternate_expected.out == "\n".join([])
 
 
 def test_cli_zone_sudoers(caplog, capsys):

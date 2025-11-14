@@ -2,7 +2,6 @@
 """Testing top level functionality"""
 
 import os
-import pwd
 import sys
 from pathlib import Path
 
@@ -17,10 +16,6 @@ from ssh_zone_handler.cli import (
     wrapper,
 )
 from ssh_zone_handler.knot import KnotCommand
-
-
-def mock_pwd_name(name):
-    return pwd.struct_passwd((name, None, None, None, None, None, None))
 
 
 def test_cli_read_config():

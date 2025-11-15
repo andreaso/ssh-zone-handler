@@ -75,9 +75,14 @@ def ssh_keys(config_file: Path = CONFIG_FILE) -> None:
     """
     Entry point for the szh-sshkeys script
 
-    Used as an AuthorizedKeysCommand
+    Used as an AuthorizedKeysCommand command
 
-    ...
+    Match User zones
+         AuthorizedKeysFile none
+         AuthorizedKeysCommandUser szh-sshdcmd
+         AuthorizedKeysCommand /path/to/szh-sshkeys
+         DisableForwarding yes
+         PermitTTY no
     """
 
     try:
@@ -115,17 +120,13 @@ def sudoers(config_file: Path = CONFIG_FILE) -> None:
 
 
 def wrapper(config_file: Path = CONFIG_FILE) -> None:
-    """
-    Entry point for the szh-wrapper script
+    """Entry point for the szh-wrapper script
 
-    Called by the sshd ForceCommand, getting all its input from the
-    SSH_ORIGINAL_COMMAND environment variable
+    Called through the authorized_keys command=, with the username
+    as an argument, and with the SSH_ORIGINAL_COMMAND environment
+    variable providing the user input.
 
-    Match User alice,bob
-        ForceCommand /path/to/szh-wrapper
-        PermitTTY no
-        AllowTcpForwarding no
-        X11Forwarding no
+    command="/path/to/szh-wrapper alice@example.com",restrict ssh-ed25519 AAAAC3NzaC1lZDI1NTE5...
     """
 
     try:

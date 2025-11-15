@@ -54,9 +54,14 @@ $
 ### Create user accounts
 
 ```
+# sudo user for journald access
 adduser --system  --ingroup systemd-journal szh-logviewer
+
+# sshd AuthorizedKeysCommandUser
 adduser --system szh-sshdcmd
-adduser --disabled-password --gecos "Zone Handler" zones
+
+# shared ssh login user
+adduser --disabled-password --comment "Zone Handler" zones
 ```
 
 

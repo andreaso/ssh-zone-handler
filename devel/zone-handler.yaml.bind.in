@@ -7,12 +7,12 @@ system:
   # server_user: bind
   # systemd_unit: named.service
 users:
-  alice:
+  alice@example.com:
     ssh_keys:
       - __ALICE_SSH_KEY__
     zones:
       - example.com
       - example.net
-  bob:
+  bob@example.org:
     zones:
       - example.org

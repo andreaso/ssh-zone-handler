@@ -7,12 +7,12 @@ system:
   # server_user: knot
   # systemd_unit: knot.service
 users:
-  alice:
+  alice@example.com:
     ssh_keys:
       - __ALICE_SSH_KEY__
     zones:
       - example.com
       - example.net
-  bob:
+  bob@example.org:
     zones:
       - example.org

@@ -112,6 +112,10 @@ def test_cli_zone_ssh_keys(caplog, capsys):
 
     assert captured_alternate_expected.out == "\n".join([])
 
+    caplog.clear()
+    with pytest.raises(SystemExit):
+        sudoers(Path("./tests/data/duplicate-ssh-keys-config.yaml"))
+
 
 def test_cli_zone_sudoers(caplog, capsys):
     sudoers(Path("./tests/data/bind-example-config.yaml"))

@@ -7,7 +7,7 @@ from pathlib import Path
 from subprocess import CalledProcessError, CompletedProcess, run
 from typing import Final
 
-from .types import ZoneHandlerConf
+from .types import UserConf, ZoneHandlerConf
 
 
 class InvokeError(Exception):
@@ -41,7 +41,10 @@ class SshZoneAuthorizedKeys(SshZoneHandler):
 
         wrapper = Path(sys.argv[0]).absolute().parent / "szh-wrapper"
 
+        user: str
+        conf: UserConf
         for user, conf in self.config.users.items():
+            ssh_key: str
             for ssh_key in conf.ssh_keys:
                 print(f'command="{wrapper} {user}",restrict {ssh_key}')
 
@@ -50,7 +53,7 @@ class SshZoneSudoers(SshZoneHandler):
     """Common class to pre-generate needed sudoers rules"""
 
     def __log_rule(self) -> list[str]:
-        command: str = " ".join(self.journal_cmd)
+        command = " ".join(self.journal_cmd)
         rule = f"{self.login_user}\tALL=({self.journal_user}) NOPASSWD: {command}"
         return [rule]
 

@@ -43,8 +43,7 @@ class SshZoneAuthorizedKeys(SshZoneHandler):
 
         for user, conf in self.config.users.items():
             for ssh_key in conf.ssh_keys:
-                clean_key = " ".join(ssh_key.split()[:2])
-                print(f'command="{wrapper} {user}",restrict {clean_key}')
+                print(f'command="{wrapper} {user}",restrict {ssh_key}')
 
 
 class SshZoneSudoers(SshZoneHandler):

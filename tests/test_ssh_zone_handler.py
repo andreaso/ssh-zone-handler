@@ -32,13 +32,13 @@ def test_cli_read_config():
             "alice": {
                 "ssh_keys": [
                     "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIGlLAm/yjw76GuHsUDlqEJMrIRiyHSMlXlx/XlpRn1dfAAAABHNzaDo=",
-                    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIOy9uTo12niUl2JCWUebyzr/5pMa64BuFc/0nGjtQad andreas@corrino",
+                    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIOy9uTo12niUl2JCWUebyzr/5pMa64BuFc/0nGjtQad",
                 ],
                 "zones": ["example.com", "example.net"],
             },
             "bob": {
                 "ssh_keys": [
-                    "sk-ecdsa-sha2-nistp256@openssh.com AAAAInNrLWVjZHNhLXNoYTItbmlzdHAyNTZAb3BlbnNzaC5jb20AAAAIbmlzdHAyNTYAAABBBPnGjVz9axrV3stm+5onXYSO/MIOdggKBw5Y5jYJReqwnkIuQ+OMME6oQUuvev+hCURpnKBlfC8zcHRKWUYFF1IAAAAEc3NoOg== |-o-|",
+                    "sk-ecdsa-sha2-nistp256@openssh.com AAAAInNrLWVjZHNhLXNoYTItbmlzdHAyNTZAb3BlbnNzaC5jb20AAAAIbmlzdHAyNTYAAABBBPnGjVz9axrV3stm+5onXYSO/MIOdggKBw5Y5jYJReqwnkIuQ+OMME6oQUuvev+hCURpnKBlfC8zcHRKWUYFF1IAAAAEc3NoOg==",
                 ],
                 "zones": ["example.org"],
             },
@@ -75,13 +75,13 @@ def test_cli_read_config():
             "alice": {
                 "ssh_keys": [
                     "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIGlLAm/yjw76GuHsUDlqEJMrIRiyHSMlXlx/XlpRn1dfAAAABHNzaDo=",
-                    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIOy9uTo12niUl2JCWUebyzr/5pMa64BuFc/0nGjtQad andreas@corrino",
+                    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIOy9uTo12niUl2JCWUebyzr/5pMa64BuFc/0nGjtQad",
                 ],
                 "zones": ["example.com", "example.net"],
             },
             "bob": {
                 "ssh_keys": [
-                    "sk-ecdsa-sha2-nistp256@openssh.com AAAAInNrLWVjZHNhLXNoYTItbmlzdHAyNTZAb3BlbnNzaC5jb20AAAAIbmlzdHAyNTYAAABBBPnGjVz9axrV3stm+5onXYSO/MIOdggKBw5Y5jYJReqwnkIuQ+OMME6oQUuvev+hCURpnKBlfC8zcHRKWUYFF1IAAAAEc3NoOg== |-o-|",
+                    "sk-ecdsa-sha2-nistp256@openssh.com AAAAInNrLWVjZHNhLXNoYTItbmlzdHAyNTZAb3BlbnNzaC5jb20AAAAIbmlzdHAyNTYAAABBBPnGjVz9axrV3stm+5onXYSO/MIOdggKBw5Y5jYJReqwnkIuQ+OMME6oQUuvev+hCURpnKBlfC8zcHRKWUYFF1IAAAAEc3NoOg==",
                 ],
                 "zones": ["example.org"],
             },

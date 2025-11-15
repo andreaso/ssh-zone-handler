@@ -2,7 +2,8 @@
 
 from typing import Annotated, Final, Literal
 
-from pydantic import BaseModel, Field, ValidationInfo, field_validator
+from pydantic import BaseModel, Field, ValidationInfo, field_validator, model_validator
+from typing_extensions import Self
 
 InternalUser = Annotated[str, Field(pattern=r"^[a-z][a-z0-9.@_-]*[a-z0-9]$")]
 SystemUser = Annotated[str, Field(pattern=r"^[a-z_][a-z0-9_-]*[a-z0-9]$")]
@@ -64,6 +65,13 @@ class UserConf(BaseModel, extra="forbid", frozen=True):
     ssh_keys: list[SSHKey] = []
     zones: list[Zone]
 
+    @field_validator("ssh_keys", mode="after")
+    def _clean_ssh_keys(cls, ssh_keys: list[SSHKey]) -> list[SSHKey]:
+        cleaned_keys: list[SSHKey] = []
+        for ssh_key in ssh_keys:
+            cleaned_keys.append(" ".join(ssh_key.split()[:2]))
+        return cleaned_keys
+
 
 class ZoneHandlerConf(BaseModel, extra="forbid", frozen=True):
     """
@@ -72,3 +80,14 @@ class ZoneHandlerConf(BaseModel, extra="forbid", frozen=True):
 
     system: SystemConf
     users: dict[InternalUser, UserConf]
+
+    @model_validator(mode="after")
+    def _check_duplicate_keys(self) -> Self:
+        all_the_keys: list[SSHKey] = []
+        for user_conf in self.users.values():
+            all_the_keys.extend(user_conf.ssh_keys)
+
+        if sorted(all_the_keys) != sorted(set(all_the_keys)):
+            raise ValueError("Duplicate ssh keys not allowed")
+
+        return self

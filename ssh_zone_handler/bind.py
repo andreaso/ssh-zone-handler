@@ -88,6 +88,7 @@ class BindCommand(SshZoneCommand):
                 if (
                     f"zone {zone}/IN" in line
                     or f"'retransfer {zone}'" in line
+                    or f"'{zone}/AXFR/IN'" in line
                     or f"'{zone}/IN'" in line
                     or f"'{zone}'" in line
                 ):

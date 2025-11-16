@@ -31,14 +31,15 @@ systemctl enable --now primary.service knot.service
 
 python3 -m venv /opt/ssh-zone-handler
 /opt/ssh-zone-handler/bin/pip3 install --editable /mp/
-install --owner=root --group=root --mode=0644 --no-target-directory /mp/zone-handler.yaml.knot.example /etc/zone-handler.yaml
 
-adduser --quiet --disabled-password --gecos "Alice,,,,Living Next Door" alice
-install --owner=alice --group=alice --mode=0700 --directory /home/alice/.ssh
-install --owner=alice --group=alice --mode=0644 --no-target-directory /mp/devel/.dynamic/id_alice_ed25519.pub /home/alice/.ssh/authorized_keys
+adduser --comment "Zone Handler" --disabled-password --shell /bin/dash zones
+adduser --quiet --system --ingroup systemd-journal szh-logviewer
+adduser --system szh-sshdcmd
 
-adduser --quiet --system --ingroup systemd-journal log-viewer
+sed -e "s#__ALICE_SSH_KEY__#$(cat /mp/devel/.dynamic/id_alice_ed25519.pub)#" < /mp/devel/zone-handler.yaml.knot.in \
+    | install --owner=root --group=root --mode=0644 --no-target-directory /dev/stdin /etc/zone-handler.yaml
+
 /opt/ssh-zone-handler/bin/szh-sudoers | EDITOR="tee" visudo -f /etc/sudoers.d/zone-handler
 
-cat /mp/devel/sshd_match >> /etc/ssh/sshd_config
+sed -e "s#__INSTALL_PATH__#/opt/ssh-zone-handler#" < /mp/devel/sshd_match.in >> /etc/ssh/sshd_config
 systemctl restart ssh.service

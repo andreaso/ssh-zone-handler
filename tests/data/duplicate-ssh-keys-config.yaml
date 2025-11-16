@@ -15,5 +15,6 @@ users:
   bob:
     ssh_keys:
       - sk-ecdsa-sha2-nistp256@openssh.com AAAAInNrLWVjZHNhLXNoYTItbmlzdHAyNTZAb3BlbnNzaC5jb20AAAAIbmlzdHAyNTYAAABBBPnGjVz9axrV3stm+5onXYSO/MIOdggKBw5Y5jYJReqwnkIuQ+OMME6oQUuvev+hCURpnKBlfC8zcHRKWUYFF1IAAAAEc3NoOg== |-o-|
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIOy9uTo12niUl2JCWUebyzr/5pMa64BuFc/0nGjtQad duplicate
     zones:
       - example.org

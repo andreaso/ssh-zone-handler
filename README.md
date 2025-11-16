@@ -16,11 +16,11 @@ $ make vm-create
 ```
 
 ```
-$ alias ssh='ssh -F devel/.generated/ssh_conf'
+$ alias ssh='ssh -F devel/.dynamic/ssh_conf'
 ```
 
 ```
-$ ssh alice@szh-secondary help
+$ ssh zones@szh-named help
 usage: command [ZONE]
 
 help                 Display this help message
@@ -32,29 +32,31 @@ $
 ```
 
 ```
-$ ssh alice@szh-secondary list
+$ ssh zones@szh-named list
 example.com
 example.net
 $
 ```
 
 ```
-$ ssh alice@szh-secondary logs example.net
-Apr 28 17:52:00 szh-secondary named[2821]: zone example.net/IN: Transfer started.
-Apr 28 17:52:00 szh-secondary named[2821]: transfer of 'example.net/IN' from 192.168.63.10#53: connected using 192.168.63.10#53
-Apr 28 17:52:00 szh-secondary named[2821]: zone example.net/IN: transferred serial 26281038
-Apr 28 17:52:00 szh-secondary named[2821]: transfer of 'example.net/IN' from 192.168.63.10#53: Transfer status: success
-Apr 28 17:52:00 szh-secondary named[2821]: transfer of 'example.net/IN' from 192.168.63.10#53: Transfer completed: 1 messages, 6 records, 190 bytes, 0.008 secs (23750 bytes/sec) (serial 26281038)
+$ ssh zones@szh-named logs example.net
+Apr 28 17:52:00 szh-named named[2821]: zone example.net/IN: Transfer started.
+Apr 28 17:52:00 szh-named named[2821]: transfer of 'example.net/IN' from 192.168.63.10#53: connected using 192.168.63.10#53
+Apr 28 17:52:00 szh-named named[2821]: zone example.net/IN: transferred serial 26281038
+Apr 28 17:52:00 szh-named named[2821]: transfer of 'example.net/IN' from 192.168.63.10#53: Transfer status: success
+Apr 28 17:52:00 szh-named named[2821]: transfer of 'example.net/IN' from 192.168.63.10#53: Transfer completed: 1 messages, 6 records, 190 bytes, 0.008 secs (23750 bytes/sec) (serial 26281038)
 $
 ```
 
 
 ## Setup instructions
 
-### Create log viewer user with journald access
+### Create user accounts
 
 ```
-adduser --system --no-create-home --home /nonexistent --shell /usr/sbin/nologin --ingroup systemd-journal log-viewer
+adduser --comment "SSH Zone Handler journalctl sudo access" --ingroup systemd-journal --system szh-logviewer
+adduser --comment "SSH Zone Handler OpenSSH AuthorizedKeysCommandUser" --system szh-sshdcmd
+adduser --comment "SSH Zone Handler shared login user" --disabled-password  zones
 ```
 
 
@@ -83,17 +85,18 @@ python3 -m venv /opt/ssh-zone-handler
 ### Configure sshd
 
 ```
-Match User alice,bob
-     ForceCommand /opt/ssh-zone-handler/bin/szh-wrapper
+Match User zones
+     AuthorizedKeysFile none
+     AuthorizedKeysCommandUser szh-sshdcmd
+     AuthorizedKeysCommand /opt/ssh-zone-handler/bin/szh-sshkeys
+     DisableForwarding yes
      PermitTTY no
-     AllowTcpForwarding no
-     X11Forwarding no
 ```
 
 
 ## Known limitations
 
-* Might be Ubuntu distro specific
+* Might be Debian/Ubuntu distro specific
 
 
 [1]: https://documentation.ubuntu.com/multipass/

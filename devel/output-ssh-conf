@@ -19,7 +19,7 @@ Host szh-knot
      Hostname $knot_ip
 
 Host *
-     User alice
+     User zones
      IdentitiesOnly yes
      IdentityFile $ssh_key_path
      UserKnownHostsFile $(mktemp -p /tmp szh-known-hosts-XXXXXXX)

@@ -1,11 +1,13 @@
 """Base classes"""
 
 import logging
-from collections.abc import Iterator, KeysView, Sequence
+import sys
+from collections.abc import Iterator, Sequence
+from pathlib import Path
 from subprocess import CalledProcessError, CompletedProcess, run
 from typing import Final
 
-from .types import ZoneHandlerConf
+from .types import UserConf, ZoneHandlerConf
 
 
 class InvokeError(Exception):
@@ -17,7 +19,8 @@ class SshZoneHandler:
 
     def __init__(self, config: ZoneHandlerConf) -> None:
         self.config: ZoneHandlerConf = config
-        self.log_user: Final[str] = config.system.log_access_user
+        self.journal_user: Final[str] = config.system.journalctl_user
+        self.login_user: Final[str] = config.system.login_user
         self.server: Final[str] = config.system.server_type
         self.service_user: Final[str] = config.system.server_user
         service_unit: Final[str] = config.system.systemd_unit
@@ -30,20 +33,29 @@ class SshZoneHandler:
         )
 
 
+class SshZoneAuthorizedKeys(SshZoneHandler):
+    """Common class to output authorized_keys entries"""
+
+    def output(self) -> None:
+        """Outputs all the configured ssh keys"""
+
+        wrapper = Path(sys.argv[0]).absolute().parent / "szh-wrapper"
+
+        user: str
+        conf: UserConf
+        for user, conf in self.config.users.items():
+            ssh_key: str
+            for ssh_key in conf.ssh_keys:
+                print(f'command="{wrapper} {user}",restrict {ssh_key}')
+
+
 class SshZoneSudoers(SshZoneHandler):
     """Common class to pre-generate needed sudoers rules"""
 
-    def __log_rules(self) -> list[str]:
-        users: KeysView[str] = self.config.users.keys()
-        command: str = " ".join(self.journal_cmd)
-        rules: list[str] = []
-
-        user: str
-        for user in users:
-            rule = f"{user}\tALL=({self.log_user}) NOPASSWD: {command}"
-            rules.append(rule)
-
-        return rules
+    def __log_rule(self) -> list[str]:
+        command = " ".join(self.journal_cmd)
+        rule = f"{self.login_user}\tALL=({self.journal_user}) NOPASSWD: {command}"
+        return [rule]
 
     def _server_command_rules(self) -> list[str]:
         raise NotImplementedError("Gets defined in each daemon specific subclass")
@@ -52,7 +64,7 @@ class SshZoneSudoers(SshZoneHandler):
         """Outputs all the needed sudoers rules."""
 
         all_rules: list[str] = []
-        all_rules += self.__log_rules()
+        all_rules += self.__log_rule()
         all_rules += self._server_command_rules()
 
         rule: str
@@ -128,7 +140,7 @@ class SshZoneCommand(SshZoneHandler):
     def __logs(self, zones: list[str]) -> None:
         zones_str = ", ".join(zones)
         failure = f"Failed to output log lines for the following zone(s): {zones_str}"
-        command = ("/usr/bin/sudo", f"--user={self.log_user}") + self.journal_cmd
+        command = ("/usr/bin/sudo", f"--user={self.journal_user}") + self.journal_cmd
 
         logging.info("Outputting logs for the following zone(s): %s", zones_str)
 

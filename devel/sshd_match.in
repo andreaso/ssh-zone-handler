@@ -1,0 +1,7 @@
+
+Match User zones
+     AuthorizedKeysFile none
+     AuthorizedKeysCommandUser szh-sshdcmd
+     AuthorizedKeysCommand __INSTALL_PATH__/bin/szh-sshkeys
+     DisableForwarding yes
+     PermitTTY no

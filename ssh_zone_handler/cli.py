@@ -3,7 +3,6 @@
 import logging
 import logging.config
 import os
-import pwd
 import sys
 from pathlib import Path
 from typing import Final, Literal
@@ -11,7 +10,7 @@ from typing import Final, Literal
 import yaml
 from pydantic import ValidationError
 
-from .base import InvokeError
+from .base import InvokeError, SshZoneAuthorizedKeys
 from .bind import BindCommand, BindSudoers
 from .knot import KnotCommand, KnotSudoers
 from .static import LOGCONF
@@ -72,6 +71,30 @@ def verifier() -> None:
         _error_out(str(cfe))
 
 
+def ssh_keys(config_file: Path = CONFIG_FILE) -> None:
+    """
+    Entry point for the szh-sshkeys script
+
+    Used as an AuthorizedKeysCommand command
+
+    Match User zones
+         AuthorizedKeysFile none
+         AuthorizedKeysCommandUser szh-sshdcmd
+         AuthorizedKeysCommand /path/to/szh-sshkeys
+         DisableForwarding yes
+         PermitTTY no
+    """
+
+    try:
+        config: ZoneHandlerConf = _read_config(config_file)
+    except ConfigFileError as cfe:
+        logging.debug(str(cfe))
+        sys.exit(1)
+
+    szh = SshZoneAuthorizedKeys(config)
+    szh.output()
+
+
 def sudoers(config_file: Path = CONFIG_FILE) -> None:
     """
     Entry point for the szh-sudoers script
@@ -97,20 +120,20 @@ def sudoers(config_file: Path = CONFIG_FILE) -> None:
 
 
 def wrapper(config_file: Path = CONFIG_FILE) -> None:
-    """
-    Entry point for the szh-wrapper script
+    """Entry point for the szh-wrapper script
 
-    Called by the sshd ForceCommand, getting all its input from the
-    SSH_ORIGINAL_COMMAND environment variable
+    Called through the authorized_keys command=, with the username
+    as an argument, and with the SSH_ORIGINAL_COMMAND environment
+    variable providing the user input.
 
-    Match User alice,bob
-        ForceCommand /path/to/szh-wrapper
-        PermitTTY no
-        AllowTcpForwarding no
-        X11Forwarding no
+    command="/path/to/szh-wrapper alice@example.com",restrict ssh-ed25519 AAAAC3NzaC1lZDI1NTE5...
     """
 
-    username: str = pwd.getpwuid(os.getuid()).pw_name
+    try:
+        username = sys.argv[1]
+    except IndexError:
+        _error_out(f"Usage: {sys.argv[0]} username")
+
     try:
         config: ZoneHandlerConf = _read_config(config_file)
     except ConfigFileError as cfe:

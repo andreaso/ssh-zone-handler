@@ -30,6 +30,7 @@ jobs:
           persist-credentials: false
 
       - name: Enable Python ${{ matrix.py_version }}
+        id: setup-python
         uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.py_version }}
@@ -38,13 +39,13 @@ jobs:
         if: matrix.secondary == 'BIND9'
         run: |
           echo "GHA_SZH_DAEMON=BIND9" >> "$GITHUB_ENV"
-          echo "GHA_SZH_CFILE=zone-handler.yaml.bind.example" >> "$GITHUB_ENV"
+          echo "GHA_SZH_CFILE=devel/zone-handler.yaml.bind.in" >> "$GITHUB_ENV"
 
       - name: Set Knot test environment variables
         if: matrix.secondary == 'Knot'
         run: |
           echo "GHA_SZH_DAEMON=Knot" >> "$GITHUB_ENV"
-          echo "GHA_SZH_CFILE=zone-handler.yaml.knot.example" >> "$GITHUB_ENV"
+          echo "GHA_SZH_CFILE=devel/zone-handler.yaml.knot.in" >> "$GITHUB_ENV"
 
       - name: Install Knot
         if: matrix.secondary == 'Knot'
@@ -114,47 +115,51 @@ jobs:
           sudo rm /etc/systemd/system/knot.service
           sudo systemctl start knot.service
 
+      - name: Create sanely owned /myopt
+        run: sudo install --owner=root --group=root --mode=0755 --directory /myopt
+
       - name: Install ssh-zone-handler
         run: |
-          "$python_binary" -m venv /opt/ssh-zone-handler
-          /opt/ssh-zone-handler/bin/pip3 install .
-          sudo install --owner=root --group=root --mode=0644 --no-target-directory "$GHA_SZH_CFILE" /etc/zone-handler.yaml
+          sudo "$python_binary" -m venv /myopt/ssh-zone-handler
+          sudo /myopt/ssh-zone-handler/bin/pip3 install .
         env:
-          python_binary: python${{ matrix.py_version }}
+          python_binary: ${{ steps.setup-python.outputs.python-path }}
+
+      - name: Create Alice's ssh key
+        run: ssh-keygen -t ed25519 -N '' -f ~/.ssh/id_alice_ed25519 -C alice
+
+      - name: Generate /etc/zone-handler.yaml
+        run: >
+          sed -e "s#__ALICE_SSH_KEY__#$(cat ~/.ssh/id_alice_ed25519.pub)#" < "$GHA_SZH_CFILE"
+          | sudo install --owner=root --group=root --mode=0644 --no-target-directory /dev/stdin /etc/zone-handler.yaml
 
       - name: Run szh-verify command against known good config files
         run: |
-          /opt/ssh-zone-handler/bin/szh-verify ./tests/data/knot-example-config.yaml
-          /opt/ssh-zone-handler/bin/szh-verify ./tests/data/bind-example-config.yaml
-          /opt/ssh-zone-handler/bin/szh-verify ./tests/data/bind-alternative-config.yaml
+          /myopt/ssh-zone-handler/bin/szh-verify ./tests/data/knot-example-config.yaml
+          /myopt/ssh-zone-handler/bin/szh-verify ./tests/data/bind-example-config.yaml
+          /myopt/ssh-zone-handler/bin/szh-verify ./tests/data/bind-alternative-config.yaml
 
       - name: Run szh-verify command against non-existing config file
         run: |
-          if /opt/ssh-zone-handler/bin/szh-verify ./completly-bogus-filename; then
+          if /myopt/ssh-zone-handler/bin/szh-verify ./completly-bogus-filename; then
               echo "Failed to fail expected fail."; exit 1
           fi
 
       - name: Run szh-verify command against invalid config file
         run: |
-          if /opt/ssh-zone-handler/bin/szh-verify ./tests/data/outdated-config.yaml; then
+          if /myopt/ssh-zone-handler/bin/szh-verify ./tests/data/outdated-config.yaml; then
               echo "Failed to fail expected fail."; exit 1
           fi
 
-      - name: Create Alice's ssh key
-        run: ssh-keygen -t ed25519 -N '' -f ~/.ssh/id_alice_ed25519 -C alice
-
-      - name: Setup Alice's user
+      - name: Setup user accounts
         run: |
-          sudo adduser --quiet --disabled-password --gecos "Alice,,,,Living Next Door" alice
-          sudo install --owner=alice --group=alice --mode=0700 --directory ~alice/.ssh
-          sudo install --owner=alice --group=alice --mode=0644 --no-target-directory ~runner/.ssh/id_alice_ed25519.pub ~alice/.ssh/authorized_keys
-
-      - name: Setup log-viewer user
-        run: sudo adduser --system --ingroup systemd-journal log-viewer
+          sudo adduser --comment "Zone Handler" --disabled-password --shell /bin/dash zones
+          sudo adduser --system --ingroup systemd-journal szh-logviewer
+          sudo adduser --system szh-sshdcmd
 
       - name: Generate sudoers file
         run: >
-          /opt/ssh-zone-handler/bin/szh-sudoers
+          /myopt/ssh-zone-handler/bin/szh-sudoers
           | sudo EDITOR="tee" visudo -f /etc/sudoers.d/zone-handler
 
       - name: Install sshd
@@ -162,8 +167,7 @@ jobs:
 
       - name: Update sshd configuration
         run: |
-          # shellcheck disable=SC2002
-          cat devel/sshd_match | sudo tee --append /etc/ssh/sshd_config
+          sed -e "s#__INSTALL_PATH__#/myopt/ssh-zone-handler#" < devel/sshd_match.in | sudo tee --append /etc/ssh/sshd_config
           sudo systemctl restart ssh.service
 
       - name: Prime ~/.ssh/known_hosts

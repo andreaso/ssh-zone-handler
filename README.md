@@ -54,14 +54,9 @@ $
 ### Create user accounts
 
 ```
-# sudo user for journald access
-adduser --system  --ingroup systemd-journal szh-logviewer
-
-# sshd AuthorizedKeysCommandUser
-adduser --system szh-sshdcmd
-
-# shared ssh login user
-adduser --disabled-password --comment "Zone Handler" zones
+adduser --comment "SSH Zone Handler journalctl sudo access" --ingroup systemd-journal --system szh-logviewer
+adduser --comment "SSH Zone Handler OpenSSH AuthorizedKeysCommandUser" --system szh-sshdcmd
+adduser --comment "SSH Zone Handler shared login user" --disabled-password  zones
 ```
 
 

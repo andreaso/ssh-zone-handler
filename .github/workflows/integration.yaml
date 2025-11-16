@@ -109,13 +109,13 @@ jobs:
           sudo rm /etc/systemd/system/knot.service
           sudo systemctl start knot.service
 
-      - name: Create sanely owned /opt2
-        run: sudo install --owner=root --group=root --mode=0755 --directory /opt2
+      - name: Create sanely owned /myopt
+        run: sudo install --owner=root --group=root --mode=0755 --directory /myopt
 
       - name: Install ssh-zone-handler
         run: |
-          sudo "$python_binary" -m venv /opt2/ssh-zone-handler
-          sudo /opt2/ssh-zone-handler/bin/pip3 install .
+          sudo "$python_binary" -m venv /myopt/ssh-zone-handler
+          sudo /myopt/ssh-zone-handler/bin/pip3 install .
         env:
           python_binary: ${{ steps.setup-python.outputs.python-path }}
 
@@ -129,19 +129,19 @@ jobs:
 
       - name: Run szh-verify command against known good config files
         run: |
-          /opt2/ssh-zone-handler/bin/szh-verify ./tests/data/knot-example-config.yaml
-          /opt2/ssh-zone-handler/bin/szh-verify ./tests/data/bind-example-config.yaml
-          /opt2/ssh-zone-handler/bin/szh-verify ./tests/data/bind-alternative-config.yaml
+          /myopt/ssh-zone-handler/bin/szh-verify ./tests/data/knot-example-config.yaml
+          /myopt/ssh-zone-handler/bin/szh-verify ./tests/data/bind-example-config.yaml
+          /myopt/ssh-zone-handler/bin/szh-verify ./tests/data/bind-alternative-config.yaml
 
       - name: Run szh-verify command against non-existing config file
         run: |
-          if /opt2/ssh-zone-handler/bin/szh-verify ./completly-bogus-filename; then
+          if /myopt/ssh-zone-handler/bin/szh-verify ./completly-bogus-filename; then
               echo "Failed to fail expected fail."; exit 1
           fi
 
       - name: Run szh-verify command against invalid config file
         run: |
-          if /opt2/ssh-zone-handler/bin/szh-verify ./tests/data/outdated-config.yaml; then
+          if /myopt/ssh-zone-handler/bin/szh-verify ./tests/data/outdated-config.yaml; then
               echo "Failed to fail expected fail."; exit 1
           fi
 
@@ -153,7 +153,7 @@ jobs:
 
       - name: Generate sudoers file
         run: >
-          /opt2/ssh-zone-handler/bin/szh-sudoers
+          /myopt/ssh-zone-handler/bin/szh-sudoers
           | sudo EDITOR="tee" visudo -f /etc/sudoers.d/zone-handler
 
       - name: Install sshd
@@ -161,7 +161,7 @@ jobs:
 
       - name: Update sshd configuration
         run: |
-          sed -e "s#__INSTALL_PATH__#/opt2/ssh-zone-handler#" < devel/sshd_match.in | sudo tee --append /etc/ssh/sshd_config
+          sed -e "s#__INSTALL_PATH__#/myopt/ssh-zone-handler#" < devel/sshd_match.in | sudo tee --append /etc/ssh/sshd_config
           sudo systemctl restart ssh.service
 
       - name: Prime ~/.ssh/known_hosts

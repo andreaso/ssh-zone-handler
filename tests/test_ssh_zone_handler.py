@@ -124,12 +124,8 @@ def test_cli_zone_sudoers(caplog, capsys):
     assert captured_expected.out == "\n".join(
         [
             "zones\tALL=(szh-logviewer) NOPASSWD: /usr/bin/journalctl --unit=named.service --since=-5days --utc",
-            "zones\tALL=(bind) NOPASSWD: /usr/sbin/rndc retransfer example.com",
-            "zones\tALL=(bind) NOPASSWD: /usr/sbin/rndc retransfer example.net",
-            "zones\tALL=(bind) NOPASSWD: /usr/sbin/rndc retransfer example.org",
-            "zones\tALL=(bind) NOPASSWD: /usr/sbin/rndc zonestatus example.com",
-            "zones\tALL=(bind) NOPASSWD: /usr/sbin/rndc zonestatus example.net",
-            "zones\tALL=(bind) NOPASSWD: /usr/sbin/rndc zonestatus example.org\n",
+            "zones\tALL=(bind) NOPASSWD: /usr/sbin/rndc retransfer *",
+            "zones\tALL=(bind) NOPASSWD: /usr/sbin/rndc zonestatus *\n",
         ]
     )
 
@@ -140,12 +136,8 @@ def test_cli_zone_sudoers(caplog, capsys):
     assert captured_knot_expected.out == "\n".join(
         [
             "zones\tALL=(szh-logviewer) NOPASSWD: /usr/bin/journalctl --unit=knot.service --since=-5days --utc",
-            "zones\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-read example.com",
-            "zones\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-read example.net",
-            "zones\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-read example.org",
-            "zones\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-retransfer example.com",
-            "zones\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-retransfer example.net",
-            "zones\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-retransfer example.org\n",
+            "zones\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-read *",
+            "zones\tALL=(knot) NOPASSWD: /usr/sbin/knotc zone-retransfer *\n",
         ]
     )
 

@@ -7,7 +7,7 @@ from subprocess import CompletedProcess
 from typing import Final
 
 from .base import InvokeError, SshZoneCommand, SshZoneSudoers
-from .types import UserConf, ZoneHandlerConf
+from .types import ZoneHandlerConf
 
 
 class BindSudoers(SshZoneSudoers):
@@ -16,15 +16,11 @@ class BindSudoers(SshZoneSudoers):
     def _server_command_rules(self) -> list[str]:
         rules: list[str] = []
         for cmd in ["retransfer", "zonestatus"]:
-            user_conf: UserConf
-            for user_conf in self.config.users.values():
-                zone: str
-                for zone in user_conf.zones:
-                    rule = (
-                        f"{self.login_user}\tALL=({self.service_user}) NOPASSWD: "
-                        + f"/usr/sbin/rndc {cmd} {zone}"
-                    )
-                    rules.append(rule)
+            rule = (
+                f"{self.login_user}\tALL=({self.service_user}) NOPASSWD: "
+                + f"/usr/sbin/rndc {cmd} *"
+            )
+            rules.append(rule)
         return rules
 
 

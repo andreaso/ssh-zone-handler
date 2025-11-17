@@ -1,6 +1,6 @@
 """Custom types"""
 
-from typing import Annotated, Final, Literal
+from typing import Annotated, Final, Literal, TypedDict
 
 from pydantic import BaseModel, Field, ValidationInfo, field_validator, model_validator
 from typing_extensions import Self
@@ -12,10 +12,11 @@ FwdZone = Annotated[str, Field(pattern=r"^([a-z0-9][a-z0-9-]+[a-z0-9]\.)+[a-z]+$
 Ptr4Zone = Annotated[str, Field(pattern=r"^[0-9/]+\.([0-9]+\.)+in-addr\.arpa$")]
 Ptr6Zone = Annotated[str, Field(pattern=r"^([a-f0-9]\.)+ip6\.arpa$")]
 Zone = FwdZone | Ptr4Zone | Ptr6Zone
+ServiceDefault = TypedDict("ServiceDefault", {"unit": ServiceUnit, "user": SystemUser})
 
 SSHKey = Annotated[str, Field(pattern=r"^(ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNT|ecdsa-sha2-nistp384 AAAAE2VjZHNhLXNoYTItbmlzdHAzOD|ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1Mj|sk-ecdsa-sha2-nistp256@openssh.com AAAAInNrLWVjZHNhLXNoYTItbmlzdHAyNTZAb3BlbnNzaC5jb2|ssh-ed25519 AAAAC3NzaC1lZDI1NTE5|sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29t|ssh-rsa AAAAB3NzaC1yc2)[0-9A-Za-z+/]+[=]{0,3}(\s.*)?$")]  # fmt: skip
 
-SERVICE_DEFAULTS: Final[dict[str, dict[str, str]]] = {
+SERVICE_DEFAULTS: Final[dict[str, ServiceDefault]] = {
     "bind": {
         "unit": "named.service",
         "user": "bind",
@@ -39,6 +40,7 @@ class SystemConf(BaseModel, extra="forbid", frozen=True):
     systemd_unit: ServiceUnit = Field(default="", validate_default=True)
 
     @field_validator("server_user", mode="before")
+    @classmethod
     def _default_user(cls, user: str, values: ValidationInfo) -> str:
         if not user:
             try:
@@ -48,6 +50,7 @@ class SystemConf(BaseModel, extra="forbid", frozen=True):
         return user
 
     @field_validator("systemd_unit", mode="before")
+    @classmethod
     def _default_unit(cls, systemd_unit: str, values: ValidationInfo) -> str:
         if not systemd_unit:
             try:
@@ -66,6 +69,7 @@ class UserConf(BaseModel, extra="forbid", frozen=True):
     zones: list[Zone]
 
     @field_validator("ssh_keys", mode="after")
+    @classmethod
     def _clean_ssh_keys(cls, ssh_keys: list[SSHKey]) -> list[SSHKey]:
         cleaned_keys: list[SSHKey] = []
         for ssh_key in ssh_keys:

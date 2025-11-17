@@ -60,16 +60,14 @@ class KnotCommand(SshZoneCommand):
         run_failure = f'Failed to dump content of zone "{zone}"'
 
         result: CompletedProcess[str] = self._runner(command, run_failure)
-        zone_content: str = result.stdout.rstrip()
+        zone_content = result.stdout.rstrip()
         zone_content = self.__filter_dump(zone_content, zone)
 
         print(zone_content)
 
     @staticmethod
     def _filter_logs(log_lines: list[str], zones: list[str]) -> Iterator[str]:
-        line: str
         for line in log_lines:
-            zone: str
             for zone in zones:
                 if f"[{zone}.]" in line:
                     yield line

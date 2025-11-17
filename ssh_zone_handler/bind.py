@@ -44,8 +44,6 @@ class BindCommand(SshZoneCommand):
 
         result: CompletedProcess[str] = self._runner(command, failure)
 
-        line: str
-        matched: re.Match[str] | None
         pattern = re.compile(r"^([^:]+): (.+)$")
         for line in result.stdout.split("\n"):
             matched = pattern.match(line)
@@ -75,15 +73,13 @@ class BindCommand(SshZoneCommand):
 
         run_failure = f'Failed to dump content of zone "{zone}"'
         result: CompletedProcess[str] = self._runner(command, run_failure)
-        zone_content: str = result.stdout.rstrip()
+        zone_content = result.stdout.rstrip()
 
         print(zone_content)
 
     @staticmethod
     def _filter_logs(log_lines: list[str], zones: list[str]) -> Iterator[str]:
-        line: str
         for line in log_lines:
-            zone: str
             for zone in zones:
                 if (
                     f"zone {zone}/IN" in line

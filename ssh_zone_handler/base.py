@@ -21,7 +21,6 @@ class SshZoneHandler:
         self.config: ZoneHandlerConf = config
         self.journal_user: Final[str] = config.system.journalctl_user
         self.login_user: Final[str] = config.system.login_user
-        self.server: Final[str] = config.system.server_type
         self.service_user: Final[str] = config.system.server_user
         service_unit: Final[str] = config.system.systemd_unit
 
@@ -67,7 +66,6 @@ class SshZoneSudoers(SshZoneHandler):
         all_rules += self.__log_rule()
         all_rules += self._server_command_rules()
 
-        rule: str
         for rule in all_rules:
             print(rule)
 
@@ -95,7 +93,8 @@ class SshZoneCommand(SshZoneHandler):
 
     @staticmethod
     def __parse(
-        ssh_command: str, user_zones: Sequence[str]
+        ssh_command: str,
+        user_zones: Sequence[str],
     ) -> tuple[str | None, list[str]]:
         args: list[str] = ssh_command.split()
         command: str | None = None
@@ -145,7 +144,7 @@ class SshZoneCommand(SshZoneHandler):
         logging.info("Outputting logs for the following zone(s): %s", zones_str)
 
         result: CompletedProcess[str] = self._runner(command, failure)
-        log_lines: list[str] = result.stdout.split("\n")
+        log_lines = result.stdout.split("\n")
 
         line: str
         for line in self._filter_logs(log_lines, zones):

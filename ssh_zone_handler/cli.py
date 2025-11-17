@@ -91,8 +91,8 @@ def ssh_keys(config_file: Path = CONFIG_FILE) -> None:
         logging.debug(str(cfe))
         sys.exit(1)
 
-    szh = SshZoneAuthorizedKeys(config)
-    szh.output()
+    szh_authorized_keys = SshZoneAuthorizedKeys(config)
+    szh_authorized_keys.output()
 
 
 def sudoers(config_file: Path = CONFIG_FILE) -> None:
@@ -109,14 +109,14 @@ def sudoers(config_file: Path = CONFIG_FILE) -> None:
     except ConfigFileError as cfe:
         _error_out(str(cfe))
 
-    szh: BindSudoers | KnotSudoers
+    szh_sudoers: BindSudoers | KnotSudoers
     if config.system.server_type == "bind":
-        szh = BindSudoers(config)
+        szh_sudoers = BindSudoers(config)
     elif config.system.server_type == "knot":
-        szh = KnotSudoers(config)
+        szh_sudoers = KnotSudoers(config)
     else:
         _error_out("Unsupported server configured")
-    szh.generate()
+    szh_sudoers.generate()
 
 
 def wrapper(config_file: Path = CONFIG_FILE) -> None:
@@ -145,15 +145,15 @@ def wrapper(config_file: Path = CONFIG_FILE) -> None:
     except KeyError:
         pass
 
-    szh: BindCommand | KnotCommand
+    szh_command: BindCommand | KnotCommand
     if config.system.server_type == "bind":
-        szh = BindCommand(config)
+        szh_command = BindCommand(config)
     elif config.system.server_type == "knot":
-        szh = KnotCommand(config)
+        szh_command = KnotCommand(config)
     else:
         _error_out("Unsupported server configured")
 
     try:
-        szh.invoke(ssh_command, username)
+        szh_command.invoke(ssh_command, username)
     except InvokeError as error:
         _error_out(str(error))

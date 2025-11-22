@@ -9,8 +9,6 @@ on:
   pull_request:
     branches:
       - main
-  schedule:
-    - cron: "15 4 * * 6"
 
 permissions:
   actions: read

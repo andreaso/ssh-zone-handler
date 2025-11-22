@@ -4,7 +4,9 @@
 * You want to provide your DNS tenants with a bit of debugging self-service?
 * You like SSH, but you don't want to grant people not-you full shell access?
 
-If so, then this might just be the tool for you.
+If so, then this might just be the tool for you. It supports dumping
+out zone content, viewing server logs as well as triggering full AXFR
+zone (re)transfers.
 
 
 ## Usage
@@ -12,11 +14,11 @@ If so, then this might just be the tool for you.
 Usage example, based on local [Multipass][1] setup.
 
 ```
-$ make vm-create
+make vm-create
 ```
 
 ```
-$ alias ssh='ssh -F devel/.dynamic/ssh_conf'
+alias ssh='ssh -F devel/.dynamic/ssh_conf'
 ```
 
 ```
@@ -97,6 +99,7 @@ Match User zones
 ## Known limitations
 
 * Might be Debian/Ubuntu distro specific
+* Currently only supports BIND 9 and Knot
 
 
 [1]: https://documentation.ubuntu.com/multipass/

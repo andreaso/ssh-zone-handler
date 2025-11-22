@@ -85,4 +85,4 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Markdown lint README
-        run: markdownlint --disable MD012 MD013 MD014 MD040 -- README.md
+        run: markdownlint --disable MD012 MD013 MD040 -- README.md

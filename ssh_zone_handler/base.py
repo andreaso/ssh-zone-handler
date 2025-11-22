@@ -164,22 +164,32 @@ class SshZoneCommand(SshZoneHandler):
             raise InvokeError('Invalid command, try "help"')
 
         if command == "help":
+            logging.info("'%s' runs help command", username)
             self.__usage()
         elif command == "list":
-            uzn: str
+            logging.info("'%s' lists available zones", username)
             for uzn in user_zones:
                 print(uzn)
         elif not zones:
             raise InvokeError("No valid zone provided")
         elif command == "dump":
-            logging.info('Outputting "%s" zone content', zones[0])
+            logging.info(
+                "'%s' requests dump of '%s' zone content",
+                username,
+                zones[0],
+            )
             self._dump(zones[0])
         elif command == "logs":
             logging.info(
-                "Outputting logs for the following zone(s): %s",
+                "'%s' requests log output for the following zone(s): %s",
+                username,
                 ", ".join(zones),
             )
             self.__logs(zones)
         elif command == "retransfer":
-            logging.info('Triggering "%s" AXFR zone retransfer', zones[0])
+            logging.info(
+                "'%s' requests '%s' AXFR zone retransfer",
+                username,
+                zones[0],
+            )
             self._retransfer(zones[0])

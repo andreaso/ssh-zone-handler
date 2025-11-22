@@ -57,7 +57,7 @@ def test_cli_read_config():
         "users": {
             "bob": {
                 "ssh_keys": [],
-                "zones": ["example.org"],
+                "zones": [],
             },
         },
     }
@@ -181,12 +181,18 @@ def test_cli_zone_wrapper(caplog, capsys, mocker):
     assert captured_outdated == "Invalid server side config file\n"
 
     caplog.clear()
-    mocker.patch("sys.argv", ["_", "mallory"])
+    mocker.patch("sys.argv", ["_", "bob"])
     os.environ["SSH_ORIGINAL_COMMAND"] = "help"
     with pytest.raises(SystemExit):
+        wrapper(Path("./tests/data/bind-alternative-config.yaml"))
+    captured_nozones_user = caplog.text
+    assert captured_nozones_user == 'No zones configured for user "bob"\n'
+
+    caplog.clear()
+    mocker.patch("sys.argv", ["_", "mallory"])
+    os.environ["SSH_ORIGINAL_COMMAND"] = "help"
+    with pytest.raises(KeyError):
         wrapper(Path("./tests/data/bind-example-config.yaml"))
-    captured_unconf_user = caplog.text
-    assert captured_unconf_user == 'No zones configured for user "mallory"\n'
 
 
 def test_bind_log_filtering():

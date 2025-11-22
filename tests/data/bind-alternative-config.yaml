@@ -8,5 +8,4 @@ system:
   systemd_unit: bind9.service
 users:
   bob:
-    zones:
-      - example.org
+    zones: []

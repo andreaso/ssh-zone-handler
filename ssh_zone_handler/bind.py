@@ -1,6 +1,5 @@
 """BIND specific subclasses"""
 
-import logging
 import re
 from collections.abc import Iterator
 from subprocess import CompletedProcess
@@ -50,8 +49,6 @@ class BindCommand(SshZoneCommand):
         return zone_file
 
     def _dump(self, zone: str) -> None:
-        logging.info('Outputting "%s" zone content', zone)
-
         lookup_failure = f'Failed to lookup zone file for zone "{zone}"'
         zone_file: str | None = self.__lookup(zone, lookup_failure)
         if not zone_file:
@@ -87,8 +84,6 @@ class BindCommand(SshZoneCommand):
                     yield line
 
     def _retransfer(self, zone: str) -> None:
-        logging.info('Triggering "%s" AXFR zone retransfer', zone)
-
         failure = f'Failed to trigger retransfer of zone "{zone}"'
         command = self.rndc_prefix + ("retransfer", zone)
 

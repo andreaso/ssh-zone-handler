@@ -1,6 +1,5 @@
 """Knot specific subclasses"""
 
-import logging
 from collections.abc import Iterator
 from subprocess import CompletedProcess
 from typing import Final
@@ -50,8 +49,6 @@ class KnotCommand(SshZoneCommand):
         return "\n".join(filtered)
 
     def _dump(self, zone: str) -> None:
-        logging.info('Outputting "%s" zone content', zone)
-
         command = self.knotc_prefix + ("zone-read", zone)
         run_failure = f'Failed to dump content of zone "{zone}"'
 
@@ -69,8 +66,6 @@ class KnotCommand(SshZoneCommand):
                     yield line
 
     def _retransfer(self, zone: str) -> None:
-        logging.info('Triggering "%s" AXFR zone retransfer', zone)
-
         failure = f'Failed to trigger retransfer of zone "{zone}"'
         command = self.knotc_prefix + ("zone-retransfer", zone)
 

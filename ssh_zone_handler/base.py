@@ -131,8 +131,6 @@ class SshZoneCommand(SshZoneHandler):
         failure = f"Failed to output log lines for the following zone(s): {zones_str}"
         command = ("/usr/bin/sudo", f"--user={self.journal_user}") + self.journal_cmd
 
-        logging.info("Outputting logs for the following zone(s): %s", zones_str)
-
         result: CompletedProcess[str] = self._runner(command, failure)
         log_lines = result.stdout.split("\n")
 
@@ -174,8 +172,14 @@ class SshZoneCommand(SshZoneHandler):
         elif not zones:
             raise InvokeError("No valid zone provided")
         elif command == "dump":
+            logging.info('Outputting "%s" zone content', zones[0])
             self._dump(zones[0])
         elif command == "logs":
+            logging.info(
+                "Outputting logs for the following zone(s): %s",
+                ", ".join(zones),
+            )
             self.__logs(zones)
         elif command == "retransfer":
+            logging.info('Triggering "%s" AXFR zone retransfer', zones[0])
             self._retransfer(zones[0])

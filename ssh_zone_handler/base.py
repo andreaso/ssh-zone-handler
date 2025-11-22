@@ -81,16 +81,6 @@ class SshZoneCommand(SshZoneHandler):
             f"--user={self.service_user}",
         )
 
-    def __zone_list(self, username: str) -> Sequence[str]:
-        user_zones: Sequence[str] = ()
-
-        try:
-            user_zones = tuple(self.config.users[username].zones)
-        except KeyError:
-            pass
-
-        return user_zones
-
     @staticmethod
     def __parse(
         ssh_command: str,
@@ -164,8 +154,7 @@ class SshZoneCommand(SshZoneHandler):
         :param username: Current user, executing the program
         """
 
-        user_zones: Sequence[str] = self.__zone_list(username)
-
+        user_zones: Sequence[str] = tuple(self.config.users[username].zones)
         if not user_zones:
             raise InvokeError(f'No zones configured for user "{username}"')
 

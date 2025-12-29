@@ -3,3 +3,4 @@
 package_update: true
 packages:
   - python3-venv
+  - snapd

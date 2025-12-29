@@ -1,3 +1,4 @@
+debian13 := https://cloud.debian.org/images/cloud/trixie/latest/debian-13-generic-amd64.qcow2
 
 default: moo
 
@@ -8,8 +9,11 @@ devel/.dynamic:
 	mkdir -m700 "$@"
 
 vm-create: devel/.dynamic
-	multipass launch --name szh-named --cloud-init ./devel/init.yaml --mount $(shell pwd):/mp noble
-	multipass launch --name szh-knot --cloud-init ./devel/init.yaml --mount $(shell pwd):/mp noble
+	multipass launch --name szh-named --cloud-init ./devel/init.yaml $(debian13)
+	multipass launch --name szh-knot --cloud-init ./devel/init.yaml $(debian13)
+	multipass restart szh-named szh-knot
+	multipass mount $(shell pwd) szh-named:/mp
+	multipass mount $(shell pwd) szh-knot:/mp
 	multipass info --format=json > ./devel/.dynamic/multipass_info.json
 	./devel/output-ssh-conf > ./devel/.dynamic/ssh_conf
 	ssh-keygen -q -t ed25519 -N '' -f "./devel/.dynamic/id_alice_ed25519" -C alice

@@ -57,7 +57,10 @@ jobs:
       - name: Check ruff linting
         run: poetry run ruff check ssh_zone_handler/ tests/
 
-      - name: Verify type hints
+      - name: Use ty to verify type hints
+        run: poetry run ty check --output-format=github
+
+      - name: Use mypy to verify type hints
         run: poetry run mypy --strict ssh_zone_handler/
 
       - name: Run Pytest

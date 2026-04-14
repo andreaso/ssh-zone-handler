@@ -29,7 +29,7 @@ class KnotCommand(SshZoneCommand):
     def __init__(self, config: ZoneHandlerConf) -> None:
         super().__init__(config)
 
-        self.knotc_prefix: Final[tuple[str, str, str]] = self.sudo_prefix + (
+        self.knotc_prefix: Final[tuple[str, ...]] = self.sudo_prefix + (
             "/usr/sbin/knotc",
         )
 

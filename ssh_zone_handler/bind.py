@@ -29,7 +29,7 @@ class BindCommand(SshZoneCommand):
     def __init__(self, config: ZoneHandlerConf) -> None:
         super().__init__(config)
 
-        self.rndc_prefix: Final[tuple[str, str, str]] = self.sudo_prefix + (
+        self.rndc_prefix: Final[tuple[str, ...]] = self.sudo_prefix + (
             "/usr/sbin/rndc",
         )
 
